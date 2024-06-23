@@ -19,7 +19,7 @@ export default function Meters({ auth }) {
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <div className="py-5">
-                                <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                                <button className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
                                     Create Measure
                                 </button>
                             </div>
@@ -93,7 +93,7 @@ export default function Meters({ auth }) {
                                             <td className="py-4 text-center">
                                                 <a
                                                     href="#"
-                                                    className="font-medium text-gray-600 dark:text-gray-500 hover:underline mr-4"
+                                                    className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
                                                 >
                                                     Edit
                                                 </a>

@@ -27,7 +27,7 @@ class MeasurementResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('name_id')
+                Forms\Components\Select::make('plant_id')
                     ->relationship(name: 'plant', titleAttribute: 'name')
                     ->searchable()
                     ->preload()
@@ -86,7 +86,9 @@ class MeasurementResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

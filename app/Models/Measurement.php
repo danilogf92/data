@@ -10,7 +10,7 @@ class Measurement extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name_id',
+        'plant_id',
         'meter_id',
         'start_value',
         'end_value',
@@ -21,7 +21,7 @@ class Measurement extends Model
     // Relación muchos a uno con Plant
     public function plant()
     {
-        return $this->belongsTo(Plant::class, 'name_id');
+        return $this->belongsTo(Plant::class, 'plant_id');
     }
 
     // Relación muchos a uno con Meter

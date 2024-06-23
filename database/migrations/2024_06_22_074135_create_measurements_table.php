@@ -15,8 +15,15 @@ return new class extends Migration
     {
         Schema::create('measurements', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Plant::class, 'name_id');
-            $table->foreignIdFor(Meter::class, 'meter_id');
+
+            $table->unsignedBigInteger('plant_id');
+            $table->foreign('plant_id')->references('id')->on('plants')
+                ->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unsignedBigInteger('meter_id');
+            $table->foreign('meter_id')->references('id')->on('meters')
+                ->onDelete('cascade')->onUpdate('cascade');
+
             $table->integer('start_value');
             $table->integer('end_value');
             $table->integer('difference');

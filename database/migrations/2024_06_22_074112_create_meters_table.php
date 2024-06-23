@@ -17,8 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('upper_limit')->nullable();
-            $table->foreignIdFor(Plant::class, 'plant_id');
-            $table->foreignIdFor(MeterType::class, 'type_id');
+            $table->unsignedBigInteger('plant_id');
+            $table->foreign('plant_id')->references('id')->on('plants')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('type_id');
+            $table->foreign('type_id')->references('id')->on('meter_types')
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
