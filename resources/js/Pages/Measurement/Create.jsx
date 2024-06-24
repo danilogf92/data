@@ -6,7 +6,7 @@ import { ArrowLongLeftIcon } from "@heroicons/react/24/solid";
 import Container from "@/Components/Container";
 import { data } from "autoprefixer";
 
-export default function Create({ auth }) {
+export default function Create({ auth, plants, meters }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -18,7 +18,7 @@ export default function Create({ auth }) {
     >
       <Head title="Meters" />
       <Container route={route("measurement.index")} buttonText="Before">
-        <FormMeters />
+        <FormMeters plants={plants} meters={meters} />
       </Container>
     </AuthenticatedLayout>
   );

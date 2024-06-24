@@ -8,13 +8,9 @@ use Inertia\Inertia;
 
 Route::redirect('/', '/dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
   Route::get('/dashboard', fn () => Inertia::render('Dashboard'))
     ->name('dashboard');
-
-  // Route::get('/meter', fn () => Inertia::render('Meters'))
-  //     ->name('meter');
-
   Route::resource('measurement', MeasurementController::class);
 });
 

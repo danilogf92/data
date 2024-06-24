@@ -1,16 +1,19 @@
 import { Link, useForm } from "@inertiajs/react";
-import React from "react";
+import React, { useState } from "react";
 import InputError from "./InputError";
+import Modal from "./Modal";
 
-export default function FormMeters({ plants, meters }) {
-  const { data, setData, post, errors } = useForm({
-    plant_id: "",
-    meter_id: "",
-    start_value: "",
-    end_value: "",
-    difference: "",
-    date: "",
+export default function FormMetersEdit({ plants, meters, measurement }) {
+  const { data, setData, put, errors } = useForm({
+    plant_id: measurement?.plant_id || "",
+    meter_id: measurement?.meter_id || "",
+    start_value: measurement?.start_value || "",
+    end_value: measurement?.end_value || "",
+    difference: measurement?.difference || "",
+    date: measurement?.date || "",
   });
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const calculateDifference = (start, end) => {
     return end - start;
@@ -43,7 +46,14 @@ export default function FormMeters({ plants, meters }) {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    post(route("measurement.store"));
+    put(route("measurement.update", measurement.id));
+  };
+
+  const onDeleteMeasurement = () => {
+    // Aquí debes implementar la lógica para la solicitud de borrado
+    // Puedes usar 'delete' de Inertia.js o cualquier método adecuado
+    console.log("Borrando medición...");
+    setIsDeleteModalOpen(false); // Cierra el modal después de la confirmación
   };
 
   return (
@@ -52,7 +62,7 @@ export default function FormMeters({ plants, meters }) {
         <div className="space-y-12">
           <div className="border-b border-white pb-12 text-center">
             <h2 className="font-semibold leading-7 text-white text-xl">
-              Measurement water data
+              Update Measurement water data
             </h2>
           </div>
 
@@ -133,7 +143,7 @@ export default function FormMeters({ plants, meters }) {
                 <div className="mt-2">
                   <input
                     onChange={(e) => setData("date", e.target.value)}
-                    value={data.date}
+                    value={data.date || measurement.date}
                     type="date"
                     name="date"
                     id="date"
@@ -234,10 +244,38 @@ export default function FormMeters({ plants, meters }) {
             type="submit"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Save
+            Update
           </button>
         </div>
       </form>
+
+      <Modal
+        show={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        maxWidth="sm"
+      >
+        <div className="p-6 bg-slate-500 text-white">
+          <h2 className="text-lg font-semibold mb-4">Delete Confirmation</h2>
+          <p className="text-sm text-white mb-8">
+            Are you sure you want to delete this measurement? This action cannot
+            be undone.
+          </p>
+          <div className="flex justify-end">
+            <button
+              onClick={onDeleteMeasurement}
+              className="bg-red-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-red-600"
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="bg-gray-300 text-gray-700 rounded-md px-4 py-2 hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
     </div>

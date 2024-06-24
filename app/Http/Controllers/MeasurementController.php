@@ -6,6 +6,8 @@ use App\Models\Measurement;
 use App\Http\Requests\StoreMeasurementRequest;
 use App\Http\Requests\UpdateMeasurementRequest;
 use App\Http\Resources\MeasurementResource;
+use App\Models\Meter;
+use App\Models\Plant;
 
 class MeasurementController extends Controller
 {
@@ -17,7 +19,7 @@ class MeasurementController extends Controller
 
     $query = Measurement::query();
 
-    $measurements = $query->paginate(2);
+    $measurements = $query->orderBy('date', 'DESC')->paginate(10);
 
     return inertia('Measurement/Index', [
       "measurements" => MeasurementResource::collection($measurements)
@@ -29,7 +31,14 @@ class MeasurementController extends Controller
    */
   public function create()
   {
-    return inertia('Measurement/Create');
+
+    $plants = Plant::orderBy('name', 'ASC')->get();
+    $meters = Meter::orderBy('name', 'ASC')->get();
+
+    return inertia('Measurement/Create', [
+      "plants" => $plants,
+      "meters" => $meters
+    ]);
   }
 
   /**
@@ -38,9 +47,9 @@ class MeasurementController extends Controller
   public function store(StoreMeasurementRequest $request)
   {
     $data = $request->validated();
-    dd($data);
+    Measurement::create($data);
+    return redirect()->route('measurement.index')->with('success', 'Measurement created successfully.');
   }
-
   /**
    * Display the specified resource.
    */
@@ -54,7 +63,15 @@ class MeasurementController extends Controller
    */
   public function edit(Measurement $measurement)
   {
-    return inertia('Measurement/Edit');
+
+    $plants = Plant::orderBy('name', 'ASC')->get();
+    $meters = Meter::orderBy('name', 'ASC')->get();
+
+    return inertia('Measurement/Edit', [
+      "plants" => $plants,
+      "meters" => $meters,
+      "measurement" => $measurement
+    ]);
   }
 
   /**
@@ -62,7 +79,10 @@ class MeasurementController extends Controller
    */
   public function update(UpdateMeasurementRequest $request, Measurement $measurement)
   {
-    //
+    $data = $request->validated();
+    $measurement->update($data);
+
+    return redirect()->route('measurement.index')->with('success', 'Measurement updated successfully.');
   }
 
   /**
@@ -70,6 +90,7 @@ class MeasurementController extends Controller
    */
   public function destroy(Measurement $measurement)
   {
-    //
+    $measurement->delete();
+    return redirect()->route('measurement.index')->with('success', 'Delete Measurement.');
   }
 }

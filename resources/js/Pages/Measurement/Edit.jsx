@@ -1,10 +1,10 @@
 import Container from "@/Components/Container";
-import FormMeters from "@/Components/FormMeters";
+import FormMetersEdit from "@/Components/FormMetersEdit";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ArrowLongLeftIcon } from "@heroicons/react/24/solid";
 import { Head, Link } from "@inertiajs/react";
 
-export default function Create({ auth }) {
+export default function Create({ auth, plants, meters, measurement }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -17,7 +17,11 @@ export default function Create({ auth }) {
       <Head title="Meters" />
 
       <Container route={route("measurement.index")} buttonText="Before">
-        <FormMeters />
+        <FormMetersEdit
+          plants={plants}
+          meters={meters}
+          measurement={measurement}
+        />
       </Container>
     </AuthenticatedLayout>
   );
