@@ -1,5 +1,5 @@
 import { Link, useForm } from "@inertiajs/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputError from "./InputError";
 import Modal from "./Modal";
 
@@ -14,6 +14,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
   });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [filteredMeters, setFilteredMeters] = useState([]);
 
   const calculateDifference = (start, end) => {
     return end - start;
@@ -49,11 +50,33 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
     put(route("measurement.update", measurement.id));
   };
 
+  const handlePlantChange = (e) => {
+    const selectedPlantId = e.target.value;
+
+    const filteredMeters = meters.filter(
+      (meter) => meter.plant_id === parseInt(selectedPlantId, 10)
+    );
+    setFilteredMeters(filteredMeters);
+
+    setData({
+      ...data,
+      plant_id: selectedPlantId,
+      meter_id: "",
+    });
+  };
+
+  useEffect(() => {
+    if (data.plant_id) {
+      const filteredMeters = meters.filter(
+        (meter) => meter.plant_id === parseInt(data.plant_id, 10)
+      );
+      setFilteredMeters(filteredMeters);
+    }
+  }, [data.plant_id]);
+
   const onDeleteMeasurement = () => {
-    // Aquí debes implementar la lógica para la solicitud de borrado
-    // Puedes usar 'delete' de Inertia.js o cualquier método adecuado
     console.log("Borrando medición...");
-    setIsDeleteModalOpen(false); // Cierra el modal después de la confirmación
+    setIsDeleteModalOpen(false);
   };
 
   return (
@@ -77,7 +100,8 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
                 </label>
                 <div className="mt-2">
                   <select
-                    onChange={(e) => setData("plant_id", e.target.value)}
+                    // onChange={(e) => setData("plant_id", e.target.value)}
+                    onChange={handlePlantChange}
                     value={data.plant_id}
                     id="plant_id"
                     name="plant_id"
@@ -120,7 +144,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
                       -- Select Meter --
                     </option>
 
-                    {meters.map((meter) => (
+                    {filteredMeters.map((meter) => (
                       <option key={meter.id} value={meter.id}>
                         {meter.name}
                       </option>

@@ -1,5 +1,5 @@
 import { Link, useForm } from "@inertiajs/react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import InputError from "./InputError";
 
 export default function FormMeters({ plants, meters }) {
@@ -11,6 +11,8 @@ export default function FormMeters({ plants, meters }) {
     difference: "",
     date: "",
   });
+
+  const [filteredMeters, setFilteredMeters] = useState([]);
 
   const calculateDifference = (start, end) => {
     return end - start;
@@ -40,9 +42,32 @@ export default function FormMeters({ plants, meters }) {
     });
   };
 
+  const handlePlantChange = (e) => {
+    const selectedPlantId = e.target.value;
+
+    const filteredMeters = meters.filter(
+      (meter) => meter.plant_id === parseInt(selectedPlantId, 10)
+    );
+    setFilteredMeters(filteredMeters);
+
+    setData({
+      ...data,
+      plant_id: selectedPlantId,
+      meter_id: "",
+    });
+  };
+
+  useEffect(() => {
+    if (data.plant_id) {
+      const filteredMeters = meters.filter(
+        (meter) => meter.plant_id === parseInt(data.plant_id, 10)
+      );
+      setFilteredMeters(filteredMeters);
+    }
+  }, [data.plant_id]);
+
   const onSubmit = (e) => {
     e.preventDefault();
-
     post(route("measurement.store"));
   };
 
@@ -67,7 +92,7 @@ export default function FormMeters({ plants, meters }) {
                 </label>
                 <div className="mt-2">
                   <select
-                    onChange={(e) => setData("plant_id", e.target.value)}
+                    onChange={handlePlantChange}
                     value={data.plant_id}
                     id="plant_id"
                     name="plant_id"
@@ -109,8 +134,7 @@ export default function FormMeters({ plants, meters }) {
                     <option value="" disabled>
                       -- Select Meter --
                     </option>
-
-                    {meters.map((meter) => (
+                    {filteredMeters.map((meter) => (
                       <option key={meter.id} value={meter.id}>
                         {meter.name}
                       </option>
@@ -238,8 +262,6 @@ export default function FormMeters({ plants, meters }) {
           </button>
         </div>
       </form>
-
-      {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
     </div>
   );
 }

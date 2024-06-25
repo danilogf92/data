@@ -139,16 +139,18 @@ export default function Authenticated({ user, header, children }) {
             >
               Dashboard
             </ResponsiveNavLink>
-          </div>
 
-          {/* <div className="pt-2 pb-3 space-y-1">
             <ResponsiveNavLink
-              href={route("meter")}
-              active={route().current("meter")}
+              href={route("measurement.index")}
+              active={
+                route().current("measurement.index") ||
+                route().current("measurement.create") ||
+                route().current("measurement.edit")
+              }
             >
-              Meters
+              Measurement
             </ResponsiveNavLink>
-          </div> */}
+          </div>
 
           <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div className="px-4">
