@@ -48,7 +48,7 @@ class MeasurementController extends Controller
   {
     $data = $request->validated();
     Measurement::create($data);
-    return redirect()->route('measurement.index')->with('success', 'Measurement created successfully.');
+   // return redirect()->route('measurement.index')->with('success', 'Measurement created successfully.');
   }
   /**
    * Display the specified resource.

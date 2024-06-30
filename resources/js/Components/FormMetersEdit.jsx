@@ -7,7 +7,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
   const { data, setData, put, errors } = useForm({
     plant_id: measurement?.plant_id || "",
     meter_id: measurement?.meter_id || "",
-    start_value: measurement?.start_value || "",
+    start_value: measurement?.start_value || "0",
     end_value: measurement?.end_value || "",
     difference: measurement?.difference || "",
     date: measurement?.date || "",
@@ -80,21 +80,21 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-4 bg-gray-600">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-4 bg-blue-100">
       <form onSubmit={onSubmit}>
         <div className="space-y-12">
-          <div className="border-b border-white pb-12 text-center">
-            <h2 className="font-semibold leading-7 text-white text-xl">
+          <div className="border-b border-white pb-6 text-center">
+            <h2 className="font-semibold leading-7 text-gray-900 text-xl">
               Update Measurement water data
             </h2>
           </div>
 
-          <div className="border-b border-white pb-12">
+          <div className="border-b border-white pb-6">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-2">
                 <label
                   htmlFor="plant_id"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Plant
                 </label>
@@ -127,7 +127,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="meter_id"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Meter
                 </label>
@@ -160,7 +160,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="date"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Date
                 </label>
@@ -184,7 +184,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
               <div className="sm:col-span-2 sm:col-start-1">
                 <label
                   htmlFor="start_value"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Start Value
                 </label>
@@ -209,7 +209,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="end_value"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Final Value
                 </label>
@@ -234,7 +234,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="difference"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Difference
                 </label>

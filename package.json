@@ -20,6 +20,8 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "@heroicons/react": "^2.1.4"
+        "@heroicons/react": "^2.1.4",
+        "@remixicon/react": "^4.2.0",
+        "@tremor/react": "^3.17.4"
     }
 }

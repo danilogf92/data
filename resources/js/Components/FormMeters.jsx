@@ -9,10 +9,12 @@ export default function FormMeters({ plants, meters }) {
     start_value: "",
     end_value: "",
     difference: "",
-    date: "",
+    date: "" || new Date().toISOString().split("T")[0],
   });
 
   const [filteredMeters, setFilteredMeters] = useState([]);
+
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const calculateDifference = (start, end) => {
     return end - start;
@@ -68,25 +70,63 @@ export default function FormMeters({ plants, meters }) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    post(route("measurement.store"));
+    post(route("measurement.store"), {
+      onSuccess: (response) => {
+        setData({
+          ...data,
+          meter_id: "",
+          start_value: "",
+          end_value: "",
+          difference: "",
+        });
+
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 3000);
+      },
+      onError: (errors) => {},
+    });
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-4 bg-gray-600">
+    <div className="relative overflow-x-auto shadow-md rounded-lg p-4 bg-blue-100">
+      {showSuccess && (
+        <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
+          <div className="relative">
+            <strong className="font-bold block">Success!</strong>
+            <span className="block sm:inline">Data stored successfully.</span>
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="absolute top-1 right-1 px-3 focus:outline-none"
+            >
+              <svg
+                className="fill-current h-6 w-6 text-green-500 hover:opacity-50"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <title>Close</title>
+                <path d="M14.354 5.646a.5.5 0 1 0-.708-.708L10 9.293 6.354 5.646a.5.5 0 1 0-.708.708L9.293 10l-3.647 3.646a.5.5 0 1 0 .708.708L10 10.707l3.646 3.647a.5.5 0 0 0 .708-.708L10.707 10l3.647-3.646z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={onSubmit}>
         <div className="space-y-12">
-          <div className="border-b border-white pb-12 text-center">
-            <h2 className="font-semibold leading-7 text-white text-xl">
+          <div className="border-b border-white pb-6 text-center">
+            <h2 className="font-semibold leading-7 text-gray-900 text-xl">
               Measurement water data
             </h2>
           </div>
 
-          <div className="border-b border-white pb-12">
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div className="border-b border-white pb-6">
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               <div className="sm:col-span-2">
                 <label
                   htmlFor="plant_id"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Plant
                 </label>
@@ -118,7 +158,7 @@ export default function FormMeters({ plants, meters }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="meter_id"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Meter
                 </label>
@@ -150,7 +190,7 @@ export default function FormMeters({ plants, meters }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="date"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Date
                 </label>
@@ -174,7 +214,7 @@ export default function FormMeters({ plants, meters }) {
               <div className="sm:col-span-2 sm:col-start-1">
                 <label
                   htmlFor="start_value"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Start Value
                 </label>
@@ -199,7 +239,7 @@ export default function FormMeters({ plants, meters }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="end_value"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Final Value
                 </label>
@@ -224,13 +264,13 @@ export default function FormMeters({ plants, meters }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="difference"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Difference
                 </label>
                 <div className="mt-2">
                   <input
-                    value={data.difference}
+                    value={data.difference >= 0 ? data.difference : ""}
                     type="text"
                     name="difference"
                     id="difference"
@@ -250,13 +290,13 @@ export default function FormMeters({ plants, meters }) {
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <Link
             href={route("measurement.index")}
-            className="rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
+            className="rounded-md bg-amber-600 text-white px-3 py-2 text-sm font-semibold shadow-sm hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
           >
             Cancel
           </Link>
           <button
             type="submit"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
           >
             Save
           </button>
