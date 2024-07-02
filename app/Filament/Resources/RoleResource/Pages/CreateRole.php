@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\PlantResource\Pages;
+namespace App\Filament\Resources\RoleResource\Pages;
 
-use App\Filament\Resources\PlantResource;
+use App\Filament\Resources\RoleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreatePlant extends CreateRecord
+class CreateRole extends CreateRecord
 {
-    protected static string $resource = PlantResource::class;
+    protected static string $resource = RoleResource::class;
 
     protected function getRedirectUrl(): string
     {

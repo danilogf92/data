@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateMeasurementRequest;
 use App\Http\Resources\MeasurementResource;
 use App\Models\Meter;
 use App\Models\Plant;
+use Illuminate\Support\Facades\Auth;
 
 class MeasurementController extends Controller
 {
@@ -31,6 +32,11 @@ class MeasurementController extends Controller
    */
   public function create()
   {
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Create Water')) {
+      abort(403, 'Unauthorized action.');
+    }
 
     $plants = Plant::orderBy('name', 'ASC')->get();
     $meters = Meter::orderBy('name', 'ASC')->get();
@@ -46,6 +52,13 @@ class MeasurementController extends Controller
    */
   public function store(StoreMeasurementRequest $request)
   {
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Create Water')) {
+      abort(403, 'Unauthorized action.');
+    }
+
     $data = $request->validated();
     Measurement::create($data);
    // return redirect()->route('measurement.index')->with('success', 'Measurement created successfully.');
@@ -63,7 +76,12 @@ class MeasurementController extends Controller
    */
   public function edit(Measurement $measurement)
   {
+    $permissions = Auth::user()->getPermissionNames();
 
+    if (!$permissions->contains('Edit Water')) {
+      abort(403, 'Unauthorized action.');
+    }
+    
     $plants = Plant::orderBy('name', 'ASC')->get();
     $meters = Meter::orderBy('name', 'ASC')->get();
 
@@ -90,6 +108,12 @@ class MeasurementController extends Controller
    */
   public function destroy(Measurement $measurement)
   {
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Delete Water')) {
+      abort(403, 'Unauthorized action.');
+    }
+
     $measurement->delete();
     return redirect()->route('measurement.index')->with('success', 'Delete Measurement.');
   }

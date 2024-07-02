@@ -29,12 +29,15 @@ export default function Index({ auth, measurements }) {
           <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             Measurement
           </h2>
-          <Link
-            href={route("measurement.create")}
-            className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
-          >
-            New Measure
-          </Link>
+          {(auth.user.roles.includes("Water") ||
+            auth.user.permissions.includes("Create Water")) && (
+            <Link
+              href={route("measurement.create")}
+              className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
+            >
+              New Measure
+            </Link>
+          )}
         </div>
       }
     >
@@ -65,9 +68,11 @@ export default function Index({ auth, measurements }) {
                     <th scope="col" className="px-6 py-3">
                       Date
                     </th>
-                    <th scope="col" className="px-6 py-3">
-                      Actions
-                    </th>
+                    {auth.user.roles.includes("Water") && (
+                      <th scope="col" className="px-6 py-3">
+                        Actions
+                      </th>
+                    )}
                   </tr>
                 </thead>
 
@@ -89,23 +94,25 @@ export default function Index({ auth, measurements }) {
                       <td className="px-6 py-2 text-nowrap">
                         {measurement.date}
                       </td>
-                      <td className="py-2 text-center">
-                        <Link
-                          className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
-                          href={route("measurement.edit", measurement.id)}
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          className="font-medium text-red-600 dark:text-red-500 hover:underline"
-                          onClick={() => {
-                            setMeasurementToDelete(measurement);
-                            setIsDeleteModalOpen(true);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
+                      {auth.user.roles.includes("Water") && (
+                        <td className="py-2 text-center">
+                          <Link
+                            className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
+                            href={route("measurement.edit", measurement.id)}
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                            onClick={() => {
+                              setMeasurementToDelete(measurement);
+                              setIsDeleteModalOpen(true);
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -151,6 +158,9 @@ export default function Index({ auth, measurements }) {
               </span>
             </div>
           )}
+
+          {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}
         </div>
       </ContainerAuth>
     </AuthenticatedLayout>

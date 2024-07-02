@@ -52,15 +52,18 @@ class MeterResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('upper_limit')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('plant.name')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('meterType.type')
                     ->numeric()
+                    ->sortable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

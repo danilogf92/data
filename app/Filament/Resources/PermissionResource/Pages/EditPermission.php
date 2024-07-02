@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\MeterTypeResource\Pages;
+namespace App\Filament\Resources\PermissionResource\Pages;
 
-use App\Filament\Resources\MeterTypeResource;
+use App\Filament\Resources\PermissionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditMeterType extends EditRecord
+class EditPermission extends EditRecord
 {
-    protected static string $resource = MeterTypeResource::class;
+    protected static string $resource = PermissionResource::class;
 
     protected function getHeaderActions(): array
     {
