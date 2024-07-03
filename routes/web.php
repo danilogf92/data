@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -9,8 +10,8 @@ use Inertia\Inertia;
 Route::redirect('/', '/dashboard');
 
 Route::middleware(['auth'])->group(function () {
-  Route::get('/dashboard', fn () => Inertia::render('Dashboard'))
-    ->name('dashboard');
+  // Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
+  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
   Route::resource('measurement', MeasurementController::class);
 });
 
