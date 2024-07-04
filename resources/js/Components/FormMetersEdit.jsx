@@ -47,7 +47,14 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    put(route("measurement.update", measurement.id));
+    put(route("measurement.update", measurement.id), {
+      onSuccess: (response) => {
+        // console.log(response); // AQUI GENERA EL showSuccess
+      },
+      onError: (errors) => {
+        // console.log(errors);
+      },
+    });
   };
 
   const handlePlantChange = (e) => {
@@ -186,7 +193,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
                   htmlFor="start_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Start Value
+                  Start Value [m³]
                 </label>
                 <div className="mt-2">
                   <input
@@ -211,7 +218,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
                   htmlFor="end_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Final Value
+                  Final Value [m³]
                 </label>
                 <div className="mt-2">
                   <input
@@ -236,7 +243,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
                   htmlFor="difference"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Difference
+                  Difference [m³]
                 </label>
                 <div className="mt-2">
                   <input

@@ -13,6 +13,7 @@ export default function FormMeters({ plants, meters, measurements }) {
   });
 
   const [filteredMeters, setFilteredMeters] = useState([]);
+  const [allMeters, setAllMeters] = useState(meters);
 
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -44,10 +45,10 @@ export default function FormMeters({ plants, meters, measurements }) {
     });
   };
 
-  const handlePlantChange = (e) => {
+  const handlePlantChange = async (e) => {
     const selectedPlantId = e.target.value;
 
-    const filteredMeters = meters.filter(
+    const filteredMeters = allMeters.filter(
       (meter) => meter.plant_id === parseInt(selectedPlantId, 10)
     );
     setFilteredMeters(filteredMeters);
@@ -60,13 +61,39 @@ export default function FormMeters({ plants, meters, measurements }) {
   };
 
   useEffect(() => {
-    if (data.plant_id) {
-      const filteredMeters = meters.filter(
+    if (data.plant_id && allMeters.length > 0) {
+      const filteredMeters = allMeters.filter(
         (meter) => meter.plant_id === parseInt(data.plant_id, 10)
       );
       setFilteredMeters(filteredMeters);
     }
-  }, [data.plant_id]);
+  }, [data.plant_id, data.date, allMeters]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/meters?date=${data.date}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch meters");
+        }
+        const { meters } = await response.json(); // Cambiado a `responseData` para evitar conflicto de nombres
+        // console.log("Updated meters new:", meters);
+        // console.log("data.plant_id", data.plant_id);
+        const allMetersArray = Object.values(meters);
+        setAllMeters(allMetersArray);
+        if (data.plant_id) {
+          const filteredMeters = allMeters.filter(
+            (meter) => meter.plant_id === parseInt(data.plant_id, 10)
+          );
+          setFilteredMeters(filteredMeters);
+        }
+      } catch (error) {
+        console.error("Error fetching meters:", error);
+      }
+    };
+
+    fetchData(); // Llama a la función asincrónica inmediatamente
+  }, [data.date, data.meter_id]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -216,7 +243,7 @@ export default function FormMeters({ plants, meters, measurements }) {
                   htmlFor="start_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Start Value
+                  Start Value [m³]
                 </label>
                 <div className="mt-2">
                   <input
@@ -241,7 +268,7 @@ export default function FormMeters({ plants, meters, measurements }) {
                   htmlFor="end_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Final Value
+                  Final Value [m³]
                 </label>
                 <div className="mt-2">
                   <input
@@ -266,7 +293,7 @@ export default function FormMeters({ plants, meters, measurements }) {
                   htmlFor="difference"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Difference
+                  Difference [m³]
                 </label>
                 <div className="mt-2">
                   <input

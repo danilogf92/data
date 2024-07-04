@@ -40,17 +40,12 @@ class MeasurementController extends Controller
 
     $plants = Plant::orderBy('name', 'ASC')->get();
     $meters = Meter::where('enabled', 1)
-               ->orderBy('name', 'ASC')
+               ->orderBy('id', 'ASC')
                ->get();
-
-    // $measurements = Measurement::orderBy('date', 'desc')
-    //                         // ->take(10)
-    //                         ->get();              
-
 
     return inertia('Measurement/Create', [
       "plants" => $plants,
-      "meters" => $meters
+      "meters" => $meters,
       // "measurements" => $measurements
     ]);
   }
@@ -66,7 +61,7 @@ class MeasurementController extends Controller
     if (!$permissions->contains('Create Water')) {
       abort(403, 'Unauthorized action.');
     }
-
+    
     $data = $request->validated();
     Measurement::create($data);
    // return redirect()->route('measurement.index')->with('success', 'Measurement created successfully.');
