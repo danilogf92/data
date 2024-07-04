@@ -22,7 +22,7 @@ return new class extends Migration
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('type_id');
             $table->foreign('type_id')->references('id')->on('meter_types')
-                ->onDelete('cascade')->onUpdate('cascade');
+                ->onDelete('cascade')->onUpdate('cascade');            
             $table->timestamps();
         });
     }

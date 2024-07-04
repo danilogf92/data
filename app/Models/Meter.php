@@ -13,7 +13,8 @@ class Meter extends Model
         'name',
         'upper_limit',
         'plant_id',
-        'type_id'
+        'type_id',
+        'enabled' 
     ];
 
     // Relación muchos a uno con Plant

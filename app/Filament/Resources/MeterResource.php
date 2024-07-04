@@ -43,7 +43,7 @@ class MeterResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required(),
-
+                Forms\Components\Toggle::make('enabled'),
             ]);
     }
 
@@ -52,18 +52,31 @@ class MeterResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable()
+                    // ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('upper_limit')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('plant.name')
                     ->numeric()
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('meterType.type')
                     ->numeric()
-                    ->sortable()
+                    // ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('enabled')
+                    ->label('Status')
+                    ->getStateUsing(function ($record) {
+                        return $record->enabled ? 'Enabled' : 'Disabled';
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Enabled' => 'success',  // Verde para 'Enabled'
+                        'Disabled' => 'danger',  // Rojo para 'Disabled'
+                        default => 'gray',
+                    })
+                    // ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

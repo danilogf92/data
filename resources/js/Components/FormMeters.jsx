@@ -2,7 +2,7 @@ import { Link, useForm } from "@inertiajs/react";
 import React, { useState, useEffect } from "react";
 import InputError from "./InputError";
 
-export default function FormMeters({ plants, meters }) {
+export default function FormMeters({ plants, meters, measurements }) {
   const { data, setData, post, errors } = useForm({
     plant_id: "",
     meter_id: "",
@@ -275,7 +275,7 @@ export default function FormMeters({ plants, meters }) {
                     name="difference"
                     id="difference"
                     readOnly
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-100 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-500 bg-red-200 sm:text-sm sm:leading-6"
                   />
                   <InputError
                     message={errors.difference}
@@ -302,6 +302,7 @@ export default function FormMeters({ plants, meters }) {
           </button>
         </div>
       </form>
+      <pre>{JSON.stringify(measurements, undefined, 2)}</pre>
     </div>
   );
 }

@@ -39,11 +39,19 @@ class MeasurementController extends Controller
     }
 
     $plants = Plant::orderBy('name', 'ASC')->get();
-    $meters = Meter::orderBy('name', 'ASC')->get();
+    $meters = Meter::where('enabled', 1)
+               ->orderBy('name', 'ASC')
+               ->get();
+
+    // $measurements = Measurement::orderBy('date', 'desc')
+    //                         // ->take(10)
+    //                         ->get();              
+
 
     return inertia('Measurement/Create', [
       "plants" => $plants,
       "meters" => $meters
+      // "measurements" => $measurements
     ]);
   }
 

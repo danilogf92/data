@@ -245,7 +245,7 @@ export default function FormMetersEdit({ plants, meters, measurement }) {
                     name="difference"
                     id="difference"
                     readOnly
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-100 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-500 bg-red-200 sm:text-sm sm:leading-6"
                   />
                   <InputError
                     message={errors.difference}
