@@ -31,7 +31,10 @@ Route::middleware('auth')->prefix('api')->group(function () {
 });
 
 Route::prefix('api')->group(function () {
-    Route::get('/dashboard', [PowerBiController::class, 'index']);
+    Route::get('/measurements', [PowerBiController::class, 'measurements']);
+    Route::get('/meter', [PowerBiController::class, 'meters']);
+    Route::get('/metertypes', [PowerBiController::class, 'metertypes']);
+    Route::get('/plant', [PowerBiController::class, 'plants']);
 });
 
 require __DIR__ . '/auth.php';
