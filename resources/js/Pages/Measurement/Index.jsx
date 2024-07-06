@@ -17,10 +17,17 @@ export default function Index({ auth, measurements }) {
         setShowSuccess(false);
       }, 3000);
     }
-  }, [flash.success]);
+  }, [flash]);
 
   const deleteMeasurement = (measurement) => {
-    router.delete(route("measurement.destroy", measurement.id));
+    router.delete(route("measurement.destroy", measurement.id), {
+      onSuccess: (response) => {
+        console.log(response); // AQUI GENERA EL showSuccess
+      },
+      onError: (errors) => {
+        // console.log(errors);
+      },
+    });
   };
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [measurementToDelete, setMeasurementToDelete] = useState(null);

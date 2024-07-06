@@ -14,7 +14,7 @@ class MeterController extends Controller
     {
     $date = Carbon::parse($request->query('date')); // Usar la fecha del query string
 
-    $measurements = Measurement::whereDate('created_at', $date)
+    $measurements = Measurement::whereDate('date', $date)
                     ->distinct()
                     ->select('meter_id', 'plant_id')                    
                     ->get();

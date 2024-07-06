@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\API\LastValueController;
 use App\Http\Controllers\API\MeterController;
 use App\Http\Controllers\API\PlantController;
 use App\Http\Controllers\API\PowerBiController;
@@ -23,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('api')->group(function () {
         Route::get('/plants', [PlantController::class, 'index']);
         Route::get('/meters', [MeterController::class, 'index']);
+        Route::get('/lastvalue', [LastValueController::class, 'index']);
     });
 });
 

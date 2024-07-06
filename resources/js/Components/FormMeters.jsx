@@ -3,13 +3,17 @@ import React, { useState, useEffect } from "react";
 import InputError from "./InputError";
 
 export default function FormMeters({ plants, meters, measurements }) {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const formattedDate = yesterday.toISOString().split("T")[0];
+
   const { data, setData, post, errors } = useForm({
     plant_id: "",
     meter_id: "",
     start_value: "",
     end_value: "",
     difference: "",
-    date: "" || new Date().toISOString().split("T")[0],
+    date: formattedDate,
   });
 
   const [filteredMeters, setFilteredMeters] = useState([]);
@@ -76,7 +80,7 @@ export default function FormMeters({ plants, meters, measurements }) {
         if (!response.ok) {
           throw new Error("Failed to fetch meters");
         }
-        const { meters } = await response.json(); // Cambiado a `responseData` para evitar conflicto de nombres
+        const { meters } = await response.json();
         // console.log("Updated meters new:", meters);
         // console.log("data.plant_id", data.plant_id);
         const allMetersArray = Object.values(meters);
@@ -92,8 +96,46 @@ export default function FormMeters({ plants, meters, measurements }) {
       }
     };
 
-    fetchData(); // Llama a la función asincrónica inmediatamente
+    fetchData();
   }, [data.date, data.meter_id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Calcular la fecha del día anterior
+        const yesterday = new Date(data.date);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const formattedDate = yesterday.toISOString().split("T")[0];
+
+        // console.log(formattedDate);
+        // console.log(data.meter_id);
+
+        const response = await fetch(
+          `/api/lastvalue?date=${formattedDate}&meter=${data.meter_id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch measurement");
+        }
+        const { measurement } = await response.json();
+        console.log(measurement);
+
+        if (measurement.length > 0) {
+          const end_value = measurement[0]["end_value"];
+
+          setData({
+            ...data,
+            start_value: end_value,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching measurement:", error);
+      }
+    };
+
+    if (data.meter_id) {
+      fetchData();
+    }
+  }, [data.meter_id, data.date]);
 
   const onSubmit = (e) => {
     e.preventDefault();
