@@ -5,15 +5,15 @@ function classNames(...classes) {
 }
 
 const currencyFormatter = (number) => {
-  return "$" + Intl.NumberFormat("us").format(number).toString();
+  return Intl.NumberFormat("us").format(number).toString() + " m³ ";
 };
 
-export default function ChartResume({ data }) {
+export default function ChartResume({ data, name, total }) {
   return (
     <>
       <Card className="sm:mx-auto sm:max-w-lg bg-slate-50 shadow-lg">
-        <h3 className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-          Total Consumption by plant
+        <h3 className="text-center text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+          {name.toUpperCase()}
         </h3>
         <DonutChart
           className="mt-8"
@@ -22,11 +22,21 @@ export default function ChartResume({ data }) {
           index="name"
           valueFormatter={currencyFormatter}
           showTooltip={false}
-          colors={["cyan", "blue", "indigo", "violet", "fuchsia"]}
+          colors={[
+            "amber",
+            "green",
+            "red",
+            "cyan",
+            "blue",
+            "indigo",
+            "violet",
+            "fuchsia",
+          ]}
         />
+
         <p className="mt-8 flex items-center justify-between text-tremor-label text-tremor-content dark:text-dark-tremor-content">
           <span>Category</span>
-          <span>Amount / Share</span>
+          <span>m³ / Percentage</span>
         </p>
         <List className="mt-2">
           {data.map((item) => (
@@ -54,6 +64,9 @@ export default function ChartResume({ data }) {
             </ListItem>
           ))}
         </List>
+        <p className="text-center mt-4 text-lg text-tremor-content dark:text-dark-tremor-content">
+          Total: {currencyFormatter(total)}
+        </p>
       </Card>
     </>
   );

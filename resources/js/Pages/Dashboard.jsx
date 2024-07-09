@@ -12,39 +12,8 @@ export default function Dashboard({
   summary2,
   chartData,
   lastMonthData,
+  total,
 }) {
-  const data = [
-    {
-      name: "Travel",
-      amount: 6730,
-      share: "32.1%",
-      color: "bg-cyan-500",
-    },
-    {
-      name: "IT & equipment",
-      amount: 4120,
-      share: "19.6%",
-      color: "bg-blue-500",
-    },
-    {
-      name: "Training & development",
-      amount: 3920,
-      share: "18.6%",
-      color: "bg-indigo-500",
-    },
-    {
-      name: "Office supplies",
-      amount: 3210,
-      share: "15.3%",
-      color: "bg-violet-500",
-    },
-    {
-      name: "Communication",
-      amount: 3010,
-      share: "14.3%",
-      color: "bg-fuchsia-500",
-    },
-  ];
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -69,10 +38,18 @@ export default function Dashboard({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-2 py-4">
-          <ChartResume data={data} />
-          <ChartResume data={data} />
-        </div>
+        {total.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-2 py-4">
+            {total.map((item, index) => (
+              <ChartResume
+                key={index}
+                data={item.data}
+                name={item.plant_name}
+                total={item.total}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 bg-slate-50 shadow-lg p-1 rounded-md mt-2">
           <AreaChartHero chartdata={lastMonthData} />
@@ -82,7 +59,7 @@ export default function Dashboard({
           <BarChartHero chartdata={chartData} />
         </div>
 
-        {/* <pre>{JSON.stringify(summary, undefined, 2)}</pre> */}
+        {/* <pre>{JSON.stringify(total, undefined, 2)}</pre> */}
         {/* <pre>{JSON.stringify(summary, undefined, 2)}</pre> */}
         {/* <pre>{JSON.stringify(lastMonthData, undefined, 2)}</pre> */}
 

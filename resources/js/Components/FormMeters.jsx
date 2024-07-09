@@ -3,9 +3,20 @@ import React, { useState, useEffect } from "react";
 import InputError from "./InputError";
 
 export default function FormMeters({ plants, meters, measurements }) {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const formattedDate = yesterday.toISOString().split("T")[0];
+  const today = new Date();
+  today.setDate(today.getDate());
+
+  const day = new Date(today);
+  const dayOfWeek = today.getDay();
+
+  if (dayOfWeek === 1) {
+    console.log("Hoy es lunes");
+    day.setDate(day.getDate() - 2);
+  } else {
+    day.setDate(day.getDate() - 1);
+  }
+
+  const formattedDate = day.toISOString().split("T")[0];
 
   const { data, setData, post, errors } = useForm({
     plant_id: "",
@@ -102,16 +113,8 @@ export default function FormMeters({ plants, meters, measurements }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Calcular la fecha del día anterior
-        const yesterday = new Date(data.date);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const formattedDate = yesterday.toISOString().split("T")[0];
-
-        // console.log(formattedDate);
-        // console.log(data.meter_id);
-
         const response = await fetch(
-          `/api/lastvalue?date=${formattedDate}&meter=${data.meter_id}`
+          `/api/lastvalue?date=${data.date}&meter=${data.meter_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch measurement");
