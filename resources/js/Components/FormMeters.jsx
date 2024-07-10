@@ -129,6 +129,11 @@ export default function FormMeters({ plants, meters, measurements }) {
             ...data,
             start_value: end_value,
           });
+        } else {
+          setData({
+            ...data,
+            start_value: "",
+          });
         }
       } catch (error) {
         console.error("Error fetching measurement:", error);
