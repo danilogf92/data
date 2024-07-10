@@ -6,6 +6,7 @@ use App\Http\Controllers\API\PlantController;
 use App\Http\Controllers\API\PowerBiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MeasurementController;
+use App\Http\Controllers\ProductionByWeightController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureStaticTokenIsValid;
 use Illuminate\Foundation\Application;
@@ -20,6 +21,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('measurement', MeasurementController::class);
+    Route::resource('production-by-weight', ProductionByWeightController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -40,6 +42,8 @@ Route::prefix('api')->middleware(EnsureStaticTokenIsValid::class)->group(functio
 });
 
 Route::get('/measurements/export', [MeasurementController::class, 'export'])->name('measurements.export');
+Route::get('/production-by-weight/export', [ProductionByWeightController::class, 'export'])->name('production-by-weight.export');
+
 
 
 require __DIR__ . '/auth.php';

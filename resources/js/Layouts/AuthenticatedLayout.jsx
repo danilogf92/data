@@ -43,6 +43,19 @@ export default function Authenticated({ user, header, children }) {
                   Measurement
                 </NavLink>
               </div>
+
+              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <NavLink
+                  href={route("production-by-weight.index")}
+                  active={
+                    route().current("production-by-weight.index") ||
+                    route().current("production-by-weight.create") ||
+                    route().current("production-by-weight.edit")
+                  }
+                >
+                  Production
+                </NavLink>
+              </div>
             </div>
 
             <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -149,6 +162,17 @@ export default function Authenticated({ user, header, children }) {
               }
             >
               Measurement
+            </ResponsiveNavLink>
+
+            <ResponsiveNavLink
+              href={route("production-by-weight.index")}
+              active={
+                route().current("production-by-weight.index") ||
+                route().current("production-by-weight.create") ||
+                route().current("production-by-weight.edit")
+              }
+            >
+              Production
             </ResponsiveNavLink>
           </div>
 

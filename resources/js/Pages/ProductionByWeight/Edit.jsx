@@ -1,26 +1,26 @@
 import Container from "@/Components/Container";
-import FormMetersEdit from "@/Components/FormMetersEdit";
+import FormEditProductionByWeight from "@/Components/MyComponents/FormEditProductionByWeight";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
-export default function Edit({ auth, plants, meters, measurement }) {
+export default function Edit({ auth, production }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-          Edit Measurement
+          Edit Production
         </h2>
       }
     >
       <Head title="Meters" />
 
-      <Container route={route("measurement.index")} buttonText="Before">
-        <FormMetersEdit
-          plants={plants}
-          meters={meters}
-          measurement={measurement}
-        />
+      <Container
+        route={route("production-by-weight.index")}
+        buttonText="Before"
+      >
+        <FormEditProductionByWeight production={production} />
+        <pre>{JSON.stringify(production, undefined, 2)}</pre>
       </Container>
     </AuthenticatedLayout>
   );

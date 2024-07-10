@@ -1,8 +1,10 @@
 import React from "react";
 
-const ExportButton = () => {
+const ExportButton = ({ link, documentName }) => {
   const handleExport = () => {
-    fetch("/measurements/export", {
+    console.log(link);
+
+    fetch(`${link}`, {
       method: "GET",
     })
       .then((response) => {
@@ -19,13 +21,11 @@ const ExportButton = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", "measurements.xlsx"); // Nombre del archivo
+            link.setAttribute("download", `${documentName}.xlsx`); // Nombre del archivo
             document.body.appendChild(link);
             link.click();
             link.remove();
           });
-          setShowSuccess(true); // Mostrar mensaje de éxito
-          setTimeout(() => setShowSuccess(false), 3000); // Ocultar mensaje después de 3 segundos
         } else {
           console.error("Error: La respuesta no es un archivo Excel.");
         }
@@ -38,7 +38,7 @@ const ExportButton = () => {
   return (
     <button
       onClick={handleExport}
-      className="justify-end mb-4 bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
+      className=" bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
     >
       Export Data
     </button>
