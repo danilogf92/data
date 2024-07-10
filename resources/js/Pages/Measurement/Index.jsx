@@ -1,6 +1,7 @@
 import FormMeters from "@/Components/FormMeters";
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
+import ExportButton from "@/Components/MyComponents/ExportButton";
 import Pagination from "@/Components/Pagination";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
@@ -64,12 +65,7 @@ export default function Index({ auth, measurements, total }) {
       <Head title="Meters" />
 
       <ContainerAuth>
-        <button
-          href={route("measurement.create")}
-          className="justify-end mb-4 bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
-        >
-          Export Data
-        </button>
+        <ExportButton />
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-2">
           {showSuccess && (
             <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">

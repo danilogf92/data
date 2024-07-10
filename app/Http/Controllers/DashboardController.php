@@ -75,6 +75,7 @@ class DashboardController extends Controller
 
 // Convertir el array asociativo en un array numérico para mantener el orden
         $result = array_values($dataByDay);
+
 $values = Measurement::selectRaw('
         plants.name as plant_name,
         meter_types.type as meter_type,
@@ -84,9 +85,9 @@ $values = Measurement::selectRaw('
     ->join('meters', 'measurements.meter_id', '=', 'meters.id')
     ->join('meter_types', 'meters.type_id', '=', 'meter_types.id')
     ->groupBy('plants.name', 'meter_types.type')
-    ->orderBy('plants.name')
-    ->orderBy('meter_types.type')
+    ->orderBy('total_difference', 'desc') // Ordenar por total_difference en orden descendente (mayor a menor)
     ->get();
+
 
 $totals = [];
 $data_by_plant = [];

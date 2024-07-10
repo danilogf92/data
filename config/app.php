@@ -124,6 +124,4 @@ return [
     ],
 
     'api_static_token' => env('API_STATIC_TOKEN'),
-
-
 ];

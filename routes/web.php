@@ -39,5 +39,8 @@ Route::prefix('api')->middleware(EnsureStaticTokenIsValid::class)->group(functio
     Route::get('/plant', [PowerBiController::class, 'plants']);
 });
 
+Route::get('/measurements/export', [MeasurementController::class, 'export'])->name('measurements.export');
+
+
 require __DIR__ . '/auth.php';
 

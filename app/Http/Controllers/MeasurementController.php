@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MeasurementsExport;
 use App\Models\Measurement;
 use App\Http\Requests\StoreMeasurementRequest;
 use App\Http\Requests\UpdateMeasurementRequest;
@@ -9,6 +10,7 @@ use App\Http\Resources\MeasurementResource;
 use App\Models\Meter;
 use App\Models\Plant;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MeasurementController extends Controller
 {
@@ -120,4 +122,9 @@ class MeasurementController extends Controller
     $measurement->delete();
     return redirect()->route('measurement.index')->with('success', 'Delete Measurement.');
   }
+
+    public function export()
+    {
+        return Excel::download(new MeasurementsExport, 'measurements.xlsx');
+    }  
 }
