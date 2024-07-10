@@ -110,17 +110,57 @@ export default function FormMeters({ plants, meters, measurements }) {
     fetchData();
   }, [data.date, data.meter_id]);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `/api/lastvalue?date=${data.date}&meter=${data.meter_id}`
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch measurement");
+  //       }
+  //       const { measurement } = await response.json();
+  //       console.log(measurement, data.date, data.meter_id);
+
+  //       if (measurement.length > 0) {
+  //         const end_value = measurement[0]["end_value"];
+
+  //         setData({
+  //           ...data,
+  //           start_value: end_value,
+  //         });
+  //       } else {
+  //         setData({
+  //           ...data,
+  //           start_value: "",
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching measurement:", error);
+  //     }
+  //   };
+
+  //   if (data.meter_id) {
+  //     fetchData();
+  //   }
+  // }, [data.meter_id, data.date]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Restar un día a data.date
+        const prevDate = new Date(data.date);
+        prevDate.setDate(prevDate.getDate() - 1);
+        const formattedDate = prevDate.toISOString().split("T")[0];
+
         const response = await fetch(
-          `/api/lastvalue?date=${data.date}&meter=${data.meter_id}`
+          `/api/lastvalue?date=${formattedDate}&meter=${data.meter_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch measurement");
         }
         const { measurement } = await response.json();
-        console.log(measurement);
+        console.log(measurement, formattedDate, data.meter_id);
 
         if (measurement.length > 0) {
           const end_value = measurement[0]["end_value"];
