@@ -20,7 +20,6 @@ export default function Edit({ auth, production }) {
         buttonText="Before"
       >
         <FormEditProductionByWeight production={production} />
-        <pre>{JSON.stringify(production, undefined, 2)}</pre>
       </Container>
     </AuthenticatedLayout>
   );
