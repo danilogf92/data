@@ -19,6 +19,7 @@ class MeasurementResource extends JsonResource
       'id' => $this->id,
       'plant_id' => $this->plant->name,
       'meter_id' => $this->meter->name,
+      'upper_limit' => $this->meter->upper_limit,
       'start_value' => $this->start_value,
       'end_value' => $this->end_value,
       'difference' => $this->difference,

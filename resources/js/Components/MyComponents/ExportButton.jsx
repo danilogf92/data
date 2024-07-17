@@ -40,7 +40,7 @@ const ExportButton = ({ link, documentName }) => {
       onClick={handleExport}
       className=" bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
     >
-      Export Data
+      Export all Data
     </button>
   );
 };

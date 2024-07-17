@@ -1,4 +1,3 @@
-import FormMeters from "@/Components/FormMeters";
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
 import ExportButton from "@/Components/MyComponents/ExportButton";
@@ -7,9 +6,23 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Index({ auth, measurements, total }) {
+export default function Index({
+  auth,
+  measurements,
+  queryParams = {},
+  plants,
+  meters,
+}) {
+  queryParams = queryParams || {};
+
   const { flash } = usePage().props;
   const [showSuccess, setShowSuccess] = useState(false);
+  const [filters, setFilters] = useState({
+    date: "",
+    plant_id: "",
+    meter_id: "",
+    rows: 5, // Valor predeterminado
+  });
 
   useEffect(() => {
     if (flash.success) {
@@ -30,6 +43,7 @@ export default function Index({ auth, measurements, total }) {
       },
     });
   };
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [measurementToDelete, setMeasurementToDelete] = useState(null);
 
@@ -38,6 +52,29 @@ export default function Index({ auth, measurements, total }) {
 
     deleteMeasurement(measurementToDelete);
     setIsDeleteModalOpen(false);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  useEffect(() => {
+    router.get(route("measurement.index"), filters, {
+      preserveState: true,
+      replace: true,
+    });
+  }, [filters]);
+
+  const clearFilter = () => {
+    setFilters({
+      date: "",
+      plant_id: "",
+      meter_id: "",
+      rows: 5,
+    });
   };
 
   return (
@@ -65,8 +102,16 @@ export default function Index({ auth, measurements, total }) {
       <Head title="Meters" />
 
       <ContainerAuth>
-        {/* <ExportButton /> */}
-        <ExportButton link="/measurements/export" documentName="measurements" />
+        {(auth.user.roles.includes("Water") ||
+          auth.user.permissions.includes("Create Water")) && (
+          <>
+            <ExportButton
+              link="/measurements/export"
+              documentName="measurements"
+            />
+          </>
+        )}
+
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-2">
           {showSuccess && (
             <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
@@ -89,6 +134,103 @@ export default function Index({ auth, measurements, total }) {
               </div>
             </div>
           )}
+
+          {/* Filter Form */}
+          <div className="mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-2">
+              <div className="col-span-1">
+                <label
+                  htmlFor="date"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Date
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  id="date"
+                  value={filters.date}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div className="col-span-1">
+                <label
+                  htmlFor="plant_id"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Plant
+                </label>
+                <select
+                  name="plant_id"
+                  id="plant_id"
+                  value={filters.plant_id}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Plant</option>
+                  {plants.map((plant) => (
+                    <option key={plant.id} value={plant.id}>
+                      {plant.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-span-1">
+                <label
+                  htmlFor="meter_id"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Meter
+                </label>
+                <select
+                  name="meter_id"
+                  id="meter_id"
+                  value={filters.meter_id}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Meter</option>
+                  {meters.map((meter) => (
+                    <option key={meter.id} value={meter.id}>
+                      {meter.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-span-1">
+                <label
+                  htmlFor="rows"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Rows
+                </label>
+                <select
+                  name="rows"
+                  id="rows"
+                  value={filters.rows}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  {/* <option value="all">All</option> */}
+                </select>
+              </div>
+              <div className="col-span-1 flex items-end space-x-2">
+                <button
+                  onClick={clearFilter}
+                  className="w-full bg-red-500 text-white py-2 px-4 rounded shadow"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          </div>
+
           {measurements.data.length > 0 && (
             <>
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
@@ -108,6 +250,9 @@ export default function Index({ auth, measurements, total }) {
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Difference
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Limit
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Date
@@ -133,8 +278,22 @@ export default function Index({ auth, measurements, total }) {
                       </td>
                       <td className="px-6 py-2">{measurement.meter_id}</td>
                       <td className="px-6 py-2">{measurement.start_value}</td>
-                      <td className="px-6 py-2">{measurement.end_value}</td>
-                      <td className="px-6 py-2">{measurement.difference}</td>
+                      <td className="px-6 py-2">{measurement.end_value} </td>
+                      <td
+                        className={`px-6 py-2 ${
+                          parseFloat(measurement.difference) >
+                          parseFloat(measurement.upper_limit)
+                            ? "bg-red-200"
+                            : parseFloat(measurement.difference) ===
+                              parseFloat(measurement.upper_limit)
+                            ? "bg-yellow-200"
+                            : "bg-green-200"
+                        }`}
+                      >
+                        {measurement.difference}
+                      </td>
+
+                      <td className="px-6 py-2">{measurement.upper_limit} </td>
                       <td className="px-6 py-2 text-nowrap">
                         {measurement.date}
                       </td>
@@ -203,6 +362,8 @@ export default function Index({ auth, measurements, total }) {
             </div>
           )}
 
+          {/* <pre>{JSON.stringify(meters, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(measurements, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}
         </div>

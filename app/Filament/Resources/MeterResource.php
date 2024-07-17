@@ -52,7 +52,7 @@ class MeterResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    // ->searchable()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('upper_limit')
                     ->numeric()

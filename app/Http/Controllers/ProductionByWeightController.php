@@ -9,6 +9,8 @@ use App\Http\Resources\ProductionByWeightResource;
 use App\Models\ProductionByWeight;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProductionByWeightController extends Controller
 {
@@ -31,6 +33,12 @@ class ProductionByWeightController extends Controller
      */
     public function create()
     {
+        $permissions = Auth::user()->getPermissionNames();
+
+        if (!$permissions->contains('Create Water')) {
+        abort(403, 'Unauthorized action.');
+        }
+
         return inertia('ProductionByWeight/Create');
     }
 
@@ -39,6 +47,13 @@ class ProductionByWeightController extends Controller
      */
     public function store(StoreProductionByWeightRequest $request)
     {
+
+        $permissions = Auth::user()->getPermissionNames();
+
+        if (!$permissions->contains('Create Water')) {
+        abort(403, 'Unauthorized action.');
+        }
+
         $data = $request->validated();
         ProductionByWeight::create($data);
     }
@@ -56,6 +71,12 @@ class ProductionByWeightController extends Controller
      */
     public function edit(ProductionByWeight $productionByWeight)
     {
+        $permissions = Auth::user()->getPermissionNames();
+
+        if (!$permissions->contains('Edit Water')) {
+        abort(403, 'Unauthorized action.');
+        }
+
         return inertia('ProductionByWeight/Edit', 
             ["production" => $productionByWeight]
         );
@@ -77,6 +98,12 @@ class ProductionByWeightController extends Controller
      */
     public function destroy(ProductionByWeight $productionByWeight)
     {
+        $permissions = Auth::user()->getPermissionNames();
+
+        if (!$permissions->contains('Delete Water')) {
+        abort(403, 'Unauthorized action.');
+        }
+
         $productionByWeight->delete();
         return redirect()->route('production-by-weight.index')->with('success', 'Delete Production Data.');
     }

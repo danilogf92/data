@@ -3,18 +3,16 @@ import React, { useState, useEffect } from "react";
 import InputError from "./InputError";
 
 export default function FormMeters({ plants, meters, measurements }) {
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isMonday, setIsMonday] = useState(false);
+  const [filteredMeters, setFilteredMeters] = useState([]);
+  const [allMeters, setAllMeters] = useState(meters);
+  const [dateMeasureBefore, setDateMeasureBefore] = useState("");
+
   const today = new Date();
   today.setDate(today.getDate());
 
   const day = new Date(today);
-  const dayOfWeek = today.getDay();
-
-  if (dayOfWeek === 1) {
-    console.log("Hoy es lunes");
-    day.setDate(day.getDate() - 2);
-  } else {
-    day.setDate(day.getDate() - 1);
-  }
 
   const formattedDate = day.toISOString().split("T")[0];
 
@@ -27,10 +25,25 @@ export default function FormMeters({ plants, meters, measurements }) {
     date: formattedDate,
   });
 
-  const [filteredMeters, setFilteredMeters] = useState([]);
-  const [allMeters, setAllMeters] = useState(meters);
+  useEffect(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
 
-  const [showSuccess, setShowSuccess] = useState(false);
+    if (dayOfWeek === 1) {
+      console.log("Hoy es lunes");
+      day.setDate(day.getDate() - 2);
+    } else {
+      day.setDate(day.getDate() - 1);
+    }
+    const formattedDate = day.toISOString().split("T")[0];
+    setDateMeasureBefore(formattedDate);
+
+    if (dayOfWeek === 1) {
+      setIsMonday(true);
+    } else {
+      setIsMonday(false);
+    }
+  }, []);
 
   const calculateDifference = (start, end) => {
     return end - start;
@@ -75,6 +88,43 @@ export default function FormMeters({ plants, meters, measurements }) {
     });
   };
 
+  const handleDateChange = (e) => {
+    const selectedDate = new Date(e.target.value + "T00:00:00");
+    const dayOfWeek = selectedDate.getDay();
+
+    if (dayOfWeek === 1) {
+      setIsMonday(true);
+      selectedDate.setDate(selectedDate.getDate() - 2);
+    } else {
+      setIsMonday(false);
+      selectedDate.setDate(selectedDate.getDate() - 1);
+    }
+
+    setDateMeasureBefore(selectedDate.toISOString().split("T")[0]);
+
+    setData({
+      ...data,
+      plant_id: "",
+      date: e.target.value,
+    });
+  };
+
+  const handleChecked = (e) => {
+    const dateInput = document.getElementById("date");
+    const dateValue = dateInput.value;
+
+    const currentDate = new Date(dateValue + "T00:00:00");
+    const newDate = new Date(currentDate); // Crea una copia de la fecha actual
+
+    if (e.target.checked) {
+      newDate.setDate(newDate.getDate() - 1);
+    } else {
+      newDate.setDate(newDate.getDate() - 2);
+    }
+
+    setDateMeasureBefore(newDate.toISOString().split("T")[0]);
+  };
+
   useEffect(() => {
     if (data.plant_id && allMeters.length > 0) {
       const filteredMeters = allMeters.filter(
@@ -82,12 +132,18 @@ export default function FormMeters({ plants, meters, measurements }) {
       );
       setFilteredMeters(filteredMeters);
     }
-  }, [data.plant_id, data.date, allMeters]);
+  }, [data.plant_id, data.date, allMeters, dateMeasureBefore]);
 
   useEffect(() => {
+    setData({
+      ...data,
+      // plant_id: "",
+      meter_id: "",
+      start_value: "",
+    });
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/meters?date=${data.date}`);
+        const response = await fetch(`/api/meters?date=${dateMeasureBefore}`);
         if (!response.ok) {
           throw new Error("Failed to fetch meters");
         }
@@ -108,48 +164,18 @@ export default function FormMeters({ plants, meters, measurements }) {
     };
 
     fetchData();
-  }, [data.date, data.meter_id]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `/api/lastvalue?date=${data.date}&meter=${data.meter_id}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch measurement");
-  //       }
-  //       const { measurement } = await response.json();
-  //       console.log(measurement, data.date, data.meter_id);
-
-  //       if (measurement.length > 0) {
-  //         const end_value = measurement[0]["end_value"];
-
-  //         setData({
-  //           ...data,
-  //           start_value: end_value,
-  //         });
-  //       } else {
-  //         setData({
-  //           ...data,
-  //           start_value: "",
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching measurement:", error);
-  //     }
-  //   };
-
-  //   if (data.meter_id) {
-  //     fetchData();
-  //   }
-  // }, [data.meter_id, data.date]);
+  }, [data.date, dateMeasureBefore, data.meter_id]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setData({
+          ...data,
+          start_value: "",
+        });
+
         // Restar un día a data.date
-        const prevDate = new Date(data.date);
+        const prevDate = new Date(dateMeasureBefore + "T00:00:00");
         prevDate.setDate(prevDate.getDate() - 1);
         const formattedDate = prevDate.toISOString().split("T")[0];
 
@@ -160,7 +186,7 @@ export default function FormMeters({ plants, meters, measurements }) {
           throw new Error("Failed to fetch measurement");
         }
         const { measurement } = await response.json();
-        console.log(measurement, formattedDate, data.meter_id);
+        // console.log(measurement, formattedDate, data.meter_id);
 
         if (measurement.length > 0) {
           const end_value = measurement[0]["end_value"];
@@ -168,11 +194,6 @@ export default function FormMeters({ plants, meters, measurements }) {
           setData({
             ...data,
             start_value: end_value,
-          });
-        } else {
-          setData({
-            ...data,
-            start_value: "",
           });
         }
       } catch (error) {
@@ -184,6 +205,20 @@ export default function FormMeters({ plants, meters, measurements }) {
       fetchData();
     }
   }, [data.meter_id, data.date]);
+
+  const dateFormat = (originalDate) => {
+    const dateObject = new Date(originalDate + "T00:00:00");
+
+    const month = dateObject.getMonth() + 1; // Sumar 1 porque los meses van de 0 a 11
+    const day = dateObject.getDate();
+    const year = dateObject.getFullYear();
+
+    const formattedDate = `${month.toString().padStart(2, "0")}/${day
+      .toString()
+      .padStart(2, "0")}/${year}`;
+
+    return formattedDate;
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -307,13 +342,25 @@ export default function FormMeters({ plants, meters, measurements }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="date"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-900 flex items-center"
                 >
-                  Date
+                  <span>Date</span>
+                  <span className="bg-red-200 ml-2 rounded-sm p-1">
+                    {dateFormat(dateMeasureBefore)}
+                  </span>
+                  {isMonday && (
+                    <input
+                      type="checkbox"
+                      name="toggle"
+                      id="toggle"
+                      onChange={handleChecked}
+                      className="h-4 w-4 ml-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                  )}
                 </label>
                 <div className="mt-2">
                   <input
-                    onChange={(e) => setData("date", e.target.value)}
+                    onChange={handleDateChange}
                     value={data.date}
                     type="date"
                     name="date"

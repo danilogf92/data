@@ -97,9 +97,9 @@ export default function Index({ auth, production }) {
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
                 <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
                   <tr>
-                    <th scope="col" className="px-6 py-3">
+                    {/* <th scope="col" className="px-6 py-3">
                       Id
-                    </th>
+                    </th> */}
                     <th scope="col" className="px-6 py-3">
                       Date
                     </th>
@@ -128,9 +128,9 @@ export default function Index({ auth, production }) {
                         index % 2 === 0 ? "bg-white" : "bg-gray-100"
                       } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                     >
-                      <td className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {/* <td className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {item.id}
-                      </td>
+                      </td> */}
                       <td className="px-6 py-2">{item.date}</td>
                       <td className="px-6 py-2">{item.net}</td>
                       <td className="px-6 py-2">{item.total_boxes}</td>
