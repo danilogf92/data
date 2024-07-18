@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 export default function Index({
   auth,
   measurements,
-  queryParams = {},
+  queryParams = null,
   plants,
   meters,
 }) {
@@ -18,11 +18,15 @@ export default function Index({
   const { flash } = usePage().props;
   const [showSuccess, setShowSuccess] = useState(false);
   const [filters, setFilters] = useState({
-    date: "",
-    plant_id: "",
-    meter_id: "",
-    rows: 5, // Valor predeterminado
+    date: queryParams.date || "",
+    plant_id: queryParams.plant_id || "",
+    meter_id: queryParams.meter_id || "",
+    rows: queryParams.rows || 5,
   });
+
+  useEffect(() => {
+    console.log(queryParams);
+  }, []);
 
   useEffect(() => {
     if (flash.success) {
@@ -55,18 +59,27 @@ export default function Index({
   };
 
   const handleFilterChange = (e) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value,
-    });
-  };
+    const { name, value } = e.target;
 
-  useEffect(() => {
-    router.get(route("measurement.index"), filters, {
-      preserveState: true,
-      replace: true,
-    });
-  }, [filters]);
+    // Actualizar el estado local de los filtros
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+
+    // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
+    router.get(
+      route("measurement.index"),
+      {
+        ...filters,
+        [name]: value, // Actualiza el filtro específico que cambió
+      },
+      {
+        preserveState: true,
+        replace: true,
+      }
+    );
+  };
 
   const clearFilter = () => {
     setFilters({
@@ -75,6 +88,9 @@ export default function Index({
       meter_id: "",
       rows: 5,
     });
+
+    // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
+    router.get(route("measurement.index"));
   };
 
   return (
@@ -149,7 +165,7 @@ export default function Index({
                   type="date"
                   name="date"
                   id="date"
-                  value={filters.date}
+                  value={queryParams.date}
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
@@ -164,7 +180,7 @@ export default function Index({
                 <select
                   name="plant_id"
                   id="plant_id"
-                  value={filters.plant_id}
+                  value={queryParams.plant_id}
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
@@ -186,7 +202,7 @@ export default function Index({
                 <select
                   name="meter_id"
                   id="meter_id"
-                  value={filters.meter_id}
+                  value={queryParams.meter_id}
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
@@ -208,7 +224,7 @@ export default function Index({
                 <select
                   name="rows"
                   id="rows"
-                  value={filters.rows}
+                  value={queryParams.rows}
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
@@ -350,7 +366,8 @@ export default function Index({
                   </div>
                 </div>
               </Modal>
-              <Pagination links={measurements.meta.links} />
+              {/* <Pagination links={measurements.meta.links} /> */}
+              <Pagination links={measurements.meta.links} filters={filters} />
             </>
           )}
           {measurements.data.length === 0 && (
@@ -362,7 +379,8 @@ export default function Index({
             </div>
           )}
 
-          {/* <pre>{JSON.stringify(meters, undefined, 2)}</pre> */}
+          {/*<pre>{JSON.stringify(queryParams, undefined, 2)}</pre> */}
+          {/*<pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(measurements, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}

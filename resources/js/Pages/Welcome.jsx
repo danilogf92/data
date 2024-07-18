@@ -53,7 +53,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 <div className="shadow-red-300 flex flex-col items-start gap-6 overflow-hidden rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800">
                   <div className="relative flex w-full flex-1 items-stretch shadow-lg shadow-red-300 border-2 border-rose-200 rounded-md ">
                     <img
-                      src="/img/banner.gif"
+                      src="/img/Banner.gif"
                       alt="Banner"
                       className="aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
                     />

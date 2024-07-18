@@ -2,7 +2,7 @@ import FormMeters from "@/Components/FormMeters";
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
 import ExportButton from "@/Components/MyComponents/ExportButton";
-import Pagination from "@/Components/Pagination";
+import PaginationTwo from "@/Components/PaginationTwo";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
@@ -188,7 +188,7 @@ export default function Index({ auth, production }) {
                   </div>
                 </div>
               </Modal>
-              <Pagination links={production.meta.links} />
+              <PaginationTwo links={production.meta.links} />
             </>
           )}
           {production.data.length === 0 && (

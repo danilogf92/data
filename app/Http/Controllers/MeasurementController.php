@@ -15,68 +15,51 @@ use Illuminate\Http\Request;
 
 class MeasurementController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   */
-  // public function index()
-  // {
-
-  //   $query = Measurement::query();
-
-  //   $measurements = $query->orderBy('date', 'DESC')->orderBy('plant_id', 'ASC')->paginate(10);
-  //   $plants = Plant::orderBy('name', 'ASC')->get();
-
-  //   $meters = Meter::where('enabled', 1)
-  //              ->orderBy('id', 'ASC')            
-  //              ->get();      
-
-  //   return inertia('Measurement/Index', [
-  //     "measurements" => MeasurementResource::collection($measurements),
-  //     "plants" => $plants,
-  //     "meters" => $meters,
-  //   ]);
-  // }
     public function index(Request $request)
-{
-    $query = Measurement::query();
+    {
+        $query = Measurement::query();
 
-    // Aplicar filtros
-    if ($request->has('date') && $request->date) {
-        $query->whereDate('date', $request->date);
+        // Aplicar filtros
+        if ($request->has('date') && $request->date) {
+            $query->whereDate('date', $request->date);
+        }
+
+        if ($request->has('plant_id') && $request->plant_id) {
+            $query->where('plant_id', $request->plant_id);
+        }
+
+        if ($request->has('meter_id') && $request->meter_id) {
+            $query->where('meter_id', $request->meter_id);
+        }
+
+        if ($request->has('rows') && $request->rows) {            
+          $rowsPerPage = $request->input('rows', $request->rows );
+        }else{
+          $rowsPerPage = $request->input('rows', 5);
+        }
+
+        if ($rowsPerPage === 'all') {
+            $measurements = $query->orderBy('date', 'DESC')
+                                  ->orderBy('plant_id', 'ASC')
+                                  ->get();
+        } else {
+            $measurements = $query->orderBy('date', 'DESC')
+                                  ->orderBy('plant_id', 'ASC')
+                                  ->paginate((int)$rowsPerPage);
+        }
+
+        $plants = Plant::orderBy('name', 'ASC')->get();
+        $meters = Meter::where('enabled', 1)
+                      ->orderBy('id', 'ASC')
+                      ->get();
+
+        return inertia('Measurement/Index', [
+            "measurements" => MeasurementResource::collection($measurements),
+            "plants" => $plants,
+            "meters" => $meters,
+            'queryParams' => request()->query() ?: null,
+        ]);
     }
-
-    if ($request->has('plant_id') && $request->plant_id) {
-        $query->where('plant_id', $request->plant_id);
-    }
-
-    if ($request->has('meter_id') && $request->meter_id) {
-        $query->where('meter_id', $request->meter_id);
-    }
-
-    // Determinar el número de filas por página
-    $rowsPerPage = $request->input('rows', 5);
-    if ($rowsPerPage === 'all') {
-        $measurements = $query->orderBy('date', 'DESC')
-                              ->orderBy('plant_id', 'ASC')
-                              ->get();
-    } else {
-        $measurements = $query->orderBy('date', 'DESC')
-                              ->orderBy('plant_id', 'ASC')
-                              ->paginate((int)$rowsPerPage);
-    }
-
-    $plants = Plant::orderBy('name', 'ASC')->get();
-    $meters = Meter::where('enabled', 1)
-                   ->orderBy('id', 'ASC')
-                   ->get();
-
-    return inertia('Measurement/Index', [
-        "measurements" => MeasurementResource::collection($measurements),
-        "plants" => $plants,
-        "meters" => $meters,
-        "queryParams" => $request->all(), // Pasar los parámetros de consulta actuales a la vista
-    ]);
-}
 
 
 

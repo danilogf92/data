@@ -14,6 +14,8 @@ export default function FormMeters({ plants, meters, measurements }) {
 
   const day = new Date(today);
 
+  day.setDate(day.getDate() - 1);
+
   const formattedDate = day.toISOString().split("T")[0];
 
   const { data, setData, post, errors } = useForm({
@@ -105,6 +107,7 @@ export default function FormMeters({ plants, meters, measurements }) {
     setData({
       ...data,
       plant_id: "",
+      meter_id: "",
       date: e.target.value,
     });
   };
@@ -143,7 +146,8 @@ export default function FormMeters({ plants, meters, measurements }) {
     });
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/meters?date=${dateMeasureBefore}`);
+        console.log(data.date);
+        const response = await fetch(`/api/meters?date=${data.date}`);
         if (!response.ok) {
           throw new Error("Failed to fetch meters");
         }
@@ -176,8 +180,10 @@ export default function FormMeters({ plants, meters, measurements }) {
 
         // Restar un día a data.date
         const prevDate = new Date(dateMeasureBefore + "T00:00:00");
-        prevDate.setDate(prevDate.getDate() - 1);
+        prevDate.setDate(prevDate.getDate());
         const formattedDate = prevDate.toISOString().split("T")[0];
+
+        console.log(formattedDate);
 
         const response = await fetch(
           `/api/lastvalue?date=${formattedDate}&meter=${data.meter_id}`
