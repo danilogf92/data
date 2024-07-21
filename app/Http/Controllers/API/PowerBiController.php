@@ -7,7 +7,7 @@ use App\Models\Measurement;
 use App\Models\Meter;
 use App\Models\MeterType;
 use App\Models\Plant;
-use Illuminate\Http\Request;
+use App\Models\ProductionByWeight;
 
 class PowerBiController extends Controller
 {
@@ -37,5 +37,12 @@ class PowerBiController extends Controller
         $plants = Plant::all();
 
         return response()->json($plants);
-    }      
+    }     
+
+    public function production()
+    {
+        $production = ProductionByWeight::all();
+
+        return response()->json($production);
+    }       
 }

@@ -2,8 +2,6 @@ import React from "react";
 
 const ExportButton = ({ link, documentName }) => {
   const handleExport = () => {
-    console.log(link);
-
     fetch(`${link}`, {
       method: "GET",
     })

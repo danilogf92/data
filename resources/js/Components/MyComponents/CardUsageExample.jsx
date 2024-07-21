@@ -1,4 +1,4 @@
-import { Card, Metric, Text } from "@tremor/react";
+import { Card, SparkAreaChart } from "@tremor/react";
 
 export function CardUsageExample({ name, value }) {
   const dataFormatter = (value) =>

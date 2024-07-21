@@ -10,7 +10,7 @@ export function AreaChartHero({ chartdata }) {
       data={chartdata}
       index="date"
       categories={["Ciesa 1", "Ciesa 2"]}
-      colors={["indigo", "rose"]}
+      colors={["cyan", "rose"]}
       valueFormatter={dataFormatter}
       yAxisWidth={100}
       onValueChange={(v) => console.log(v)}

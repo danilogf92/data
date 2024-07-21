@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ProductionByWeightsExport;
+use App\Exports\ProductionByWeightExport;
 use App\Http\Requests\StoreProductionByWeightRequest;
 use App\Http\Requests\UpdateProductionByWeightRequest;
 use App\Http\Resources\ProductionByWeightResource;
 use App\Models\ProductionByWeight;
-use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 
 class ProductionByWeightController extends Controller
@@ -17,14 +17,26 @@ class ProductionByWeightController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = ProductionByWeight::query();
 
-        $production = $query->orderBy('date', 'DESC')->paginate(10);
+        // Aplicar filtros
+        if ($request->has('date') && $request->date) {
+            $query->whereDate('date', $request->date);
+        }
+      
+        if ($request->has('rows') && $request->rows) {            
+          $rowsPerPage = $request->input('rows', $request->rows );
+        }else{
+          $rowsPerPage = $request->input('rows', 10);
+        }
+   
+        $production = $query->orderBy('date', 'DESC')->paginate((int)$rowsPerPage);
 
         return inertia('ProductionByWeight/Index', [
-            "production" => ProductionByWeightResource::collection($production)
+            "production" => ProductionByWeightResource::collection($production),
+            'queryParams' => request()->query() ?: null
         ]);
     }
 
@@ -110,6 +122,6 @@ class ProductionByWeightController extends Controller
 
     public function export()
     {
-        return Excel::download(new ProductionByWeightsExport, 'production_by_weights.xlsx');
+        return Excel::download(new ProductionByWeightExport, 'production_by_weights.xlsx');
     }  
 }

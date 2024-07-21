@@ -6,14 +6,14 @@ import { BarChart } from "@tremor/react";
 const dataFormatter = (number) =>
   `${Intl.NumberFormat("us").format(number).toString()} m³`;
 
-export const BarChartHero = ({ chartdata }) => (
+export const BarChartHero = ({ chartdata, functionChangeData }) => (
   <BarChart
     data={chartdata}
     index="name"
     categories={["Consumption by month m³"]}
-    colors={["blue"]}
+    colors={["cyan"]}
     valueFormatter={dataFormatter}
     yAxisWidth={100}
-    onValueChange={(v) => console.log(v)}
+    onValueChange={(v) => functionChangeData(v)}
   />
 );

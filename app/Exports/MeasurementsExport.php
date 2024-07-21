@@ -38,7 +38,7 @@ class MeasurementsExport implements FromQuery, WithMapping, WithHeadings
             $measurement->start_value,
             $measurement->end_value,
             $measurement->difference,
-            Carbon::parse($measurement->date)->format('n/j/Y'), // Formato de fecha deseado
+            Carbon::parse($measurement->date)->format('n/j/Y'), 
         ];
     }
 

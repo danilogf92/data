@@ -14,6 +14,10 @@ export default function Dashboard({
   lastMonthData,
   total,
 }) {
+  const functionChangeData = (data) => {
+    console.log(data);
+  };
+
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -56,7 +60,10 @@ export default function Dashboard({
         </div>
 
         <div className="grid grid-cols-1 bg-slate-50 shadow-lg p-1 rounded-md mt-2">
-          <BarChartHero chartdata={chartData} />
+          <BarChartHero
+            chartdata={chartData}
+            functionChangeData={functionChangeData}
+          />
         </div>
 
         {/* <pre>{JSON.stringify(total, undefined, 2)}</pre> */}

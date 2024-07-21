@@ -2,12 +2,19 @@ import FormMeters from "@/Components/FormMeters";
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
 import ExportButton from "@/Components/MyComponents/ExportButton";
+import Pagination from "@/Components/Pagination";
 import PaginationTwo from "@/Components/PaginationTwo";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Index({ auth, production }) {
+export default function Index({ auth, production, queryParams = null }) {
+  queryParams = queryParams || {};
+  const [filters, setFilters] = useState({
+    date: queryParams.date || "",
+    rows: queryParams.rows || 10,
+  });
+
   const { flash } = usePage().props;
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -41,6 +48,41 @@ export default function Index({ auth, production }) {
     setIsDeleteModalOpen(false);
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+
+    // Actualizar el estado local de los filtros
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+
+    // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
+    router.get(
+      route("production-by-weight.index"),
+      {
+        ...filters,
+        [name]: value, // Actualiza el filtro específico que cambió
+      },
+      {
+        preserveState: true,
+        replace: true,
+      }
+    );
+  };
+
+  const clearFilter = () => {
+    setFilters({
+      date: "",
+      rows: 10,
+    });
+
+    queryParams.rows;
+
+    // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
+    router.get(route("production-by-weight.index"));
+  };
+
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -66,10 +108,10 @@ export default function Index({ auth, production }) {
       <Head title="Meters" />
 
       <ContainerAuth>
-        {/* <ExportButton
-          link="/production-by-weight/export"
+        <ExportButton
+          link="/production-by-weights/export"
           documentName="production_by_weights"
-        /> */}
+        />
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-2">
           {showSuccess && (
             <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
@@ -92,6 +134,59 @@ export default function Index({ auth, production }) {
               </div>
             </div>
           )}
+
+          <div className="mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
+              <div className="col-span-1">
+                <label
+                  htmlFor="date"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Date
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  id="date"
+                  value={filters.date}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+
+              <div className="col-span-1">
+                <label
+                  htmlFor="rows"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Rows
+                </label>
+                <select
+                  name="rows"
+                  id="rows"
+                  value={filters.rows}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  {/* <option value="all">All</option> */}
+                </select>
+              </div>
+              <div className="col-span-1 flex items-end space-x-2">
+                <button
+                  onClick={clearFilter}
+                  className="w-full bg-red-500 text-white py-2 px-4 rounded shadow"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          </div>
+
           {production.data.length > 0 && (
             <>
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
@@ -188,7 +283,10 @@ export default function Index({ auth, production }) {
                   </div>
                 </div>
               </Modal>
-              <PaginationTwo links={production.meta.links} />
+              {/* <PaginationTwo links={production.meta.links} /> */}
+              <Pagination links={production.meta.links} filters={filters} />
+              {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
+              {/* <pre>{JSON.stringify(queryParams, undefined, 2)}</pre> */}
             </>
           )}
           {production.data.length === 0 && (
@@ -202,9 +300,7 @@ export default function Index({ auth, production }) {
         </div>
       </ContainerAuth>
 
-      {/* 
-      <pre>{JSON.stringify(production, undefined, 2)}</pre>
-      <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre>  */}
     </AuthenticatedLayout>
   );
 }

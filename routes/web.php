@@ -9,9 +9,7 @@ use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\ProductionByWeightController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureStaticTokenIsValid;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // Route::redirect('/', '/dashboard');
 Route::get('/', function () {
@@ -32,6 +30,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/meters', [MeterController::class, 'index']);
         Route::get('/lastvalue', [LastValueController::class, 'index']);
     });
+
+    Route::get('/measurements/export', [MeasurementController::class, 'export'])->name('measurements.export');
+    Route::get('/production-by-weights/export', [ProductionByWeightController::class, 'export'])->name('production-by-weight.export');
 });
 
 Route::prefix('api')->middleware(EnsureStaticTokenIsValid::class)->group(function () {
@@ -39,12 +40,8 @@ Route::prefix('api')->middleware(EnsureStaticTokenIsValid::class)->group(functio
     Route::get('/meter', [PowerBiController::class, 'meters']);
     Route::get('/metertypes', [PowerBiController::class, 'metertypes']);
     Route::get('/plant', [PowerBiController::class, 'plants']);
+    Route::get('/production', [PowerBiController::class, 'production']);
 });
-
-Route::get('/measurements/export', [MeasurementController::class, 'export'])->name('measurements.export');
-Route::get('/production-by-weight/export', [ProductionByWeightController::class, 'export'])->name('production-by-weight.export');
-
-
 
 require __DIR__ . '/auth.php';
 

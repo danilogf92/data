@@ -14,7 +14,7 @@ export default function Index({
   meters,
 }) {
   queryParams = queryParams || {};
-
+  const [metersArray, setMetersArray] = useState(meters);
   const { flash } = usePage().props;
   const [showSuccess, setShowSuccess] = useState(false);
   const [filters, setFilters] = useState({
@@ -23,10 +23,6 @@ export default function Index({
     meter_id: queryParams.meter_id || "",
     rows: queryParams.rows || 5,
   });
-
-  useEffect(() => {
-    console.log(queryParams);
-  }, []);
 
   useEffect(() => {
     if (flash.success) {
@@ -92,6 +88,15 @@ export default function Index({
     // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
     router.get(route("measurement.index"));
   };
+
+  useEffect(() => {
+    if (filters.plant_id) {
+      const filteredMeters = meters.filter(
+        (meter) => meter.plant_id === parseInt(filters.plant_id, 10)
+      );
+      setMetersArray(filteredMeters);
+    }
+  }, [filters.plant_id]);
 
   return (
     <AuthenticatedLayout
@@ -207,7 +212,7 @@ export default function Index({
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
                   <option value="">Select Meter</option>
-                  {meters.map((meter) => (
+                  {metersArray.map((meter) => (
                     <option key={meter.id} value={meter.id}>
                       {meter.name}
                     </option>
@@ -379,8 +384,8 @@ export default function Index({
             </div>
           )}
 
-          {/*<pre>{JSON.stringify(queryParams, undefined, 2)}</pre> */}
-          {/*<pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(meters, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(measurements, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}
