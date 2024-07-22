@@ -6,15 +6,23 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Index({ auth, production, queryParams = null }) {
+export default function Index({
+  auth,
+  fuelData,
+  queryParams = null,
+  fuelEquipment,
+  meters,
+}) {
   queryParams = queryParams || {};
-  const [filters, setFilters] = useState({
-    date: queryParams.date || "",
-    rows: queryParams.rows || 5,
-  });
-
+  const [metersArray, setMetersArray] = useState(meters);
   const { flash } = usePage().props;
   const [showSuccess, setShowSuccess] = useState(false);
+  const [filters, setFilters] = useState({
+    date: queryParams.date || "",
+    plant_id: queryParams.plant_id || "",
+    meter_id: queryParams.meter_id || "",
+    rows: queryParams.rows || 5,
+  });
 
   useEffect(() => {
     if (flash.success) {
@@ -25,19 +33,19 @@ export default function Index({ auth, production, queryParams = null }) {
     }
   }, [flash]);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [measurementToDelete, setMeasurementToDelete] = useState(null);
-
-  const deleteMeasurement = (item) => {
-    router.delete(route("production-by-weight.destroy", item.id), {
+  const deleteMeasurement = (fuel) => {
+    router.delete(route("fuel.destroy", fuel.id), {
       onSuccess: (response) => {
-        // console.log(response); // AQUI GENERA EL showSuccess
+        console.log(response); // AQUI GENERA EL showSuccess
       },
       onError: (errors) => {
         // console.log(errors);
       },
     });
   };
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [measurementToDelete, setMeasurementToDelete] = useState(null);
 
   const onDeleteMeasurement = () => {
     if (!measurementToDelete) return;
@@ -57,7 +65,7 @@ export default function Index({ auth, production, queryParams = null }) {
 
     // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
     router.get(
-      route("production-by-weight.index"),
+      route("fuel.index"),
       {
         ...filters,
         [name]: value, // Actualiza el filtro específico que cambió
@@ -72,14 +80,23 @@ export default function Index({ auth, production, queryParams = null }) {
   const clearFilter = () => {
     setFilters({
       date: "",
+      plant_id: "",
+      meter_id: "",
       rows: 5,
     });
 
-    queryParams.rows;
-
     // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
-    router.get(route("production-by-weight.index"));
+    router.get(route("fuel.index"));
   };
+
+  useEffect(() => {
+    if (filters.plant_id) {
+      const filteredMeters = meters.filter(
+        (meter) => meter.plant_id === parseInt(filters.plant_id, 10)
+      );
+      setMetersArray(filteredMeters);
+    }
+  }, [filters.plant_id]);
 
   return (
     <AuthenticatedLayout
@@ -87,16 +104,16 @@ export default function Index({ auth, production, queryParams = null }) {
       header={
         <div className="flex justify-between items-center">
           <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Production
+            Fuel Measurement
           </h2>
-          {(auth.user.roles.includes("Water") ||
-            auth.user.permissions.includes("Create Water")) && (
+          {(auth.user.roles.includes("Fuel") ||
+            auth.user.permissions.includes("Create Fuel")) && (
             <>
               <Link
-                href={route("production-by-weight.create")}
+                href={route("fuel.create")}
                 className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
               >
-                New value
+                New Measure
               </Link>
             </>
           )}
@@ -106,10 +123,13 @@ export default function Index({ auth, production, queryParams = null }) {
       <Head title="Meters" />
 
       <ContainerAuth>
-        <ExportButton
-          link="/production-by-weights/export"
-          documentName="production_by_weights"
-        />
+        {(auth.user.roles.includes("Fuel") ||
+          auth.user.permissions.includes("Create Fuel")) && (
+          <>
+            <ExportButton link="/fuels/export" documentName="fuels" />
+          </>
+        )}
+
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-2">
           {showSuccess && (
             <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
@@ -133,8 +153,9 @@ export default function Index({ auth, production, queryParams = null }) {
             </div>
           )}
 
+          {/* Filter Form */}
           <div className="mb-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-2">
               <div className="col-span-1">
                 <label
                   htmlFor="date"
@@ -146,10 +167,32 @@ export default function Index({ auth, production, queryParams = null }) {
                   type="date"
                   name="date"
                   id="date"
-                  value={filters.date}
+                  value={queryParams.date}
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
+              </div>
+              <div className="col-span-1">
+                <label
+                  htmlFor="fuel_equipment_id"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Equipment
+                </label>
+                <select
+                  name="fuel_equipment_id"
+                  id="fuel_equipment_id"
+                  value={queryParams.fuel_equipment_id}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Equipment</option>
+                  {fuelEquipment.map((equipment) => (
+                    <option key={equipment.id} value={equipment.id}>
+                      {equipment.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="col-span-1">
@@ -162,7 +205,7 @@ export default function Index({ auth, production, queryParams = null }) {
                 <select
                   name="rows"
                   id="rows"
-                  value={filters.rows}
+                  value={queryParams.rows}
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
@@ -171,7 +214,6 @@ export default function Index({ auth, production, queryParams = null }) {
                   <option value="20">20</option>
                   <option value="50">50</option>
                   <option value="100">100</option>
-                  {/* <option value="all">All</option> */}
                 </select>
               </div>
               <div className="col-span-1 flex items-end space-x-2">
@@ -185,27 +227,30 @@ export default function Index({ auth, production, queryParams = null }) {
             </div>
           </div>
 
-          {production.data.length > 0 && (
+          {fuelData.data.length > 0 && (
             <>
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
                 <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
                   <tr>
-                    {/* <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-6 py-3">
                       Id
-                    </th> */}
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Equipment
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Start Value
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Final Value
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Difference
+                    </th>
                     <th scope="col" className="px-6 py-3">
                       Date
                     </th>
-                    <th scope="col" className="px-6 py-3">
-                      Net
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Total boxes
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Pn per box
-                    </th>
-                    {auth.user.roles.includes("Water") && (
+                    {auth.user.roles.includes("Fuel") && (
                       <th scope="col" className="px-6 py-3">
                         Actions
                       </th>
@@ -214,32 +259,46 @@ export default function Index({ auth, production, queryParams = null }) {
                 </thead>
 
                 <tbody>
-                  {production.data.map((item, index) => (
+                  {fuelData.data.map((fuel, index) => (
                     <tr
-                      key={item.id}
+                      key={fuel.id}
                       className={`${
                         index % 2 === 0 ? "bg-white" : "bg-gray-100"
                       } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                     >
-                      {/* <td className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {item.id}
-                      </td> */}
-                      <td className="px-6 py-2">{item.date}</td>
-                      <td className="px-6 py-2">{item.net}</td>
-                      <td className="px-6 py-2">{item.total_boxes}</td>
-                      <td className="px-6 py-2">{item.pn_per_box}</td>
-                      {auth.user.roles.includes("Water") && (
+                      <td className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {fuel.id}
+                      </td>
+                      <td className="px-6 py-2">{fuel.fuel_equipment_id}</td>
+                      <td className="px-6 py-2">{fuel.start_value}</td>
+                      <td className="px-6 py-2">{fuel.end_value} </td>
+                      <td
+                        className={`px-6 py-2 ${
+                          parseFloat(fuel.difference) >
+                          parseFloat(fuel.upper_limit)
+                            ? "bg-red-200"
+                            : parseFloat(fuel.difference) ===
+                              parseFloat(fuel.upper_limit)
+                            ? "bg-yellow-200"
+                            : "bg-green-200"
+                        }`}
+                      >
+                        {fuel.difference}
+                      </td>
+
+                      <td className="px-6 py-2 text-nowrap">{fuel.date}</td>
+                      {auth.user.roles.includes("Fuel") && (
                         <td className="py-2 text-center">
                           <Link
                             className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
-                            href={route("production-by-weight.edit", item.id)}
+                            href={route("fuel.edit", fuel.id)}
                           >
                             Edit
                           </Link>
                           <button
                             className="font-medium text-red-600 dark:text-red-500 hover:underline"
                             onClick={() => {
-                              setMeasurementToDelete(item);
+                              setMeasurementToDelete(fuel);
                               setIsDeleteModalOpen(true);
                             }}
                           >
@@ -281,13 +340,11 @@ export default function Index({ auth, production, queryParams = null }) {
                   </div>
                 </div>
               </Modal>
-              {/* <PaginationTwo links={production.meta.links} /> */}
-              <Pagination links={production.meta.links} filters={filters} />
-              {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
-              {/* <pre>{JSON.stringify(queryParams, undefined, 2)}</pre> */}
+              {/* <Pagination links={fuelData.meta.links} /> */}
+              <Pagination links={fuelData.meta.links} filters={filters} />
             </>
           )}
-          {production.data.length === 0 && (
+          {fuelData.data.length === 0 && (
             <div className="flex items-center justify-center p-4 text-yellow-800">
               <span className="mr-2 text-5xl">No content</span>
               <span className="text-5xl" role="img" aria-label="barrel">
@@ -295,10 +352,14 @@ export default function Index({ auth, production, queryParams = null }) {
               </span>
             </div>
           )}
+
+          {/* <pre>{JSON.stringify(fuelData, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(fuelData, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}
         </div>
       </ContainerAuth>
-
-      {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre>  */}
     </AuthenticatedLayout>
   );
 }

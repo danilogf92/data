@@ -29,7 +29,7 @@ class ProductionByWeightController extends Controller
         if ($request->has('rows') && $request->rows) {            
           $rowsPerPage = $request->input('rows', $request->rows );
         }else{
-          $rowsPerPage = $request->input('rows', 10);
+          $rowsPerPage = $request->input('rows', 5);
         }
    
         $production = $query->orderBy('date', 'DESC')->paginate((int)$rowsPerPage);

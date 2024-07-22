@@ -1,22 +1,29 @@
 import { Link, useForm } from "@inertiajs/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InputError from "./InputError";
 
+const datetest = () => {
+  const hoy = new Date();
+  hoy.setDate(hoy.getDate());
+
+  if (hoy.getDay() === 1) {
+    hoy.setDate(hoy.getDate() - 2);
+    console.log("ES LUNES");
+  } else {
+    hoy.setDate(hoy.getDate() - 1);
+  }
+  return hoy.toISOString().split("T")[0];
+};
+
 export default function FormMeters({ plants, meters, measurements }) {
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [isMonday, setIsMonday] = useState(false);
-  const [filteredMeters, setFilteredMeters] = useState([]);
-  const [allMeters, setAllMeters] = useState(meters);
-  const [dateMeasureBefore, setDateMeasureBefore] = useState("");
+  // const hoy = new Date();
+  // hoy.setDate(hoy.getDate());
 
-  const today = new Date();
-  today.setDate(today.getDate());
-
-  const day = new Date(today);
-
-  day.setDate(day.getDate() - 1);
-
-  const formattedDate = day.toISOString().split("T")[0];
+  // if (hoy.getDay() === 1) {
+  //   hoy.setDate(hoy.getDate() - 2);
+  // } else {
+  //   hoy.setDate(hoy.getDate() - 1);
+  // }
 
   const { data, setData, post, errors } = useForm({
     plant_id: "",
@@ -24,27 +31,35 @@ export default function FormMeters({ plants, meters, measurements }) {
     start_value: "",
     end_value: "",
     difference: "",
-    date: formattedDate,
+    date: datetest() || "",
   });
+  const dateInputRef = useRef(null);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isMonday, setIsMonday] = useState(false);
+  const [filteredMeters, setFilteredMeters] = useState([]);
+  const [allMeters, setAllMeters] = useState(meters);
+  const [dateMeasureBefore, setDateMeasureBefore] = useState("");
 
   useEffect(() => {
     const today = new Date();
     const dayOfWeek = today.getDay();
 
     if (dayOfWeek === 1) {
-      console.log("Hoy es lunes");
-      day.setDate(day.getDate() - 2);
+      console.log("Hoy es lunes Primera ejecucion");
+      today.setDate(today.getDate() - 3);
     } else {
-      day.setDate(day.getDate() - 1);
+      today.setDate(today.getDate() - 2);
     }
-    const formattedDate = day.toISOString().split("T")[0];
-    setDateMeasureBefore(formattedDate);
 
-    if (dayOfWeek === 1) {
+    if (dayOfWeek === 2) {
+      console.log("Hoy es Martes Primera ejecucion");
       setIsMonday(true);
     } else {
       setIsMonday(false);
     }
+
+    setDateMeasureBefore(today.toISOString().split("T")[0]);
   }, []);
 
   const calculateDifference = (start, end) => {
@@ -113,8 +128,7 @@ export default function FormMeters({ plants, meters, measurements }) {
   };
 
   const handleChecked = (e) => {
-    const dateInput = document.getElementById("date");
-    const dateValue = dateInput.value;
+    const dateValue = dateInputRef.current.value;
 
     const currentDate = new Date(dateValue + "T00:00:00");
     const newDate = new Date(currentDate); // Crea una copia de la fecha actual
@@ -124,6 +138,7 @@ export default function FormMeters({ plants, meters, measurements }) {
     } else {
       newDate.setDate(newDate.getDate() - 2);
     }
+    console.log(newDate.toISOString().split("T")[0]);
 
     setDateMeasureBefore(newDate.toISOString().split("T")[0]);
   };
@@ -146,7 +161,7 @@ export default function FormMeters({ plants, meters, measurements }) {
     });
     const fetchData = async () => {
       try {
-        console.log(data.date);
+        // console.log(data.date);
         const response = await fetch(`/api/meters?date=${data.date}`);
         if (!response.ok) {
           throw new Error("Failed to fetch meters");
@@ -369,6 +384,7 @@ export default function FormMeters({ plants, meters, measurements }) {
                     onChange={handleDateChange}
                     value={data.date}
                     type="date"
+                    ref={dateInputRef}
                     name="date"
                     id="date"
                     autoComplete="address-level1"

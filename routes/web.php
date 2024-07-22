@@ -5,6 +5,7 @@ use App\Http\Controllers\API\MeterController;
 use App\Http\Controllers\API\PlantController;
 use App\Http\Controllers\API\PowerBiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FuelMeasurementController;
 use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\ProductionByWeightController;
 use App\Http\Controllers\ProfileController;
@@ -20,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('measurement', MeasurementController::class);
     Route::resource('production-by-weight', ProductionByWeightController::class);
+    Route::resource('fuel', FuelMeasurementController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

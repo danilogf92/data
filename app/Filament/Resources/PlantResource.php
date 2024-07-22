@@ -19,7 +19,7 @@ class PlantResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
-    protected static ?string $navigationGroup = 'Water consumption managment';
+    protected static ?string $navigationGroup = 'Main managment';
 
     protected static ?int $navigationSort = 1;
 

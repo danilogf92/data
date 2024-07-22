@@ -40,7 +40,7 @@ export default function Authenticated({ user, header, children }) {
                     route().current("measurement.edit")
                   }
                 >
-                  Measurement
+                  Water
                 </NavLink>
               </div>
 
@@ -54,6 +54,19 @@ export default function Authenticated({ user, header, children }) {
                   }
                 >
                   Production
+                </NavLink>
+              </div>
+
+              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <NavLink
+                  href={route("fuel.index")}
+                  active={
+                    route().current("fuel.index") ||
+                    route().current("fuel.create") ||
+                    route().current("fuel.edit")
+                  }
+                >
+                  Fuel
                 </NavLink>
               </div>
             </div>
@@ -161,7 +174,7 @@ export default function Authenticated({ user, header, children }) {
                 route().current("measurement.edit")
               }
             >
-              Measurement
+              Water
             </ResponsiveNavLink>
 
             <ResponsiveNavLink
@@ -173,6 +186,17 @@ export default function Authenticated({ user, header, children }) {
               }
             >
               Production
+            </ResponsiveNavLink>
+
+            <ResponsiveNavLink
+              href={route("fuel.index")}
+              active={
+                route().current("fuel.index") ||
+                route().current("fuel.create") ||
+                route().current("fuel.edit")
+              }
+            >
+              Fuel
             </ResponsiveNavLink>
           </div>
 

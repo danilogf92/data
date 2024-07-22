@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PermissionResource\Pages;
-use App\Filament\Resources\PermissionResource\RelationManagers;
-use App\Models\Permission;
+use App\Filament\Resources\FuelEquipmentResource\Pages;
+use App\Filament\Resources\FuelEquipmentResource\RelationManagers;
+use App\Models\FuelEquipment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,12 +13,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PermissionResource extends Resource
+class FuelEquipmentResource extends Resource
 {
-    protected static ?string $model = Permission::class;
+    protected static ?string $model = FuelEquipment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-identification';
-    protected static ?string $navigationGroup = 'User managment';
+    protected static ?string $navigationGroup = 'Fuel consumption managment';
+
+    protected static ?string $navigationIcon = 'heroicon-o-funnel';
+    
+    protected static ?int $navigationSort = 2;    
 
     public static function form(Form $form): Form
     {
@@ -26,11 +29,19 @@ class PermissionResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->unique(ignoreRecord: true)
                     ->maxLength(255),
-                Forms\Components\TextInput::make('guard_name')
-                    ->required()
-                    ->maxLength(255),
+
+                Forms\Components\Select::make('plant_id')
+                    ->relationship(name: 'plant', titleAttribute: 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),                    
+
+                Forms\Components\Select::make('type_fuel_id')
+                    ->relationship(name: 'fuelType', titleAttribute: 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),  
             ]);
     }
 
@@ -38,10 +49,16 @@ class PermissionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('guard_name')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('plant.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('fuelType.name')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -56,7 +73,7 @@ class PermissionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),                
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -75,9 +92,9 @@ class PermissionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPermissions::route('/'),
-            'create' => Pages\CreatePermission::route('/create'),
-            'edit' => Pages\EditPermission::route('/{record}/edit'),
+            'index' => Pages\ListFuelEquipment::route('/'),
+            'create' => Pages\CreateFuelEquipment::route('/create'),
+            'edit' => Pages\EditFuelEquipment::route('/{record}/edit'),
         ];
     }
 }
