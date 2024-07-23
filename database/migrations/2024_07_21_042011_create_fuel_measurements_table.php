@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('fuel_equipment_id');
-            $table->foreign('fuel_equipment_id')->references('id')->on('fuel_types')
+            $table->foreign('fuel_equipment_id')->references('id')->on('fuel_equipment')
                 ->onDelete('cascade')->onUpdate('cascade');          
             
             $table->date('date');

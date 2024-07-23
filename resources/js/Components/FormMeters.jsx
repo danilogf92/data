@@ -54,6 +54,7 @@ export default function FormMeters({ plants, meters, measurements }) {
 
     if (dayOfWeek === 2) {
       console.log("Hoy es Martes Primera ejecucion");
+      today.setDate(today.getDate() - 1);
       setIsMonday(true);
     } else {
       setIsMonday(false);
