@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FuelMeasurementResource\Pages;
 use App\Filament\Resources\FuelMeasurementResource\RelationManagers;
-use App\Models\FuelMeasurement;
+use App\Models\Fuel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FuelMeasurementResource extends Resource
 {
-    protected static ?string $model = FuelMeasurement::class;
+    protected static ?string $model = Fuel::class;
 
     protected static ?string $navigationGroup = 'Fuel consumption managment';
 
