@@ -130,7 +130,7 @@ export default function Index({
         {(auth.user.roles.includes("Fuel") ||
           auth.user.permissions.includes("Create Fuel")) && (
           <>
-            <ExportButton link="/fuels/export" documentName="fuels" />
+            <ExportButton link="/fuel-data/export" documentName="fuel" />
           </>
         )}
 

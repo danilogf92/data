@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\MeasurementsFuelExport;
+use App\Exports\FuelExport;
 use App\Http\Requests\StoreFuelMeasurementRequest;
 use App\Http\Requests\UpdateFuelMeasurementRequest;
 use App\Http\Resources\FuelResource;
@@ -69,7 +69,7 @@ class FuelController extends Controller
     {
         $permissions = Auth::user()->getPermissionNames();
         
-        if (!$permissions->contains('Create Water')) {
+        if (!$permissions->contains('Create Fuel')) {
         abort(403, 'Unauthorized action.');
         }
 
@@ -150,7 +150,7 @@ class FuelController extends Controller
     {
         $permissions = Auth::user()->getPermissionNames();
 
-        if (!$permissions->contains('Delete Water')) {
+        if (!$permissions->contains('Delete Fuel')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -160,6 +160,6 @@ class FuelController extends Controller
 
     public function export()
     {
-        return Excel::download(new MeasurementsFuelExport, 'measurements.xlsx');
+        return Excel::download(new FuelExport, 'fuel.xlsx');
     }      
 }

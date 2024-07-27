@@ -25,8 +25,8 @@ class FuelEquipment extends Model
         return $this->belongsTo(FuelType::class, 'type_fuel_id');
     }
 
-    public function fuelMeasurements()
+    public function fuel()
     {
-        return $this->hasMany(FuelMeasurement::class, 'fuel_equipment_id');
+        return $this->hasMany(Fuel::class, 'fuel_equipment_id');
     }
 }

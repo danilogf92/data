@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/measurements/export', [MeasurementController::class, 'export'])->name('measurements.export');
     Route::get('/production-by-weights/export', [ProductionByWeightController::class, 'export'])->name('production-by-weight.export');
-    Route::get('/fuels/export', [FuelController::class, 'export'])->name('fuels.export');
+    Route::get('/fuel-data/export', [FuelController::class, 'export'])->name('fuels.export');
 });
 
 Route::prefix('api')->middleware(EnsureStaticTokenIsValid::class)->group(function () {

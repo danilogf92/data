@@ -29,8 +29,8 @@ class Plant extends Model
         return $this->hasMany(FuelEquipment::class, 'type_fuel_id');
     }
 
-    public function fuelMeasurements()
+    public function fuel()
     {
-        return $this->hasMany(FuelMeasurement::class, 'plant_id');
+        return $this->hasMany(Fuel::class, 'plant_id');
     }
 }

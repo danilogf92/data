@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Carbon;
 
-class MeasurementsFuelExport implements FromQuery, WithMapping, WithHeadings
+class FuelExport implements FromQuery, WithMapping, WithHeadings
 {
     use Exportable;
 
