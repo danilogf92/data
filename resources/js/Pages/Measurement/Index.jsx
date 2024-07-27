@@ -1,6 +1,7 @@
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
 import ExportButton from "@/Components/MyComponents/ExportButton";
+import { NoContent } from "@/Components/MyComponents/NoContent";
 import Pagination from "@/Components/Pagination";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
@@ -376,12 +377,7 @@ export default function Index({
             </>
           )}
           {measurements.data.length === 0 && (
-            <div className="flex items-center justify-center p-4 text-yellow-800">
-              <span className="mr-2 text-5xl">No content</span>
-              <span className="text-5xl" role="img" aria-label="barrel">
-                🛢
-              </span>
-            </div>
+            <NoContent text={"No Content"} icon={"🛢"} />
           )}
 
           {/* <pre>{JSON.stringify(meters, undefined, 2)}</pre> */}

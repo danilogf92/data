@@ -27,11 +27,24 @@ class FuelMeasurementResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('fuel_equipment_id')
-                    ->relationship(name: 'fuelEquipment', titleAttribute: 'name')
+                Forms\Components\Select::make('plant_id')
+                    ->relationship('plant', 'name')
                     ->searchable()
                     ->preload()
-                    ->required(), 
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(fn (callable $set) => $set('fuel_equipment_id', null)),               
+                Forms\Components\Select::make('fuel_equipment_id')
+                    ->required()
+                    ->options(function (callable $get) {
+                        $plantId = $get('plant_id');
+                        if ($plantId) {
+                            return \App\Models\FuelEquipment::where('plant_id', $plantId)->pluck('name', 'id');
+                        }
+                        return [];
+                    })
+                    ->searchable()
+                    ->preload(), 
                 Forms\Components\DatePicker::make('date')
                     ->required(),
                 Forms\Components\TextInput::make('start_value')
@@ -50,8 +63,9 @@ class FuelMeasurementResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('plant.name')
+                    ->sortable(),                
                 Tables\Columns\TextColumn::make('fuelEquipment.name')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date()

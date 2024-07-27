@@ -18,6 +18,7 @@ class FuelResource extends JsonResource
         return [
         'id' => $this->id,
         'fuel_equipment_id' => $this->fuelEquipment->name,
+        'plant_id' => $this->plant->name,
         'date' => (new Carbon($this->date))->format('Y-m-d'),        
         'start_value' => $this->start_value,
         'end_value' => $this->end_value,

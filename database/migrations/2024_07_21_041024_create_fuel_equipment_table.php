@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('fuel_equipment', function (Blueprint $table) {
@@ -17,19 +14,16 @@ return new class extends Migration
 
             $table->unsignedBigInteger('plant_id');
             $table->foreign('plant_id')->references('id')->on('plants')
-                ->onDelete('cascade')->onUpdate('cascade');     
-                
+                ->onDelete('cascade')->onUpdate('cascade');
+
             $table->unsignedBigInteger('type_fuel_id');
             $table->foreign('type_fuel_id')->references('id')->on('fuel_types')
-                ->onDelete('cascade')->onUpdate('cascade');    
+                ->onDelete('cascade')->onUpdate('cascade');
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('fuel_equipment');

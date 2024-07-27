@@ -1,6 +1,7 @@
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
 import ExportButton from "@/Components/MyComponents/ExportButton";
+import { NoContent } from "@/Components/MyComponents/NoContent";
 import Pagination from "@/Components/Pagination";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
@@ -11,10 +12,10 @@ export default function Index({
   fuelData,
   queryParams = null,
   fuelEquipment,
-  meters,
+  plants,
 }) {
   queryParams = queryParams || {};
-  const [metersArray, setMetersArray] = useState(meters);
+  const [fuelEquipmentArray, setFuelEquipmentArray] = useState(fuelEquipment);
   const { flash } = usePage().props;
   const [showSuccess, setShowSuccess] = useState(false);
   const [filters, setFilters] = useState({
@@ -34,12 +35,14 @@ export default function Index({
   }, [flash]);
 
   const deleteMeasurement = (fuel) => {
+    console.log(fuel.id);
+
     router.delete(route("fuel.destroy", fuel.id), {
       onSuccess: (response) => {
         console.log(response); // AQUI GENERA EL showSuccess
       },
       onError: (errors) => {
-        // console.log(errors);
+        console.log(errors);
       },
     });
   };
@@ -91,10 +94,11 @@ export default function Index({
 
   useEffect(() => {
     if (filters.plant_id) {
-      const filteredMeters = meters.filter(
-        (meter) => meter.plant_id === parseInt(filters.plant_id, 10)
+      const filteredEquipments = fuelEquipment.filter(
+        (fuelEquipment) =>
+          fuelEquipment.plant_id === parseInt(filters.plant_id, 10)
       );
-      setMetersArray(filteredMeters);
+      setFuelEquipmentArray(() => filteredEquipments);
     }
   }, [filters.plant_id]);
 
@@ -155,7 +159,7 @@ export default function Index({
 
           {/* Filter Form */}
           <div className="mb-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-2">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-2">
               <div className="col-span-1">
                 <label
                   htmlFor="date"
@@ -172,6 +176,30 @@ export default function Index({
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
+
+              <div className="col-span-1">
+                <label
+                  htmlFor="plant_id"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Plant
+                </label>
+                <select
+                  name="plant_id"
+                  id="plant_id"
+                  value={queryParams.plant_id}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Plant</option>
+                  {plants.map((plant) => (
+                    <option key={plant.id} value={plant.id}>
+                      {plant.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="col-span-1">
                 <label
                   htmlFor="fuel_equipment_id"
@@ -187,7 +215,7 @@ export default function Index({
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
                   <option value="">Select Equipment</option>
-                  {fuelEquipment.map((equipment) => (
+                  {fuelEquipmentArray.map((equipment) => (
                     <option key={equipment.id} value={equipment.id}>
                       {equipment.name}
                     </option>
@@ -233,7 +261,7 @@ export default function Index({
                 <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
                   <tr>
                     <th scope="col" className="px-6 py-3">
-                      Id
+                      Plant
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Equipment
@@ -267,7 +295,7 @@ export default function Index({
                       } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                     >
                       <td className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {fuel.id}
+                        {fuel.plant_id}
                       </td>
                       <td className="px-6 py-2">{fuel.fuel_equipment_id}</td>
                       <td className="px-6 py-2">{fuel.start_value}</td>
@@ -345,12 +373,7 @@ export default function Index({
             </>
           )}
           {fuelData.data.length === 0 && (
-            <div className="flex items-center justify-center p-4 text-yellow-800">
-              <span className="mr-2 text-5xl">No content</span>
-              <span className="text-5xl" role="img" aria-label="barrel">
-                🛢
-              </span>
-            </div>
+            <NoContent text={"No Content"} icon={"🛢"} />
           )}
 
           {/* <pre>{JSON.stringify(fuelData, undefined, 2)}</pre> */}

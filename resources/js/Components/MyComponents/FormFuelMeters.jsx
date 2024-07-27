@@ -1,6 +1,6 @@
 import { Link, useForm } from "@inertiajs/react";
 import React, { useState, useEffect, useRef } from "react";
-import InputError from "./InputError";
+import InputError from "../InputError";
 
 const datetest = () => {
   const hoy = new Date();
@@ -15,19 +15,10 @@ const datetest = () => {
   return hoy.toISOString().split("T")[0];
 };
 
-export default function FormMeters({ plants, meters, measurements }) {
-  // const hoy = new Date();
-  // hoy.setDate(hoy.getDate());
-
-  // if (hoy.getDay() === 1) {
-  //   hoy.setDate(hoy.getDate() - 2);
-  // } else {
-  //   hoy.setDate(hoy.getDate() - 1);
-  // }
-
+export default function FormFuelMeters({ plants, fuelEquipment }) {
   const { data, setData, post, errors } = useForm({
     plant_id: "",
-    meter_id: "",
+    fuel_equipment_id: "",
     start_value: "",
     end_value: "",
     difference: "",
@@ -37,8 +28,8 @@ export default function FormMeters({ plants, meters, measurements }) {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [isMonday, setIsMonday] = useState(false);
-  const [filteredMeters, setFilteredMeters] = useState([]);
-  const [allMeters, setAllMeters] = useState(meters);
+  const [filteredEquipments, setFilteredEquipments] = useState([]);
+  const [allEquipments, setAllEquipments] = useState(fuelEquipment);
   const [dateMeasureBefore, setDateMeasureBefore] = useState("");
 
   useEffect(() => {
@@ -94,15 +85,16 @@ export default function FormMeters({ plants, meters, measurements }) {
   const handlePlantChange = async (e) => {
     const selectedPlantId = e.target.value;
 
-    const filteredMeters = allMeters.filter(
-      (meter) => meter.plant_id === parseInt(selectedPlantId, 10)
+    const filteredEquipments = allEquipments.filter(
+      (equipment) => equipment.plant_id === parseInt(selectedPlantId, 10)
     );
-    setFilteredMeters(filteredMeters);
+
+    setFilteredEquipments(filteredEquipments);
 
     setData({
       ...data,
       plant_id: selectedPlantId,
-      meter_id: "",
+      fuel_equipment_id: "",
     });
   };
 
@@ -123,7 +115,7 @@ export default function FormMeters({ plants, meters, measurements }) {
     setData({
       ...data,
       plant_id: "",
-      meter_id: "",
+      fuel_equipment_id: "",
       date: e.target.value,
     });
   };
@@ -145,38 +137,49 @@ export default function FormMeters({ plants, meters, measurements }) {
   };
 
   useEffect(() => {
-    if (data.plant_id && allMeters.length > 0) {
-      const filteredMeters = allMeters.filter(
-        (meter) => meter.plant_id === parseInt(data.plant_id, 10)
+    if (data.plant_id) {
+      const fuelEquipmentArray = allEquipments.filter(
+        (item) => item.plant_id === parseInt(data.plant_id, 10)
       );
-      setFilteredMeters(filteredMeters);
+      setFilteredEquipments(fuelEquipmentArray);
     }
-  }, [data.plant_id, data.date, allMeters, dateMeasureBefore]);
+  }, [data.plant_id, data.date, allEquipments, dateMeasureBefore]);
+
+  // useEffect(() => {
+  //   if (data.plant_id && allMeters.length > 0) {
+  //     const filteredMeters = allMeters.filter(
+  //       (meter) => meter.plant_id === parseInt(data.plant_id, 10)
+  //     );
+  //     setFilteredMeters(filteredMeters);
+  //   }
+  // }, [data.plant_id, data.date, allMeters, dateMeasureBefore]);
 
   useEffect(() => {
     setData({
       ...data,
       // plant_id: "",
-      meter_id: "",
+      fuel_equipment_id: "",
       start_value: "",
     });
+
     const fetchData = async () => {
       try {
         // console.log(data.date);
-        const response = await fetch(`/api/meters?date=${data.date}`);
+        const response = await fetch(`/api/fuel-equipment?date=${data.date}`);
         if (!response.ok) {
           throw new Error("Failed to fetch meters");
         }
-        const { meters } = await response.json();
-        // console.log("Updated meters new:", meters);
+        const { equipments } = await response.json();
+        // console.log("Updated equipments new:", equipments);
         // console.log("data.plant_id", data.plant_id);
-        const allMetersArray = Object.values(meters);
-        setAllMeters(allMetersArray);
+        const allMetersArray = Object.values(equipments);
+        setAllEquipments(allMetersArray);
+
         if (data.plant_id) {
-          const filteredMeters = allMeters.filter(
-            (meter) => meter.plant_id === parseInt(data.plant_id, 10)
+          const filteredMeters = allEquipments.filter(
+            (item) => item.plant_id === parseInt(data.plant_id, 10)
           );
-          setFilteredMeters(filteredMeters);
+          setFilteredEquipments(filteredMeters);
         }
       } catch (error) {
         console.error("Error fetching meters:", error);
@@ -184,14 +187,14 @@ export default function FormMeters({ plants, meters, measurements }) {
     };
 
     fetchData();
-  }, [data.date, dateMeasureBefore, data.meter_id]);
+  }, [data.date, dateMeasureBefore, data.fuel_equipment_id]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setData({
           ...data,
-          start_value: "",
+          start_value: "0",
         });
 
         // Restar un día a data.date
@@ -199,16 +202,14 @@ export default function FormMeters({ plants, meters, measurements }) {
         prevDate.setDate(prevDate.getDate());
         const formattedDate = prevDate.toISOString().split("T")[0];
 
-        console.log(formattedDate);
-
         const response = await fetch(
-          `/api/lastvalue?date=${formattedDate}&meter=${data.meter_id}`
+          `/api/fuel-lastvalue?date=${formattedDate}&equipment=${data.fuel_equipment_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch measurement");
         }
         const { measurement } = await response.json();
-        // console.log(measurement, formattedDate, data.meter_id);
+        // console.log(measurement, formattedDate, data.fuel_equipment_id);
 
         if (measurement.length > 0) {
           const end_value = measurement[0]["end_value"];
@@ -223,10 +224,10 @@ export default function FormMeters({ plants, meters, measurements }) {
       }
     };
 
-    if (data.meter_id) {
+    if (data.fuel_equipment_id) {
       fetchData();
     }
-  }, [data.meter_id, data.date]);
+  }, [data.fuel_equipment_id, data.date]);
 
   const dateFormat = (originalDate) => {
     const dateObject = new Date(originalDate + "T00:00:00");
@@ -244,11 +245,14 @@ export default function FormMeters({ plants, meters, measurements }) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    post(route("measurement.store"), {
+
+    post(route("fuel.store"), {
       onSuccess: (response) => {
+        // console.log("Respuesta exitosa:", response);
+
         setData({
           ...data,
-          meter_id: "",
+          fuel_equipment_id: "",
           start_value: "",
           end_value: "",
           difference: "",
@@ -259,12 +263,15 @@ export default function FormMeters({ plants, meters, measurements }) {
           setShowSuccess(false);
         }, 3000);
       },
-      onError: (errors) => {},
+      onError: (errors) => {
+        console.error("Errores:", errors);
+        // Opcional: mostrar errores en la interfaz de usuario
+      },
     });
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md rounded-lg p-4 bg-blue-100">
+    <div className="relative overflow-x-auto shadow-md rounded-lg p-4 bg-gray-200">
       {showSuccess && (
         <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
           <div className="relative">
@@ -291,7 +298,7 @@ export default function FormMeters({ plants, meters, measurements }) {
         <div className="space-y-12">
           <div className="border-b border-white pb-6 text-center">
             <h2 className="font-semibold leading-7 text-gray-900 text-xl">
-              Measurement water data
+              Measurement fuel
             </h2>
           </div>
 
@@ -331,31 +338,33 @@ export default function FormMeters({ plants, meters, measurements }) {
 
               <div className="sm:col-span-2">
                 <label
-                  htmlFor="meter_id"
+                  htmlFor="fuel_equipment_id"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Meter
+                  Equipment
                 </label>
                 <div className="mt-2">
                   <select
-                    onChange={(e) => setData("meter_id", e.target.value)}
-                    value={data.meter_id}
-                    id="meter_id"
-                    name="meter_id"
-                    autoComplete="meter_id"
+                    onChange={(e) =>
+                      setData("fuel_equipment_id", e.target.value)
+                    }
+                    value={data.fuel_equipment_id}
+                    id="fuel_equipment_id"
+                    name="fuel_equipment_id"
+                    autoComplete="fuel_equipment_id"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option value="" disabled>
                       -- Select Meter --
                     </option>
-                    {filteredMeters.map((meter) => (
+                    {filteredEquipments.map((meter) => (
                       <option key={meter.id} value={meter.id}>
                         {meter.name}
                       </option>
                     ))}
                   </select>
                   <InputError
-                    message={errors.meter_id}
+                    message={errors.fuel_equipment_id}
                     className="mt-2 text-red-500"
                   />
                 </div>
@@ -403,7 +412,7 @@ export default function FormMeters({ plants, meters, measurements }) {
                   htmlFor="start_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Start Value [m³]
+                  Start Value
                 </label>
                 <div className="mt-2">
                   <input
@@ -428,7 +437,7 @@ export default function FormMeters({ plants, meters, measurements }) {
                   htmlFor="end_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Final Value [m³]
+                  Final Value
                 </label>
                 <div className="mt-2">
                   <input
@@ -453,7 +462,7 @@ export default function FormMeters({ plants, meters, measurements }) {
                   htmlFor="difference"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Difference [m³]
+                  Difference
                 </label>
                 <div className="mt-2">
                   <input
@@ -489,7 +498,8 @@ export default function FormMeters({ plants, meters, measurements }) {
           </button>
         </div>
       </form>
-      {/* <pre>{JSON.stringify(measurements, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(filteredEquipments, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(allEquipments, undefined, 2)}</pre> */}
     </div>
   );
 }

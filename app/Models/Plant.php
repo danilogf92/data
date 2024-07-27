@@ -14,15 +14,23 @@ class Plant extends Model
         'location'
     ];
 
-    // Relación uno a muchos con Meter
     public function meters()
     {
         return $this->hasMany(Meter::class, 'plant_id');
     }
 
-    // Relación uno a muchos con Measurement
     public function measurements()
     {
         return $this->hasMany(Measurement::class, 'name_id');
+    }
+
+    public function fuelTypes()
+    {
+        return $this->hasMany(FuelEquipment::class, 'type_fuel_id');
+    }
+
+    public function fuelMeasurements()
+    {
+        return $this->hasMany(FuelMeasurement::class, 'plant_id');
     }
 }

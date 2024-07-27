@@ -136,6 +136,12 @@ class MeasurementController extends Controller
    */
   public function update(UpdateMeasurementRequest $request, Measurement $measurement)
   {
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Edit Water')) {
+      abort(403, 'Unauthorized action.');
+    }
+        
     $data = $request->validated();
     $measurement->update($data);
 

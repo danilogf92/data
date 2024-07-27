@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Fuel;
+use App\Models\FuelEquipment;
+use App\Models\FuelType;
 use App\Models\Measurement;
 use App\Models\Meter;
 use App\Models\MeterType;
@@ -45,4 +48,26 @@ class PowerBiController extends Controller
 
         return response()->json($production);
     }       
+
+    public function fuel()
+    {
+        $fuel = Fuel::all();
+
+        return response()->json($fuel);
+    }      
+
+    public function fuelTypes()
+    {
+        $fuelType = FuelType::all();
+
+        return response()->json($fuelType);
+    }    
+
+    public function fuelEquipment()
+    {
+        $fuelEquipment = FuelEquipment::all();
+
+        return response()->json($fuelEquipment);
+    }      
+    
 }
