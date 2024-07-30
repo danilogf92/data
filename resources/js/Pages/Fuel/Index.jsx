@@ -300,19 +300,7 @@ export default function Index({
                       <td className="px-6 py-2">{fuel.fuel_equipment_id}</td>
                       <td className="px-6 py-2">{fuel.start_value}</td>
                       <td className="px-6 py-2">{fuel.end_value} </td>
-                      <td
-                        className={`px-6 py-2 ${
-                          parseFloat(fuel.difference) >
-                          parseFloat(fuel.upper_limit)
-                            ? "bg-red-200"
-                            : parseFloat(fuel.difference) ===
-                              parseFloat(fuel.upper_limit)
-                            ? "bg-yellow-200"
-                            : "bg-green-200"
-                        }`}
-                      >
-                        {fuel.difference}
-                      </td>
+                      <td className="px-6 py-2">{fuel.difference}</td>
 
                       <td className="px-6 py-2 text-nowrap">{fuel.date}</td>
                       {auth.user.roles.includes("Fuel") && (

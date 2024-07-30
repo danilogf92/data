@@ -303,8 +303,10 @@ export default function Index({
                       <td className="px-6 py-2">{measurement.end_value} </td>
                       <td
                         className={`px-6 py-2 ${
-                          parseFloat(measurement.difference) >
-                          parseFloat(measurement.upper_limit)
+                          parseFloat(measurement.upper_limit) === 0
+                            ? ""
+                            : parseFloat(measurement.difference) >
+                              parseFloat(measurement.upper_limit)
                             ? "bg-red-200"
                             : parseFloat(measurement.difference) ===
                               parseFloat(measurement.upper_limit)
@@ -314,7 +316,6 @@ export default function Index({
                       >
                         {measurement.difference}
                       </td>
-
                       <td className="px-6 py-2">{measurement.upper_limit} </td>
                       <td className="px-6 py-2 text-nowrap">
                         {measurement.date}

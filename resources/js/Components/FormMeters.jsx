@@ -264,7 +264,7 @@ export default function FormMeters({ plants, meters, measurements }) {
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md rounded-lg p-4 bg-blue-100">
+    <div className="relative overflow-x-auto shadow-md rounded-lg p-6 bg-gradient-to-r from-blue-50 to-blue-100">
       {showSuccess && (
         <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
           <div className="relative">

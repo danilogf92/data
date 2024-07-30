@@ -271,7 +271,7 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md rounded-lg p-4 bg-gray-200">
+    <div className="relative overflow-x-auto shadow-md rounded-lg p-6 bg-gradient-to-r from-blue-50 to-gray-200">
       {showSuccess && (
         <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
           <div className="relative">
@@ -502,4 +502,230 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
       {/* <pre>{JSON.stringify(allEquipments, undefined, 2)}</pre> */}
     </div>
   );
+
+  // return (
+  //   <div className="relative overflow-x-auto shadow-lg rounded-lg p-6 bg-gradient-to-r from-blue-50 to-indigo-100">
+  //     {showSuccess && (
+  //       <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-lg">
+  //         <div className="relative">
+  //           <strong className="font-bold">Success!</strong>
+  //           <span className="block sm:inline">Data stored successfully.</span>
+  //           <button
+  //             onClick={() => setShowSuccess(false)}
+  //             className="absolute top-1 right-1 px-3 focus:outline-none"
+  //           >
+  //             <svg
+  //               className="fill-current h-6 w-6 text-green-500 hover:opacity-50"
+  //               xmlns="http://www.w3.org/2000/svg"
+  //               viewBox="0 0 20 20"
+  //             >
+  //               <title>Close</title>
+  //               <path d="M14.354 5.646a.5.5 0 1 0-.708-.708L10 9.293 6.354 5.646a.5.5 0 1 0-.708.708L9.293 10l-3.647 3.646a.5.5 0 1 0 .708.708L10 10.707l3.646 3.647a.5.5 0 0 0 .708-.708L10.707 10l3.647-3.646z" />
+  //             </svg>
+  //           </button>
+  //         </div>
+  //       </div>
+  //     )}
+
+  //     {/* <form onSubmit={onSubmit} className="bg-white p-8 rounded-lg shadow-xl">
+  //       <div className="space-y-8">
+  //         <div className="border-b border-gray-200 pb-6 text-center">
+  //           <h2 className="font-semibold leading-7 text-gray-900 text-2xl">
+  //             Measurement Fuel
+  //           </h2>
+  //         </div>
+
+  //         <div className="border-b border-gray-200 pb-6">
+  //           <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+  //             <div className="sm:col-span-1">
+  //               <label
+  //                 htmlFor="plant_id"
+  //                 className="block text-sm font-medium leading-6 text-gray-900"
+  //               >
+  //                 Plant
+  //               </label>
+  //               <div className="mt-2 relative">
+  //                 <select
+  //                   onChange={handlePlantChange}
+  //                   value={data.plant_id}
+  //                   id="plant_id"
+  //                   name="plant_id"
+  //                   className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //                 >
+  //                   <option value="" disabled>
+  //                     -- Select Plant --
+  //                   </option>
+  //                   {plants.map((plant) => (
+  //                     <option key={plant.id} value={plant.id}>
+  //                       {plant.name}
+  //                     </option>
+  //                   ))}
+  //                 </select>
+  //                 <InputError
+  //                   message={errors.plant_id}
+  //                   className="mt-2 text-red-500"
+  //                 />
+  //               </div>
+  //             </div>
+
+  //             <div className="sm:col-span-1">
+  //               <label
+  //                 htmlFor="fuel_equipment_id"
+  //                 className="block text-sm font-medium leading-6 text-gray-900"
+  //               >
+  //                 Equipment
+  //               </label>
+  //               <div className="mt-2 relative">
+  //                 <select
+  //                   onChange={(e) =>
+  //                     setData("fuel_equipment_id", e.target.value)
+  //                   }
+  //                   value={data.fuel_equipment_id}
+  //                   id="fuel_equipment_id"
+  //                   name="fuel_equipment_id"
+  //                   className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //                 >
+  //                   <option value="" disabled>
+  //                     -- Select Meter --
+  //                   </option>
+  //                   {filteredEquipments.map((meter) => (
+  //                     <option key={meter.id} value={meter.id}>
+  //                       {meter.name}
+  //                     </option>
+  //                   ))}
+  //                 </select>
+  //                 <InputError
+  //                   message={errors.fuel_equipment_id}
+  //                   className="mt-2 text-red-500"
+  //                 />
+  //               </div>
+  //             </div>
+
+  //             <div className="sm:col-span-1">
+  //               <label
+  //                 htmlFor="date"
+  //                 className="block text-sm font-medium leading-6 text-gray-900"
+  //               >
+  //                 Date
+  //               </label>
+  //               <div className="mt-2 flex items-center">
+  //                 <input
+  //                   onChange={handleDateChange}
+  //                   value={data.date}
+  //                   type="date"
+  //                   ref={dateInputRef}
+  //                   name="date"
+  //                   id="date"
+  //                   className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //                 />
+  //                 <span className="ml-2 p-1 bg-red-200 rounded-sm">
+  //                   {dateFormat(dateMeasureBefore)}
+  //                 </span>
+  //                 {isMonday && (
+  //                   <input
+  //                     type="checkbox"
+  //                     name="toggle"
+  //                     id="toggle"
+  //                     onChange={handleChecked}
+  //                     className="ml-2 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+  //                   />
+  //                 )}
+  //               </div>
+  //               <InputError
+  //                 message={errors.date}
+  //                 className="mt-2 text-red-500"
+  //               />
+  //             </div>
+
+  //             <div className="sm:col-span-1">
+  //               <label
+  //                 htmlFor="start_value"
+  //                 className="block text-sm font-medium leading-6 text-gray-900"
+  //               >
+  //                 Start Value
+  //               </label>
+  //               <div className="mt-2">
+  //                 <input
+  //                   onChange={handleStartChange}
+  //                   value={data.start_value}
+  //                   type="number"
+  //                   name="start_value"
+  //                   id="start_value"
+  //                   min={0}
+  //                   className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //                 />
+  //                 <InputError
+  //                   message={errors.start_value}
+  //                   className="mt-2 text-red-500"
+  //                 />
+  //               </div>
+  //             </div>
+
+  //             <div className="sm:col-span-1">
+  //               <label
+  //                 htmlFor="end_value"
+  //                 className="block text-sm font-medium leading-6 text-gray-900"
+  //               >
+  //                 Final Value
+  //               </label>
+  //               <div className="mt-2">
+  //                 <input
+  //                   onChange={handleEndChange}
+  //                   value={data.end_value}
+  //                   type="number"
+  //                   name="end_value"
+  //                   id="end_value"
+  //                   min={0}
+  //                   className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //                 />
+  //                 <InputError
+  //                   message={errors.end_value}
+  //                   className="mt-2 text-red-500"
+  //                 />
+  //               </div>
+  //             </div>
+
+  //             <div className="sm:col-span-1">
+  //               <label
+  //                 htmlFor="difference"
+  //                 className="block text-sm font-medium leading-6 text-gray-900"
+  //               >
+  //                 Difference
+  //               </label>
+  //               <div className="mt-2">
+  //                 <input
+  //                   value={data.difference >= 0 ? data.difference : ""}
+  //                   type="text"
+  //                   name="difference"
+  //                   id="difference"
+  //                   readOnly
+  //                   className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600 bg-red-200 sm:text-sm sm:leading-6"
+  //                 />
+  //                 <InputError
+  //                   message={errors.difference}
+  //                   className="mt-2 text-red-500"
+  //                 />
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+
+  //         <div className="mt-6 flex items-center justify-end gap-x-4">
+  //           <Link
+  //             href={route("measurement.index")}
+  //             className="rounded-md bg-amber-600 text-white px-4 py-2 text-sm font-semibold shadow-md hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600"
+  //           >
+  //             Cancel
+  //           </Link>
+  //           <button
+  //             type="submit"
+  //             className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600"
+  //           >
+  //             Save
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </form> */}
+  //   </div>
+  // );
 }
