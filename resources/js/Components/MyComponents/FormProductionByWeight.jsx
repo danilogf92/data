@@ -8,8 +8,8 @@ export default function FormProductionByWeight() {
 
   const { data, setData, post, errors } = useForm({
     date: formattedDate,
-    net: "",
-    total_boxes: "",
+    net: 0,
+    total_boxes: 0,
     pn_per_box: "",
   });
 
@@ -19,10 +19,12 @@ export default function FormProductionByWeight() {
     e.preventDefault();
     post(route("production-by-weight.store"), {
       onSuccess: (response) => {
+        const today = new Date();
+        const formattedDate = today.toISOString().split("T")[0];
         setData({
-          date: "",
-          net: "",
-          total_boxes: "",
+          date: formattedDate,
+          net: 0,
+          total_boxes: 0,
           pn_per_box: "",
         });
 
@@ -93,7 +95,7 @@ export default function FormProductionByWeight() {
                 </div>
               </div>
 
-              <div className="sm:col-span-2">
+              {/* <div className="sm:col-span-2">
                 <label
                   htmlFor="net"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -107,7 +109,7 @@ export default function FormProductionByWeight() {
                     type="number"
                     name="net"
                     min={0}
-                    step="0.01"
+                    step="0.001"
                     id="net"
                     autoComplete="address-level2"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -131,7 +133,7 @@ export default function FormProductionByWeight() {
                     onChange={(e) => setData("total_boxes", e.target.value)}
                     value={data.total_boxes}
                     min={0}
-                    step="0.01"
+                    step="0.001"
                     type="number"
                     name="total_boxes"
                     id="total_boxes"
@@ -143,7 +145,7 @@ export default function FormProductionByWeight() {
                     className="mt-2 text-red-500"
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="sm:col-span-2">
                 <label
@@ -157,7 +159,7 @@ export default function FormProductionByWeight() {
                     onChange={(e) => setData("pn_per_box", e.target.value)}
                     value={data.pn_per_box}
                     min={0}
-                    step="0.01"
+                    step="0.001"
                     type="number"
                     name="pn_per_box"
                     id="pn_per_box"

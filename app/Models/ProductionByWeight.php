@@ -24,31 +24,31 @@ class ProductionByWeight extends Model
 
     public function getNetAttribute($value)
     {
-        return number_format($value, 2, '.', '');
+        return number_format($value, 3, '.', '');
     }
 
     public function getTotalBoxesAttribute($value)
     {
-        return number_format($value, 2, '.', '');
+        return number_format($value, 3, '.', '');
     }
 
     public function getPnPerBoxAttribute($value)
     {
-        return number_format($value, 2, '.', '');
+        return number_format($value, 3, '.', '');
     }
 
     public function setNetAttribute($value)
     {
-        $this->attributes['net'] = round($value, 2);
+        $this->attributes['net'] = round($value, 3);
     }
 
     public function setTotalBoxesAttribute($value)
     {
-        $this->attributes['total_boxes'] = round($value, 2);
+        $this->attributes['total_boxes'] = round($value, 3);
     }
 
     public function setPnPerBoxAttribute($value)
     {
-        $this->attributes['pn_per_box'] = round($value, 2);
+        $this->attributes['pn_per_box'] = round($value, 3);
     }
 }

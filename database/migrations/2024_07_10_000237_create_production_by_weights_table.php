@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('production_by_weights', function (Blueprint $table) {
             $table->id();
             $table->string('date');
-            $table->float('net');
-            $table->float('total_boxes');
-            $table->float('pn_per_box');
+            $table->decimal('net', 10, 3);        
+            $table->decimal('total_boxes', 10, 3);
+            $table->decimal('pn_per_box', 10, 3); 
             $table->timestamps();
         });
     }

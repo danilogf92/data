@@ -73,7 +73,7 @@ export default function FormEditProductionByWeight({ production }) {
                     type="number"
                     name="net"
                     min={0}
-                    step="0.01"
+                    step="0.001"
                     id="net"
                     autoComplete="address-level2"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -97,7 +97,7 @@ export default function FormEditProductionByWeight({ production }) {
                     onChange={(e) => setData("total_boxes", e.target.value)}
                     value={data.total_boxes}
                     min={0}
-                    step="0.01"
+                    step="0.001"
                     type="number"
                     name="total_boxes"
                     id="total_boxes"
@@ -123,7 +123,7 @@ export default function FormEditProductionByWeight({ production }) {
                     onChange={(e) => setData("pn_per_box", e.target.value)}
                     value={data.pn_per_box}
                     min={0}
-                    step="0.01"
+                    step="0.001"
                     type="number"
                     name="pn_per_box"
                     id="pn_per_box"

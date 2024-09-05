@@ -294,7 +294,7 @@ export default function Index({ auth, production, queryParams = null }) {
         </div>
       </ContainerAuth>
 
-      {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre>  */}
+      {/* <pre>{JSON.stringify(production, undefined, 2)}</pre> */}
     </AuthenticatedLayout>
   );
 }
