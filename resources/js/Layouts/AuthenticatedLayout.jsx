@@ -57,7 +57,7 @@ export default function Authenticated({ user, header, children }) {
                 </NavLink>
               </div>
 
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+              {/* <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                 <NavLink
                   href={route("fuel.index")}
                   active={
@@ -68,7 +68,7 @@ export default function Authenticated({ user, header, children }) {
                 >
                   Fuel
                 </NavLink>
-              </div>
+              </div> */}
             </div>
 
             <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -188,7 +188,7 @@ export default function Authenticated({ user, header, children }) {
               Production
             </ResponsiveNavLink>
 
-            <ResponsiveNavLink
+            {/* <ResponsiveNavLink
               href={route("fuel.index")}
               active={
                 route().current("fuel.index") ||
@@ -197,7 +197,7 @@ export default function Authenticated({ user, header, children }) {
               }
             >
               Fuel
-            </ResponsiveNavLink>
+            </ResponsiveNavLink> */}
           </div>
 
           <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
