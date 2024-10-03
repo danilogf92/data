@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreign('type_fuel_id')->references('id')->on('fuel_types')
                 ->onDelete('cascade')->onUpdate('cascade');
 
+            $table->integer('enabled')->default(1);
+
             $table->timestamps();
         });
     }

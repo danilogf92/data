@@ -22,7 +22,9 @@ class FuelEquipmentController extends Controller
 
         $measurementMeterIds = $measurements->pluck('fuel_equipment_id');                    
 
-        $equipments = FuelEquipment::orderBy('id', 'ASC')
+        
+        $equipments = FuelEquipment::where('enabled', 1)
+               ->orderBy('id', 'ASC')
                 ->get()
                 ->filter(function ($equipments) use ($measurementMeterIds) {
                     return !$measurementMeterIds->contains($equipments->id);

@@ -12,7 +12,8 @@ class FuelEquipment extends Model
     protected $fillable = [
         'name',
         'plant_id',
-        'type_fuel_id'
+        'type_fuel_id',
+        'enabled'
     ];
 
     public function plant()

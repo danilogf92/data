@@ -41,7 +41,8 @@ class FuelEquipmentResource extends Resource
                     ->relationship(name: 'fuelType', titleAttribute: 'name')
                     ->searchable()
                     ->preload()
-                    ->required(),  
+                    ->required(),   
+                Forms\Components\Toggle::make('enabled'),                                 
             ]);
     }
 
@@ -59,6 +60,19 @@ class FuelEquipmentResource extends Resource
                 Tables\Columns\TextColumn::make('fuelType.name')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('enabled')
+                    ->label('Status')
+                    ->getStateUsing(function ($record) {
+                        return $record->enabled ? 'Enabled' : 'Disabled';
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Enabled' => 'success',  // Verde para 'Enabled'
+                        'Disabled' => 'danger',  // Rojo para 'Disabled'
+                        default => 'gray',
+                    })
+                    // ->searchable()
+                    ->sortable(),                      
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

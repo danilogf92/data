@@ -20,9 +20,9 @@ return new class extends Migration
                 ->onDelete('cascade')->onUpdate('cascade');
 
             $table->date('date');
-            $table->integer('start_value');
-            $table->integer('end_value');
-            $table->integer('difference');
+            $table->decimal('start_value',10,3);
+            $table->decimal('end_value',10,3);
+            $table->decimal('difference',10,3);
             $table->timestamps();
         });
     }
