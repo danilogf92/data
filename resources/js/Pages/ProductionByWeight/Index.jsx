@@ -6,6 +6,8 @@ import Pagination from "@/Components/Pagination";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import WorkConditionForm from "./Index1";
+import TrabajoAlturaForm from "./TrabajoAlturaForm";
 
 export default function Index({ auth, production, queryParams = null }) {
   queryParams = queryParams || {};
@@ -172,7 +174,6 @@ export default function Index({ auth, production, queryParams = null }) {
                   <option value="20">20</option>
                   <option value="50">50</option>
                   <option value="100">100</option>
-                  {/* <option value="all">All</option> */}
                 </select>
               </div>
               <div className="col-span-1 flex items-end space-x-2">
@@ -191,9 +192,6 @@ export default function Index({ auth, production, queryParams = null }) {
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
                 <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
                   <tr>
-                    {/* <th scope="col" className="px-6 py-3">
-                      Id
-                    </th> */}
                     <th scope="col" className="px-6 py-3">
                       Date
                     </th>
@@ -222,9 +220,6 @@ export default function Index({ auth, production, queryParams = null }) {
                         index % 2 === 0 ? "bg-white" : "bg-gray-100"
                       } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                     >
-                      {/* <td className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {item.id}
-                      </td> */}
                       <td className="px-6 py-2">{item.date}</td>
                       <td className="px-6 py-2">{item.net}</td>
                       <td className="px-6 py-2">{item.total_boxes}</td>
@@ -282,17 +277,21 @@ export default function Index({ auth, production, queryParams = null }) {
                   </div>
                 </div>
               </Modal>
-              {/* <PaginationTwo links={production.meta.links} /> */}
               <Pagination links={production.meta.links} filters={filters} />
-              {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
-              {/* <pre>{JSON.stringify(queryParams, undefined, 2)}</pre> */}
             </>
           )}
           {production.data.length === 0 && (
             <NoContent text={"No Content"} icon={"🛢"} />
           )}
         </div>
+
+        <WorkConditionForm />
+        <TrabajoAlturaForm />
       </ContainerAuth>
+
+      {/* <ContainerAuth>
+        <WorkConditionForm />
+      </ContainerAuth> */}
 
       {/* <pre>{JSON.stringify(production, undefined, 2)}</pre> */}
     </AuthenticatedLayout>
