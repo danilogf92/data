@@ -3,7 +3,7 @@ import { Head } from "@inertiajs/react";
 import Container from "@/Components/Container";
 import FormEditFuelMeters from "@/Components/MyComponents/FormEditFuelMeters";
 
-export default function Edit({ auth, plants, fuelEquipment, fuel }) {
+export default function Edit({ auth, plants, fuelEquipment, fuel, equipment }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -19,6 +19,7 @@ export default function Edit({ auth, plants, fuelEquipment, fuel }) {
           plants={plants}
           fuelEquipment={fuelEquipment}
           fuel={fuel}
+          equipment={equipment}
         />
       </Container>
     </AuthenticatedLayout>

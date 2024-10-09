@@ -2,13 +2,25 @@ import { Link, useForm } from "@inertiajs/react";
 import React, { useState, useEffect } from "react";
 import InputError from "../InputError";
 
-export default function FormEditFuelMeters({ fuel, plants, fuelEquipment }) {
+export default function FormEditFuelMeters({
+  fuel,
+  plants,
+  fuelEquipment,
+  equipment,
+}) {
   const { data, setData, put, errors } = useForm({
     plant_id: fuel.plant_id || "",
     fuel_equipment_id: fuel.fuel_equipment_id || "",
     start_value: fuel.start_value * 1 || "0",
     end_value: fuel.end_value * 1 || "0",
     difference: fuel.difference * 1 || "0",
+
+    kw_start_value: fuel.kw_start_value * 1 || "0",
+    kw_end_value: fuel.kw_end_value * 1 || "0",
+    kw_difference: fuel.kw_difference * 1 || "0",
+    hour_start_value: fuel.hour_start_value * 1 || "0",
+    hour_end_value: fuel.hour_end_value * 1 || "0",
+    hour_difference: fuel.hour_difference * 1 || "0",
     date: fuel.date || "",
   });
 
@@ -31,6 +43,33 @@ export default function FormEditFuelMeters({ fuel, plants, fuelEquipment }) {
     });
   };
 
+  const handleStartKWChange = (e) => {
+    const kw_start_value = parseFloat(e.target.value) || 0;
+    const kw_end_value = parseFloat(data.kw_end_value) || 0;
+    const kw_difference = calculateDifference(kw_start_value, kw_end_value);
+
+    setData({
+      ...data,
+      kw_start_value: kw_start_value,
+      kw_difference: kw_difference,
+    });
+  };
+
+  const handleStartHourChange = (e) => {
+    const hour_start_value = parseFloat(e.target.value) || 0;
+    const hour_end_value = parseFloat(data.hour_end_value) || 0;
+    const hour_difference = calculateDifference(
+      hour_start_value,
+      hour_end_value
+    );
+
+    setData({
+      ...data,
+      hour_start_value: hour_start_value,
+      hour_difference: hour_difference,
+    });
+  };
+
   const handleEndChange = (e) => {
     const endValue = parseFloat(e.target.value) || 0;
     const startValue = parseFloat(data.start_value) || 0;
@@ -40,6 +79,33 @@ export default function FormEditFuelMeters({ fuel, plants, fuelEquipment }) {
       ...data,
       end_value: endValue,
       difference: difference,
+    });
+  };
+
+  const handleEndKWChange = (e) => {
+    const kw_end_value = parseFloat(e.target.value) || 0;
+    const kw_start_value = parseFloat(data.kw_start_value) || 0;
+    const kw_difference = calculateDifference(kw_start_value, kw_end_value);
+
+    setData({
+      ...data,
+      kw_end_value: kw_end_value,
+      kw_difference: kw_difference,
+    });
+  };
+
+  const handleEndHourChange = (e) => {
+    const hour_end_value = parseFloat(e.target.value) || 0;
+    const hour_start_value = parseFloat(data.hour_start_value) || 0;
+    const hour_difference = calculateDifference(
+      hour_start_value,
+      hour_end_value
+    );
+
+    setData({
+      ...data,
+      hour_end_value: hour_end_value,
+      hour_difference: hour_difference,
     });
   };
 
@@ -83,7 +149,8 @@ export default function FormEditFuelMeters({ fuel, plants, fuelEquipment }) {
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md rounded-lg p-4 bg-gray-200">
+    // <div className="relative overflow-x-auto shadow-md rounded-lg p-4 bg-gray-200">
+    <div className="relative overflow-x-auto shadow-md rounded-lg p-6 bg-gradient-to-r from-blue-50 to-gray-200">
       {showSuccess && (
         <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
           <div className="relative">
@@ -110,7 +177,7 @@ export default function FormEditFuelMeters({ fuel, plants, fuelEquipment }) {
         <div className="space-y-12">
           <div className="border-b border-white pb-6 text-center">
             <h2 className="font-semibold leading-7 text-gray-900 text-xl">
-              Measurement fuel
+              Update Measurement fuel
             </h2>
           </div>
 
@@ -280,6 +347,168 @@ export default function FormEditFuelMeters({ fuel, plants, fuelEquipment }) {
                   />
                 </div>
               </div>
+
+              {parseInt(equipment.enabled_kw) == 1 && (
+                <>
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor="kw_start_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Start Value KW/h
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleStartKWChange}
+                        value={data.kw_start_value}
+                        type="number"
+                        name="kw_start_value"
+                        min={0}
+                        step="0.001"
+                        id="kw_start_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.kw_start_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="kw_end_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Final Value KW/h
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleEndKWChange}
+                        value={data.kw_end_value}
+                        min={0}
+                        step="0.001"
+                        type="number"
+                        name="kw_end_value"
+                        id="kw_end_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.kw_end_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="kw_difference"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Difference KW/h
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        value={
+                          data.kw_difference >= 0 ? data.kw_difference : ""
+                        }
+                        type="text"
+                        name="kw_difference"
+                        id="kw_difference"
+                        readOnly
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-500 bg-red-200 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.kw_difference}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {parseInt(equipment.enabled_hour) == 1 && (
+                <>
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor="hour_start_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Start Value Hour
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleStartHourChange}
+                        value={data.hour_start_value}
+                        type="number"
+                        name="hour_start_value"
+                        min={0}
+                        step="0.001"
+                        id="hour_start_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.hour_start_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="hour_end_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Final Value Hour
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleEndHourChange}
+                        value={data.hour_end_value}
+                        min={0}
+                        step="0.001"
+                        type="number"
+                        name="hour_end_value"
+                        id="hour_end_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.hour_end_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="hour_difference"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Difference Hour
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        value={
+                          data.hour_difference >= 0 ? data.hour_difference : ""
+                        }
+                        type="text"
+                        name="hour_difference"
+                        id="hour_difference"
+                        readOnly
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-500 bg-red-200 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.hour_difference}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -300,6 +529,7 @@ export default function FormEditFuelMeters({ fuel, plants, fuelEquipment }) {
         </div>
       </form>
       {/* <pre>{JSON.stringify(fuel, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(equipment, undefined, 2)}</pre> */}
     </div>
   );
 }
