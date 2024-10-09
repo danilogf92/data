@@ -6,8 +6,6 @@ import Pagination from "@/Components/Pagination";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
-import WorkConditionForm from "./Index1";
-import TrabajoAlturaForm from "./TrabajoAlturaForm";
 
 export default function Index({ auth, production, queryParams = null }) {
   queryParams = queryParams || {};
@@ -284,14 +282,7 @@ export default function Index({ auth, production, queryParams = null }) {
             <NoContent text={"No Content"} icon={"🛢"} />
           )}
         </div>
-
-        <WorkConditionForm />
-        <TrabajoAlturaForm />
       </ContainerAuth>
-
-      {/* <ContainerAuth>
-        <WorkConditionForm />
-      </ContainerAuth> */}
 
       {/* <pre>{JSON.stringify(production, undefined, 2)}</pre> */}
     </AuthenticatedLayout>

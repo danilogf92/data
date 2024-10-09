@@ -257,29 +257,50 @@ export default function Index({
 
           {fuelData.data.length > 0 && (
             <>
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
+              <table className="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
                 <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
                   <tr>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-2 py-3">
                       Plant
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-2 py-3">
                       Equipment
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-2 py-3">
                       Start Value
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-2 py-3">
                       Final Value
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-2 py-3">
                       Difference
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-2 py-3">
+                      Units
+                    </th>
+                    <th scope="col" className="px-2 py-3">
+                      Start Value KW/h
+                    </th>
+                    <th scope="col" className="px-2 py-3">
+                      Final Value KW/h
+                    </th>
+                    <th scope="col" className="px-2 py-3">
+                      Difference KW/h
+                    </th>
+                    <th scope="col" className="px-2 py-3">
+                      Start Value H
+                    </th>
+                    <th scope="col" className="px-2 py-3">
+                      Final Value H
+                    </th>
+                    <th scope="col" className="px-2 py-3">
+                      Difference H
+                    </th>
+                    <th scope="col" className="px-2 py-3">
                       Date
                     </th>
                     {auth.user.roles.includes("Fuel") && (
-                      <th scope="col" className="px-6 py-3">
+                      <th scope="col" className="px-2 py-3">
                         Actions
                       </th>
                     )}
@@ -294,15 +315,22 @@ export default function Index({
                         index % 2 === 0 ? "bg-white" : "bg-gray-100"
                       } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                     >
-                      <td className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      <td className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {fuel.plant_id}
                       </td>
-                      <td className="px-6 py-2">{fuel.fuel_equipment_id}</td>
-                      <td className="px-6 py-2">{fuel.start_value}</td>
-                      <td className="px-6 py-2">{fuel.end_value} </td>
-                      <td className="px-6 py-2">{fuel.difference}</td>
+                      <td className="px-2 py-2">{fuel.fuel_equipment_id}</td>
+                      <td className="px-2 py-2">{fuel.start_value}</td>
+                      <td className="px-2 py-2">{fuel.end_value} </td>
+                      <td className="px-2 py-2">{fuel.difference}</td>
+                      <td className="px-2 py-2">{fuel.fuel_equipment_units}</td>
+                      <td className="px-2 py-2">{fuel.kw_start_value}</td>
+                      <td className="px-2 py-2">{fuel.kw_end_value}</td>
+                      <td className="px-2 py-2">{fuel.kw_difference}</td>
+                      <td className="px-2 py-2">{fuel.hour_start_value}</td>
+                      <td className="px-2 py-2">{fuel.hour_end_value}</td>
+                      <td className="px-2 py-2">{fuel.hour_difference}</td>
 
-                      <td className="px-6 py-2 text-nowrap">{fuel.date}</td>
+                      <td className="px-2 py-2 text-nowrap">{fuel.date}</td>
                       {auth.user.roles.includes("Fuel") && (
                         <td className="py-2 text-center">
                           <Link

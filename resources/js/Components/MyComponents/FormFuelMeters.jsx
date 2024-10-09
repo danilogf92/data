@@ -22,6 +22,12 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     start_value: 0,
     end_value: 0,
     difference: 0,
+    kw_start_value: 0,
+    kw_end_value: 0,
+    kw_difference: 0,
+    hour_start_value: 0,
+    hour_end_value: 0,
+    hour_difference: 0,
     date: datetest() || "",
   });
   const dateInputRef = useRef(null);
@@ -31,6 +37,8 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
   const [filteredEquipments, setFilteredEquipments] = useState([]);
   const [allEquipments, setAllEquipments] = useState(fuelEquipment);
   const [dateMeasureBefore, setDateMeasureBefore] = useState("");
+
+  const [selectedEquipment, setSelectedEquipment] = useState({});
 
   useEffect(() => {
     const today = new Date();
@@ -70,6 +78,33 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     });
   };
 
+  const handleStartKWChange = (e) => {
+    const kw_start_value = parseFloat(e.target.value) || 0;
+    const kw_end_value = parseFloat(data.kw_end_value) || 0;
+    const kw_difference = calculateDifference(kw_start_value, kw_end_value);
+
+    setData({
+      ...data,
+      kw_start_value: kw_start_value,
+      kw_difference: kw_difference,
+    });
+  };
+
+  const handleStartHourChange = (e) => {
+    const hour_start_value = parseFloat(e.target.value) || 0;
+    const hour_end_value = parseFloat(data.hour_end_value) || 0;
+    const hour_difference = calculateDifference(
+      hour_start_value,
+      hour_end_value
+    );
+
+    setData({
+      ...data,
+      hour_start_value: hour_start_value,
+      hour_difference: hour_difference,
+    });
+  };
+
   const handleEndChange = (e) => {
     const endValue = parseFloat(e.target.value) || 0;
     const startValue = parseFloat(data.start_value) || 0;
@@ -79,6 +114,33 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
       ...data,
       end_value: endValue,
       difference: difference,
+    });
+  };
+
+  const handleEndKWChange = (e) => {
+    const kw_end_value = parseFloat(e.target.value) || 0;
+    const kw_start_value = parseFloat(data.kw_start_value) || 0;
+    const kw_difference = calculateDifference(kw_start_value, kw_end_value);
+
+    setData({
+      ...data,
+      kw_end_value: kw_end_value,
+      kw_difference: kw_difference,
+    });
+  };
+
+  const handleEndHourChange = (e) => {
+    const hour_end_value = parseFloat(e.target.value) || 0;
+    const hour_start_value = parseFloat(data.hour_start_value) || 0;
+    const hour_difference = calculateDifference(
+      hour_start_value,
+      hour_end_value
+    );
+
+    setData({
+      ...data,
+      hour_end_value: hour_end_value,
+      hour_difference: hour_difference,
     });
   };
 
@@ -146,6 +208,45 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
   }, [data.plant_id, data.date, allEquipments, dateMeasureBefore]);
 
   useEffect(() => {
+    if (data.fuel_equipment_id) {
+      const foundEquipment = filteredEquipments.find(
+        (equipment) => equipment.id === parseInt(data.fuel_equipment_id)
+      );
+      setSelectedEquipment(foundEquipment || {}); // Establecer el equipo encontrado o un objeto vacío por defecto
+      console.log(foundEquipment.enabled_kw);
+
+      if (
+        parseInt(foundEquipment.enabled_kw) == 0 &&
+        parseInt(foundEquipment.enabled_hour) == 0
+      ) {
+        setData({
+          ...data,
+          kw_start_value: 0,
+          kw_end_value: 0,
+          kw_difference: 0,
+          hour_start_value: 0,
+          hour_end_value: 0,
+          hour_difference: 0,
+        });
+      } else if (parseInt(foundEquipment.enabled_kw) == 0) {
+        setData({
+          ...data,
+          kw_start_value: 0,
+          kw_end_value: 0,
+          kw_difference: 0,
+        });
+      } else if (parseInt(foundEquipment.enabled_hour) == 0) {
+        setData({
+          ...data,
+          hour_start_value: 0,
+          hour_end_value: 0,
+          hour_difference: 0,
+        });
+      }
+    }
+  }, [data.fuel_equipment_id, filteredEquipments]);
+
+  useEffect(() => {
     setData({
       ...data,
       // plant_id: "",
@@ -153,6 +254,12 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
       start_value: "",
       end_value: "",
       difference: "",
+      kw_start_value: "",
+      kw_end_value: "",
+      kw_difference: "",
+      hour_start_value: "",
+      hour_end_value: "",
+      hour_difference: "",
     });
 
     const fetchData = async () => {
@@ -188,6 +295,8 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
         setData({
           ...data,
           start_value: "0",
+          hour_start_value: "0",
+          kw_start_value: "0",
         });
 
         // Restar un día a data.date
@@ -206,10 +315,20 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
 
         if (measurement.length > 0) {
           const end_value = measurement[0]["end_value"];
+          const hour_end_value = measurement[0]["hour_end_value"];
+          const kw_end_value = measurement[0]["kw_end_value"];
+
+          console.log(measurement);
 
           setData({
             ...data,
             start_value: end_value,
+            hour_start_value: hour_end_value,
+            kw_start_value: kw_end_value,
+            hour_end_value: "",
+            kw_end_value: "",
+            kw_difference: "",
+            hour_difference: "",
           });
         }
       } catch (error) {
@@ -249,7 +368,15 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
           start_value: "",
           end_value: "",
           difference: "",
+          kw_start_value: 0,
+          kw_end_value: 0,
+          kw_difference: 0,
+          hour_start_value: 0,
+          hour_end_value: 0,
+          hour_difference: 0,
         });
+
+        setSelectedEquipment({});
 
         setShowSuccess(true);
         setTimeout(() => {
@@ -328,7 +455,6 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2">
                 <label
                   htmlFor="fuel_equipment_id"
@@ -362,7 +488,6 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2">
                 <label
                   htmlFor="date"
@@ -399,13 +524,16 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2 sm:col-start-1">
                 <label
                   htmlFor="start_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Start Value
+                  {`Start Value${
+                    selectedEquipment.units
+                      ? ` [${selectedEquipment.units}]`
+                      : ""
+                  }`}
                 </label>
                 <div className="mt-2">
                   <input
@@ -425,13 +553,16 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2">
                 <label
                   htmlFor="end_value"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Final Value
+                  {`Final Value${
+                    selectedEquipment.units
+                      ? ` [${selectedEquipment.units}]`
+                      : ""
+                  }`}
                 </label>
                 <div className="mt-2">
                   <input
@@ -451,13 +582,16 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2">
                 <label
                   htmlFor="difference"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Difference
+                  {`Difference${
+                    selectedEquipment.units
+                      ? ` [${selectedEquipment.units}]`
+                      : ""
+                  }`}
                 </label>
                 <div className="mt-2">
                   <input
@@ -474,6 +608,167 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                   />
                 </div>
               </div>
+              {parseInt(selectedEquipment.enabled_kw) == 1 && (
+                <>
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor="kw_start_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Start Value KW/h
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleStartKWChange}
+                        value={data.kw_start_value}
+                        type="number"
+                        name="kw_start_value"
+                        min={0}
+                        step="0.001"
+                        id="kw_start_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.kw_start_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="kw_end_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Final Value KW/h
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleEndKWChange}
+                        value={data.kw_end_value}
+                        min={0}
+                        step="0.001"
+                        type="number"
+                        name="kw_end_value"
+                        id="kw_end_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.kw_end_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="kw_difference"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Difference KW/h
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        value={
+                          data.kw_difference >= 0 ? data.kw_difference : ""
+                        }
+                        type="text"
+                        name="kw_difference"
+                        id="kw_difference"
+                        readOnly
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-500 bg-red-200 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.kw_difference}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {parseInt(selectedEquipment.enabled_hour) == 1 && (
+                <>
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor="hour_start_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Start Value Hour
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleStartHourChange}
+                        value={data.hour_start_value}
+                        type="number"
+                        name="hour_start_value"
+                        min={0}
+                        step="0.001"
+                        id="hour_start_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.hour_start_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="hour_end_value"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Final Value Hour
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        onChange={handleEndHourChange}
+                        value={data.hour_end_value}
+                        min={0}
+                        step="0.001"
+                        type="number"
+                        name="hour_end_value"
+                        id="hour_end_value"
+                        autoComplete="off"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.hour_end_value}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="hour_difference"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Difference Hour
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        value={
+                          data.hour_difference >= 0 ? data.hour_difference : ""
+                        }
+                        type="text"
+                        name="hour_difference"
+                        id="hour_difference"
+                        readOnly
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 disabled:bg-gray-500 bg-red-200 sm:text-sm sm:leading-6"
+                      />
+                      <InputError
+                        message={errors.hour_difference}
+                        className="mt-2 text-red-500"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -493,7 +788,10 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
           </button>
         </div>
       </form>
+      {/* <pre>{JSON.stringify(selectedEquipment, undefined, 2)}</pre> */}
       {/* <pre>{JSON.stringify(filteredEquipments, undefined, 2)}</pre> */}
+
+      {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
       {/* <pre>{JSON.stringify(allEquipments, undefined, 2)}</pre> */}
     </div>
   );
