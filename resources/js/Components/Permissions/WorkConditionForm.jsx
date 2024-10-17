@@ -1,299 +1,319 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { condiciones } from "../Constantes/Constantes";
 
-const WorkConditionForm = () => {
+const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
+  const date = () => {
+    const hoy = new Date();
+    hoy.setDate(hoy.getDate());
+    return hoy.toISOString().split("T")[0];
+  };
+  const [filteredArea, setFilteredArea] = useState([]);
+  const [allAreas, setAllAreas] = useState(areaMachine);
+  const [allSuppliers, setAllSuppliers] = useState(suppliers);
+
+  // Inicializa el estado de formData
   const [formData, setFormData] = useState({
-    fechaEjecucion: "8/16/2024",
-    desde: "6:00",
+    fechaEjecucion: date() || "",
+    desde: "06:00",
     hasta: "23:00",
-    inspectorSSA: "AREA FREON COMPRESORES",
-    proceso: "Ciesa 1",
-    areaMaquina: "AREA FREON COMPRESORES",
-    ordenTrabajo: "N/A",
-    ejecutorTrabajo: "ARQ FRANCO",
-    descripcionTrabajo: "Pintura y empaste",
-    TrabajosIncompatible: "Vacios",
-    RiesgosFactores: "Vacios",
-    altoRiesgo: {
-      electrico: "NO",
-      soldadura: "NO",
-      alturas: "SI",
-      cocinadores: "NO",
-      quimicos: "NO",
-      levantarPesado: "NO",
-    },
-    condiciones: [
-      {
-        name: "EQUIPO/ÁREA FUERA DE SERVICIO",
-        cumple: "SI",
-        observaciones: "",
-      },
-      { name: "VÁLVULAS CERRADAS", cumple: "SI", observaciones: "" },
-      { name: "VÁLVULAS BLOQUEADAS", cumple: "SI", observaciones: "" },
-      { name: "INTERRUPTORES APAGADOS", cumple: "SI", observaciones: "" },
-      {
-        name: "TABLEROS DE CONTROL ELÉCTRICO BLOQUEADOS",
-        cumple: "SI",
-        observaciones: "",
-      },
-      { name: "EQUIPOS PURGADOS", cumple: "SI", observaciones: "" },
-      { name: "EQUIPOS SIN RESIDUOS", cumple: "SI", observaciones: "" },
-      { name: "EQUIPOS DRENADOS", cumple: "SI", observaciones: "" },
-      { name: "EQUIPOS SIN PRESIÓN", cumple: "SI", observaciones: "" },
-      {
-        name: "EQUIPOS SIN ENERGÍA ELÉCTRICA",
-        cumple: "SI",
-        observaciones: "",
-      },
-      {
-        name: "EQUIPOS A TEMPERATURA ADECUADA",
-        cumple: "SI",
-        observaciones: "",
-      },
-      {
-        name: "POSIBLE CONTAMINACIÓN CRUZADA DURANTE/ DESPUÉS DEL TRABAJO",
-        cumple: "NO",
-        observaciones: "",
-      },
-      {
-        name: "POSIBLES IMPACTOS AMBIENTALES (RESIDUOS)",
-        cumple: "SI",
-        observaciones: "",
-      },
-      {
-        name: "Área Circundante Libre de Otros Elementos de Riesgo",
-        cumple: "SI",
-        observaciones: "",
-      },
-      {
-        name: "PERSONAL INVOLUCRADO INFORMADO",
-        cumple: "SI",
-        observaciones: "",
-      },
-      {
-        name: "EQUIPO DE EMERGENCIA DISPONIBLE",
-        cumple: "SI",
-        observaciones: "",
-      },
-      { name: "PERSONAL EJECUTOR CAPACITADO", cumple: "SI", observaciones: "" },
-      {
-        name: "SUPERVISIÓN PERMANENTE",
-        cumple: "NO",
-        observaciones: "Cada 2 hrs",
-      },
-    ],
+    inspectorSSA: "Inspector",
+    plant: "",
+    areaMaquina: "",
+    ejecutorTrabajo: "",
+    descripcionTrabajo: "",
+    condiciones,
+    TrabajosIncompatible: "",
+    RiesgosFactores: "",
+    TrabajosElectricos: "NO",
+    TrabajosDeSoldadura: "NO",
+    TrabajosEnAlturas: "NO",
+    TrabajosDentroCocinadores: "NO",
+    TrabajosTransportar: "NO",
+    TrabajosLevantarObjetos: "NO",
   });
 
-  const handleChange = (index, field, value) => {
-    const newCondiciones = [...formData.condiciones];
-    newCondiciones[index][field] = value;
-    setFormData({ ...formData, condiciones: newCondiciones });
-  };
-
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name in formData.altoRiesgo) {
-      setFormData({
-        ...formData,
-        altoRiesgo: {
-          ...formData.altoRiesgo,
-          [name]: value,
-        },
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+  const handleConditionChange = (index, value) => {
+    const newCondiciones = [...condiciones];
+    newCondiciones[index].cumple = value;
+    setFormData((prevData) => ({
+      ...prevData,
+      condiciones: newCondiciones,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    post(route("permission.store"), {
+      onSuccess: (response) => {
+        // console.log("Respuesta exitosa:", response);
+        // setTimeout(() => {
+        //   setShowSuccess(false);
+        // }, 3000);
+      },
+      onError: (errors) => {
+        console.error("Errores:", errors);
+        // Opcional: mostrar errores en la interfaz de usuario
+      },
+    });
   };
+
+  const handlePlantChange = async (selectedPlantId) => {
+    const filteredArea = allAreas.filter(
+      (area) => area.plant_id === parseInt(selectedPlantId, 10)
+    );
+    setFilteredArea(filteredArea);
+  };
+
+  useEffect(() => {
+    handlePlantChange(formData.plant);
+  }, [formData.plant]);
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto">
-      {/* Tabla de Fecha Ejecución */}
+    <form onSubmit={onSubmit} className="border border-gray-300 p-4 rounded-lg">
       <table className="table-auto w-full mb-4 border-collapse border border-gray-300">
         <tbody>
           <tr className="bg-blue-900 text-white">
-            <th className="p-2 border border-gray-300">Fecha Ejecución</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
-              {formData.fechaEjecucion}
+            <th className="p-2 border border-gray-700">Fecha Ejecución</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+              <input
+                type="date"
+                name="fechaEjecucion"
+                value={formData.fechaEjecucion}
+                onChange={handleChange}
+              />
             </td>
-            <th className="p-2 border border-gray-300">DESDE:</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
-              {formData.desde}
+            <th className="p-2 border border-gray-700">DESDE:</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+              <input
+                type="time"
+                name="desde"
+                value={formData.desde}
+                onChange={handleChange}
+              />
             </td>
-            <th className="p-2 border border-gray-300">HASTA:</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
-              {formData.hasta}
+            <th className="p-2 border border-gray-700">HASTA:</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+              <input
+                type="time"
+                name="hasta"
+                value={formData.hasta}
+                onChange={handleChange}
+              />
             </td>
-            <th className="p-2 border border-gray-300">Inspector SSA</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
+
+            <th className="p-2 border border-gray-700">Inspector SSA</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
               {formData.inspectorSSA}
             </td>
           </tr>
           <tr className="bg-blue-900 text-white">
-            <th className="p-2 border border-gray-300">Proceso</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
-              {formData.proceso}
+            <th className="p-2 border border-gray-700">Planta</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+              <div className="mt-2">
+                <select
+                  onChange={handleChange}
+                  value={formData.plant}
+                  id="plant"
+                  name="plant"
+                  autoComplete="plant"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                >
+                  <option value="" disabled>
+                    -- Select Plant --
+                  </option>
+                  {plants.map((plant) => (
+                    <option key={plant.id} value={plant.id}>
+                      {plant.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </td>
-            <th className="p-2 border border-gray-300">Área/Máquina</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
-              {formData.areaMaquina}
+            <th className="p-2 border border-gray-700">Área/Máquina</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+              <div className="mt-2">
+                <select
+                  onChange={handleChange}
+                  value={formData.areaMaquina}
+                  id="areaMaquina"
+                  name="areaMaquina"
+                  autoComplete="areaMaquina"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                >
+                  <option value="" disabled>
+                    -- Select Machine --
+                  </option>
+                  {filteredArea.map((machine) => (
+                    <option key={machine.id} value={machine.nombre}>
+                      {machine.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </td>
-            <th className="p-2 border border-gray-300">Orden/Trabajo #</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
-              {formData.ordenTrabajo}
+            <th className="p-2 border border-gray-700">Proveedor</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+              <div className="mt-2">
+                <select
+                  onChange={handleChange}
+                  value={formData.ejecutorTrabajo}
+                  id="ejecutorTrabajo"
+                  name="ejecutorTrabajo"
+                  autoComplete="ejecutorTrabajo"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                >
+                  <option value="" disabled>
+                    -- Select Proveedor --
+                  </option>
+                  {allSuppliers.map((proveedor) => (
+                    <option key={proveedor.id} value={proveedor.name}>
+                      {proveedor.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </td>
-            <th className="p-2 border border-gray-300">Ejecutor Del Trabajo</th>
-            <td className="p-2 border border-gray-300 bg-lime-300">
-              {formData.ejecutorTrabajo}
+            <th className="p-2 border border-gray-700">Orden/Trabajo</th>
+            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+              No Aplica
             </td>
           </tr>
-        </tbody>
-      </table>
 
-      {/* Tabla de Descripción Breve del Trabajo */}
-      <table className="table-auto w-full mb-4 border-collapse border border-gray-300">
-        <tbody>
           <tr className="bg-blue-900 text-white">
-            <th className="p-2 border border-gray-300">
+            <th className="p-2 border border-gray-700">
               Descripción Breve Del Trabajo a Realizar
             </th>
-            <td className="p-2 border border-gray-300 bg-gray-100" colSpan="4">
+            <td className="p-2 border bg-gray-300 text-gray-700" colSpan="8">
               <textarea
                 name="descripcionTrabajo"
                 value={formData.descripcionTrabajo}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 text-zinc-800"
                 rows="4"
+                placeholder="Descripción del trabajo..."
               ></textarea>
             </td>
           </tr>
-        </tbody>
-      </table>
 
-      {/* Tabla de Condiciones */}
-      <table className="table-auto w-full border-collapse border border-gray-300">
-        <thead>
           <tr className="bg-blue-900 text-white">
-            <th className="p-2 border border-gray-300">CUMPLE CON</th>
-            <th className="p-2 border border-gray-300">SÍ</th>
-            <th className="p-2 border border-gray-300">NO</th>
-            <th className="p-2 border border-gray-300">N/A</th>
-            <th className="p-2 border border-gray-300">OBSERVACIONES</th>
+            <th className="p-2 border border-gray-700">CUMPLE CON</th>
+            <th className="p-2 border border-gray-700">SÍ</th>
+            <th className="p-2 border border-gray-700">NO</th>
+            <th className="p-2 border border-gray-700">N/A</th>
+            <th className="p-2 border border-gray-700" colSpan="4">
+              OBSERVACIONES
+            </th>
           </tr>
-        </thead>
-        <tbody>
-          {formData.condiciones.map((condicion, index) => (
+
+          {condiciones.map((condicion, index) => (
             <tr key={index}>
               <td className="p-2 border border-gray-300">{condicion.name}</td>
               <td className="p-2 border border-gray-300">
                 <input
                   type="radio"
-                  name={`cumple-${index}`}
+                  name={`cumple_${index}`}
                   value="SI"
                   checked={condicion.cumple === "SI"}
-                  onChange={() => handleChange(index, "cumple", "SI")}
+                  onChange={() => handleConditionChange(index, "SI")}
                 />
               </td>
               <td className="p-2 border border-gray-300">
                 <input
                   type="radio"
-                  name={`cumple-${index}`}
+                  name={`cumple_${index}`}
                   value="NO"
                   checked={condicion.cumple === "NO"}
-                  onChange={() => handleChange(index, "cumple", "NO")}
+                  onChange={() => handleConditionChange(index, "NO")}
                 />
               </td>
               <td className="p-2 border border-gray-300">
                 <input
                   type="radio"
-                  name={`cumple-${index}`}
+                  name={`cumple_${index}`}
                   value="N/A"
                   checked={condicion.cumple === "N/A"}
-                  onChange={() => handleChange(index, "cumple", "N/A")}
+                  onChange={() => handleConditionChange(index, "N/A")}
                 />
               </td>
-              <td className="p-2 border border-gray-300">
-                <input
+              <td className="p-2 border border-gray-300" colSpan="4">
+                <textarea
                   type="text"
+                  className="w-full p-1 border border-gray-300"
+                  placeholder="Observaciones"
                   value={condicion.observaciones}
-                  onChange={(e) =>
-                    handleChange(index, "observaciones", e.target.value)
-                  }
-                  className="w-full p-2 border border-gray-300"
+                  onChange={(e) => {
+                    const newCondiciones = [...formData.condiciones];
+                    newCondiciones[index].observaciones = e.target.value;
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      condiciones: newCondiciones,
+                    }));
+                  }}
                 />
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
 
-      {/* Tabla de Trabajos Incompatible en las Cercanias */}
-      <table className="table-auto w-full mb-4 border-collapse border border-gray-300">
-        <tbody>
           <tr className="bg-blue-900 text-white">
             <th className="p-2 border border-gray-300">
               Trabajos Incompatible en las Cercanias:
             </th>
-            <td className="p-2 border border-gray-300 bg-gray-100" colSpan="4">
+            <td className="p-2 border border-gray-300" colSpan={8}>
               <textarea
                 name="TrabajosIncompatible"
                 value={formData.TrabajosIncompatible}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 text-zinc-800"
                 rows="4"
+                placeholder="Observaciones"
               ></textarea>
             </td>
           </tr>
-        </tbody>
-      </table>
 
-      {/* Tabla de Riesgos y Factores de Riesgo en la Tarea Reconocidos por el Ejecutor del Trabajo */}
-      <table className="table-auto w-full border-collapse border border-gray-300">
-        <tbody>
           <tr className="bg-blue-900 text-white">
             <th className="p-2 border border-gray-300">
-              Riesgos y Factores de Riesgo en la Tarea Reconocidos por el
-              Ejecutor del Trabajo:
+              Trabajos Incompatible en las Cercanias:
             </th>
-            <td className="p-2 border border-gray-300 bg-gray-100" colSpan="4">
+            <td className="p-2 border border-gray-300" colSpan={8}>
               <textarea
                 name="RiesgosFactores"
                 value={formData.RiesgosFactores}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 text-zinc-800"
                 rows="4"
+                placeholder="Observaciones"
               ></textarea>
             </td>
           </tr>
-        </tbody>
-      </table>
 
-      <table className="table-auto w-full mb-4 border-collapse border border-gray-300">
-        <thead>
           <tr className="bg-blue-900 text-white">
-            <th className="p-2 border border-gray-300" colSpan="3">
+            <th className="text-center p-2 border border-gray-300" colSpan={8}>
               Destimación de Alto Riesgo de Actividad
             </th>
           </tr>
-        </thead>
-        <tbody>
+
           <tr>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={6}>
               Intervención en instalaciones o equipos eléctricos de mediana
               tensión (1KV - 50KV) o alta tensión (50KV - 500KV)
             </td>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={2}>
               <label>
                 <input
                   className="mr-1"
                   type="radio"
-                  name="electrico"
+                  name="TrabajosElectricos" // Cambié aquí para que coincida con el nombre en formData
                   value="SI"
-                  checked={formData.altoRiesgo.electrico === "SI"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosElectricos === "SI"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
               </label>
@@ -301,28 +321,29 @@ const WorkConditionForm = () => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="electrico"
+                  name="TrabajosElectricos" // Cambié aquí también
                   value="NO"
-                  checked={formData.altoRiesgo.electrico === "NO"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosElectricos === "NO"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
               </label>
             </td>
           </tr>
+
           <tr>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={6}>
               Trabajo de soldadura fuera de los talleres (ambiente controlado)
             </td>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={2}>
               <label>
                 <input
                   className="mr-1"
                   type="radio"
-                  name="soldadura"
+                  name="TrabajosDeSoldadura" // Cambié aquí para que coincida con el nombre en formData
                   value="SI"
-                  checked={formData.altoRiesgo.soldadura === "SI"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosDeSoldadura === "SI"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
               </label>
@@ -330,29 +351,30 @@ const WorkConditionForm = () => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="soldadura"
+                  name="TrabajosDeSoldadura" // Cambié aquí también
                   value="NO"
-                  checked={formData.altoRiesgo.soldadura === "NO"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosDeSoldadura === "NO"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
               </label>
             </td>
           </tr>
+
           <tr>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={6}>
               Trabajos de cualquier tipo, a alturas mayores a la referencial (h
               + 1 piso de altura), fuera de ambiente controlado.
             </td>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={2}>
               <label>
                 <input
                   className="mr-1"
                   type="radio"
-                  name="alturas"
+                  name="TrabajosEnAlturas" // Cambié aquí para que coincida con el nombre en formData
                   value="SI"
-                  checked={formData.altoRiesgo.alturas === "SI"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosEnAlturas === "SI"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
               </label>
@@ -360,29 +382,30 @@ const WorkConditionForm = () => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="alturas"
+                  name="TrabajosEnAlturas" // Cambié aquí también
                   value="NO"
-                  checked={formData.altoRiesgo.alturas === "NO"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosEnAlturas === "NO"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
               </label>
             </td>
           </tr>
+
           <tr>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={6}>
               Trabajos dentro de cocinadores, autoclaves, cisternas, tanques,
               reservorios o similares
             </td>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={2}>
               <label>
                 <input
                   className="mr-1"
                   type="radio"
-                  name="cocinadores"
+                  name="TrabajosDentroCocinadores" // Cambié aquí para que coincida con el nombre en formData
                   value="SI"
-                  checked={formData.altoRiesgo.cocinadores === "SI"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosDentroCocinadores === "SI"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
               </label>
@@ -390,29 +413,30 @@ const WorkConditionForm = () => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="cocinadores"
+                  name="TrabajosDentroCocinadores" // Cambié aquí también
                   value="NO"
-                  checked={formData.altoRiesgo.cocinadores === "NO"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosDentroCocinadores === "NO"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
               </label>
             </td>
           </tr>
+
           <tr>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={6}>
               Transportar, trasvasar, mezclar, utilizar o manipular químicos
               peligrosos, fuera del ambiente controlado
             </td>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={2}>
               <label>
                 <input
                   className="mr-1"
                   type="radio"
-                  name="quimicos"
+                  name="TrabajosTransportar" // Cambié aquí para que coincida con el nombre en formData
                   value="SI"
-                  checked={formData.altoRiesgo.quimicos === "SI"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosTransportar === "SI"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
               </label>
@@ -420,29 +444,30 @@ const WorkConditionForm = () => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="quimicos"
+                  name="TrabajosTransportar" // Cambié aquí también
                   value="NO"
-                  checked={formData.altoRiesgo.quimicos === "NO"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosTransportar === "NO"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
               </label>
             </td>
           </tr>
+
           <tr>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={6}>
               Trabajos que implican levantar objetos pesados o cargas utilizando
               equipos especializados, como grúas, polipastos o similares
             </td>
-            <td className="p-2 border border-gray-300">
+            <td className="p-2 border border-gray-300" colSpan={2}>
               <label>
                 <input
                   className="mr-1"
                   type="radio"
-                  name="levantarPesado"
+                  name="TrabajosLevantarObjetos" // Cambié aquí para que coincida con el nombre en formData
                   value="SI"
-                  checked={formData.altoRiesgo.levantarPesado === "SI"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosLevantarObjetos === "SI"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
               </label>
@@ -450,37 +475,27 @@ const WorkConditionForm = () => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="levantarPesado"
+                  name="TrabajosLevantarObjetos" // Cambié aquí también
                   value="NO"
-                  checked={formData.altoRiesgo.levantarPesado === "NO"}
-                  onChange={handleInputChange}
+                  checked={formData.TrabajosLevantarObjetos === "NO"}
+                  onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
               </label>
-            </td>
-          </tr>
-          <tr>
-            <td colSpan="2" className="p-4 border border-gray-300 bg-gray-100">
-              Si se ha seleccionado alguna de las opciones anteriores, el
-              trabajo está catalogado como de "alto riesgo". El coordinador de
-              la actividad deberá contactarse con SSAP para la gestión
-              correspondiente.
-            </td>
-          </tr>
-          <tr>
-            <td colSpan="2" className="p-4 border border-gray-300 bg-gray-50">
-              <strong>NOTA:</strong> Ambiente o área controlada: Lugar de
-              trabajo que tiene controles, herramientas, procedimientos y/o
-              métodos específicos para proteger a los trabajadores de los
-              riesgos presentes en sus actividades laborales.
             </td>
           </tr>
         </tbody>
       </table>
 
-      <button type="submit" className="mt-4 bg-blue-600 text-white p-2 rounded">
-        Submit
+      <button
+        type="submit"
+        className="mt-4 block mx-auto bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition duration-300"
+      >
+        Save
       </button>
+
+      {/* <pre>{JSON.stringify(formData, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(suppliers, undefined, 2)}</pre> */}
     </form>
   );
 };

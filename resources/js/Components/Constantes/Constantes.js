@@ -1,0 +1,36 @@
+export const condiciones = [
+  { name: "EQUIPO/ÁREA FUERA DE SERVICIO", cumple: "SI", observaciones: "" },
+  { name: "VÁLVULAS CERRADAS", cumple: "SI", observaciones: "" },
+  { name: "VÁLVULAS BLOQUEADAS", cumple: "SI", observaciones: "" },
+  { name: "INTERRUPTORES APAGADOS", cumple: "SI", observaciones: "" },
+  {
+    name: "TABLEROS DE CONTROL ELÉCTRICO BLOQUEADOS",
+    cumple: "SI",
+    observaciones: "",
+  },
+  { name: "EQUIPOS PURGADOS", cumple: "SI", observaciones: "" },
+  { name: "EQUIPOS SIN RESIDUOS", cumple: "SI", observaciones: "" },
+  { name: "EQUIPOS DRENADOS", cumple: "SI", observaciones: "" },
+  { name: "EQUIPOS SIN PRESIÓN", cumple: "SI", observaciones: "" },
+  { name: "EQUIPOS SIN ENERGÍA ELÉCTRICA", cumple: "SI", observaciones: "" },
+  { name: "EQUIPOS A TEMPERATURA ADECUADA", cumple: "SI", observaciones: "" },
+  {
+    name: "POSIBLE CONTAMINACIÓN CRUZADA DURANTE/ DESPUÉS DEL TRABAJO",
+    cumple: "NO",
+    observaciones: "",
+  },
+  {
+    name: "POSIBLES IMPACTOS AMBIENTALES (RESIDUOS)",
+    cumple: "SI",
+    observaciones: "",
+  },
+  {
+    name: "Área Circundante Libre de Otros Elementos de Riesgo",
+    cumple: "SI",
+    observaciones: "",
+  },
+  { name: "PERSONAL INVOLUCRADO INFORMADO", cumple: "SI", observaciones: "" },
+  { name: "EQUIPO DE EMERGENCIA DISPONIBLE", cumple: "SI", observaciones: "" },
+  { name: "PERSONAL EJECUTOR CAPACITADO", cumple: "SI", observaciones: "" },
+  { name: "SUPERVISIÓN PERMANENTE", cumple: "NO", observaciones: "Cada 2 hrs" },
+];
