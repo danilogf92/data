@@ -3,7 +3,13 @@ import { Head } from "@inertiajs/react";
 import Container from "@/Components/Container";
 import WorkConditionForm from "@/Components/Permissions/WorkConditionForm";
 
-export default function Create({ auth, plants, areaMachine, suppliers }) {
+export default function Create({
+  auth,
+  plants,
+  areaMachine,
+  suppliers,
+  conditions,
+}) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -19,6 +25,7 @@ export default function Create({ auth, plants, areaMachine, suppliers }) {
           plants={plants}
           areaMachine={areaMachine}
           suppliers={suppliers}
+          conditions={conditions}
         />
       </Container>
     </AuthenticatedLayout>

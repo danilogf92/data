@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { condiciones } from "../Constantes/Constantes";
+import { useForm } from "@inertiajs/react";
 
-const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
+const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
   const date = () => {
     const hoy = new Date();
     hoy.setDate(hoy.getDate());
@@ -11,8 +11,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
   const [allAreas, setAllAreas] = useState(areaMachine);
   const [allSuppliers, setAllSuppliers] = useState(suppliers);
 
-  // Inicializa el estado de formData
-  const [formData, setFormData] = useState({
+  const { data, setdata, post, errors } = useForm({
     fechaEjecucion: date() || "",
     desde: "06:00",
     hasta: "23:00",
@@ -21,7 +20,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
     areaMaquina: "",
     ejecutorTrabajo: "",
     descripcionTrabajo: "",
-    condiciones,
+    condiciones: conditions,
     TrabajosIncompatible: "",
     RiesgosFactores: "",
     TrabajosElectricos: "NO",
@@ -34,15 +33,15 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setdata((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
   const handleConditionChange = (index, value) => {
-    const newCondiciones = [...condiciones];
+    const newCondiciones = [...conditions];
     newCondiciones[index].cumple = value;
-    setFormData((prevData) => ({
+    setdata((prevData) => ({
       ...prevData,
       condiciones: newCondiciones,
     }));
@@ -53,7 +52,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
 
     post(route("permission.store"), {
       onSuccess: (response) => {
-        // console.log("Respuesta exitosa:", response);
+        console.log("Respuesta exitosa:", response);
         // setTimeout(() => {
         //   setShowSuccess(false);
         // }, 3000);
@@ -73,8 +72,10 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
   };
 
   useEffect(() => {
-    handlePlantChange(formData.plant);
-  }, [formData.plant]);
+    if (data && data.plant) {
+      handlePlantChange(data.plant);
+    }
+  }, [data]);
 
   return (
     <form onSubmit={onSubmit} className="border border-gray-300 p-4 rounded-lg">
@@ -86,7 +87,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
               <input
                 type="date"
                 name="fechaEjecucion"
-                value={formData.fechaEjecucion}
+                value={data.fechaEjecucion}
                 onChange={handleChange}
               />
             </td>
@@ -95,7 +96,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
               <input
                 type="time"
                 name="desde"
-                value={formData.desde}
+                value={data.desde}
                 onChange={handleChange}
               />
             </td>
@@ -104,14 +105,14 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
               <input
                 type="time"
                 name="hasta"
-                value={formData.hasta}
+                value={data.hasta}
                 onChange={handleChange}
               />
             </td>
 
             <th className="p-2 border border-gray-700">Inspector SSA</th>
             <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
-              {formData.inspectorSSA}
+              {data.inspectorSSA}
             </td>
           </tr>
           <tr className="bg-blue-900 text-white">
@@ -120,7 +121,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
               <div className="mt-2">
                 <select
                   onChange={handleChange}
-                  value={formData.plant}
+                  value={data.plant}
                   id="plant"
                   name="plant"
                   autoComplete="plant"
@@ -142,7 +143,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
               <div className="mt-2">
                 <select
                   onChange={handleChange}
-                  value={formData.areaMaquina}
+                  value={data.areaMaquina}
                   id="areaMaquina"
                   name="areaMaquina"
                   autoComplete="areaMaquina"
@@ -164,7 +165,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
               <div className="mt-2">
                 <select
                   onChange={handleChange}
-                  value={formData.ejecutorTrabajo}
+                  value={data.ejecutorTrabajo}
                   id="ejecutorTrabajo"
                   name="ejecutorTrabajo"
                   autoComplete="ejecutorTrabajo"
@@ -194,7 +195,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
             <td className="p-2 border bg-gray-300 text-gray-700" colSpan="8">
               <textarea
                 name="descripcionTrabajo"
-                value={formData.descripcionTrabajo}
+                value={data.descripcionTrabajo}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 text-zinc-800"
                 rows="4"
@@ -213,46 +214,57 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
             </th>
           </tr>
 
-          {condiciones.map((condicion, index) => (
+          {conditions.map((condicion, index) => (
             <tr key={index}>
-              <td className="p-2 border border-gray-300">{condicion.name}</td>
-              <td className="p-2 border border-gray-300">
-                <input
-                  type="radio"
-                  name={`cumple_${index}`}
-                  value="SI"
-                  checked={condicion.cumple === "SI"}
-                  onChange={() => handleConditionChange(index, "SI")}
-                />
+              <td className="p-2 border border-gray-300 text-center">
+                {condicion.nombre}
               </td>
+
               <td className="p-2 border border-gray-300">
-                <input
-                  type="radio"
-                  name={`cumple_${index}`}
-                  value="NO"
-                  checked={condicion.cumple === "NO"}
-                  onChange={() => handleConditionChange(index, "NO")}
-                />
+                <div className="flex justify-center items-center">
+                  <input
+                    type="radio"
+                    name={`cumple_${index}`}
+                    value="SI"
+                    checked={condicion.cumple === "SI"}
+                    onChange={() => handleConditionChange(index, "SI")}
+                  />
+                </div>
               </td>
+
               <td className="p-2 border border-gray-300">
-                <input
-                  type="radio"
-                  name={`cumple_${index}`}
-                  value="N/A"
-                  checked={condicion.cumple === "N/A"}
-                  onChange={() => handleConditionChange(index, "N/A")}
-                />
+                <div className="flex justify-center items-center">
+                  <input
+                    type="radio"
+                    name={`cumple_${index}`}
+                    value="NO"
+                    checked={condicion.cumple === "NO"}
+                    onChange={() => handleConditionChange(index, "NO")}
+                  />
+                </div>
               </td>
+
+              <td className="p-2 border border-gray-300">
+                <div className="flex justify-center items-center">
+                  <input
+                    type="radio"
+                    name={`cumple_${index}`}
+                    value="N/A"
+                    checked={condicion.cumple === "N/A"}
+                    onChange={() => handleConditionChange(index, "N/A")}
+                  />
+                </div>
+              </td>
+
               <td className="p-2 border border-gray-300" colSpan="4">
                 <textarea
-                  type="text"
-                  className="w-full p-1 border border-gray-300"
+                  className="w-full p-2 border border-gray-300"
                   placeholder="Observaciones"
                   value={condicion.observaciones}
                   onChange={(e) => {
-                    const newCondiciones = [...formData.condiciones];
+                    const newCondiciones = [...data.condiciones];
                     newCondiciones[index].observaciones = e.target.value;
-                    setFormData((prevData) => ({
+                    setdata((prevData) => ({
                       ...prevData,
                       condiciones: newCondiciones,
                     }));
@@ -269,7 +281,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
             <td className="p-2 border border-gray-300" colSpan={8}>
               <textarea
                 name="TrabajosIncompatible"
-                value={formData.TrabajosIncompatible}
+                value={data.TrabajosIncompatible}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 text-zinc-800"
                 rows="4"
@@ -285,7 +297,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
             <td className="p-2 border border-gray-300" colSpan={8}>
               <textarea
                 name="RiesgosFactores"
-                value={formData.RiesgosFactores}
+                value={data.RiesgosFactores}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 text-zinc-800"
                 rows="4"
@@ -310,9 +322,9 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="TrabajosElectricos" // Cambié aquí para que coincida con el nombre en formData
+                  name="TrabajosElectricos" // Cambié aquí para que coincida con el nombre en data
                   value="SI"
-                  checked={formData.TrabajosElectricos === "SI"}
+                  checked={data.TrabajosElectricos === "SI"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
@@ -323,7 +335,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                   type="radio"
                   name="TrabajosElectricos" // Cambié aquí también
                   value="NO"
-                  checked={formData.TrabajosElectricos === "NO"}
+                  checked={data.TrabajosElectricos === "NO"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
@@ -340,9 +352,9 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="TrabajosDeSoldadura" // Cambié aquí para que coincida con el nombre en formData
+                  name="TrabajosDeSoldadura" // Cambié aquí para que coincida con el nombre en data
                   value="SI"
-                  checked={formData.TrabajosDeSoldadura === "SI"}
+                  checked={data.TrabajosDeSoldadura === "SI"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
@@ -353,7 +365,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                   type="radio"
                   name="TrabajosDeSoldadura" // Cambié aquí también
                   value="NO"
-                  checked={formData.TrabajosDeSoldadura === "NO"}
+                  checked={data.TrabajosDeSoldadura === "NO"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
@@ -371,9 +383,9 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="TrabajosEnAlturas" // Cambié aquí para que coincida con el nombre en formData
+                  name="TrabajosEnAlturas" // Cambié aquí para que coincida con el nombre en data
                   value="SI"
-                  checked={formData.TrabajosEnAlturas === "SI"}
+                  checked={data.TrabajosEnAlturas === "SI"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
@@ -384,7 +396,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                   type="radio"
                   name="TrabajosEnAlturas" // Cambié aquí también
                   value="NO"
-                  checked={formData.TrabajosEnAlturas === "NO"}
+                  checked={data.TrabajosEnAlturas === "NO"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
@@ -402,9 +414,9 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="TrabajosDentroCocinadores" // Cambié aquí para que coincida con el nombre en formData
+                  name="TrabajosDentroCocinadores" // Cambié aquí para que coincida con el nombre en data
                   value="SI"
-                  checked={formData.TrabajosDentroCocinadores === "SI"}
+                  checked={data.TrabajosDentroCocinadores === "SI"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
@@ -415,7 +427,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                   type="radio"
                   name="TrabajosDentroCocinadores" // Cambié aquí también
                   value="NO"
-                  checked={formData.TrabajosDentroCocinadores === "NO"}
+                  checked={data.TrabajosDentroCocinadores === "NO"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
@@ -433,9 +445,9 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="TrabajosTransportar" // Cambié aquí para que coincida con el nombre en formData
+                  name="TrabajosTransportar" // Cambié aquí para que coincida con el nombre en data
                   value="SI"
-                  checked={formData.TrabajosTransportar === "SI"}
+                  checked={data.TrabajosTransportar === "SI"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
@@ -446,7 +458,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                   type="radio"
                   name="TrabajosTransportar" // Cambié aquí también
                   value="NO"
-                  checked={formData.TrabajosTransportar === "NO"}
+                  checked={data.TrabajosTransportar === "NO"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
@@ -464,9 +476,9 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                 <input
                   className="mr-1"
                   type="radio"
-                  name="TrabajosLevantarObjetos" // Cambié aquí para que coincida con el nombre en formData
+                  name="TrabajosLevantarObjetos" // Cambié aquí para que coincida con el nombre en data
                   value="SI"
-                  checked={formData.TrabajosLevantarObjetos === "SI"}
+                  checked={data.TrabajosLevantarObjetos === "SI"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 Sí
@@ -477,7 +489,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
                   type="radio"
                   name="TrabajosLevantarObjetos" // Cambié aquí también
                   value="NO"
-                  checked={formData.TrabajosLevantarObjetos === "NO"}
+                  checked={data.TrabajosLevantarObjetos === "NO"}
                   onChange={handleChange} // Aquí solo llamas a handleChange
                 />
                 No
@@ -486,16 +498,14 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers }) => {
           </tr>
         </tbody>
       </table>
-
       <button
         type="submit"
         className="mt-4 block mx-auto bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition duration-300"
       >
         Save
       </button>
-
-      {/* <pre>{JSON.stringify(formData, undefined, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(suppliers, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(conditions, undefined, 2)}</pre> */}
     </form>
   );
 };
