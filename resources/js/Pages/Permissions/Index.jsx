@@ -1,10 +1,104 @@
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
 import ExportButton from "@/Components/MyComponents/ExportButton";
+import { NoContent } from "@/Components/MyComponents/NoContent";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
+import { useEffect, useState } from "react";
+import Pagination from "@/Components/Pagination";
 
-export default function Index({ auth }) {
+export default function Index({ auth, data, queryParams = null }) {
+  queryParams = queryParams || {};
+  const [filters, setFilters] = useState({
+    date: queryParams.date || "",
+    rows: queryParams.rows || 5,
+  });
+  const { flash } = usePage().props;
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [measurementToDelete, setMeasurementToDelete] = useState(null);
+
+  const onDeleteMeasurement = () => {
+    if (!measurementToDelete) return;
+
+    deleteMeasurement(measurementToDelete);
+    setIsDeleteModalOpen(false);
+  };
+
+  const deleteMeasurement = (permission) => {
+    router.delete(route("permission.destroy", permission.id), {
+      onSuccess: (response) => {},
+      onError: (errors) => {},
+    });
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+
+    // Actualizar el estado local de los filtros
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+
+    // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
+    router.get(
+      route("permission.index"),
+      {
+        ...filters,
+        [name]: value, // Actualiza el filtro específico que cambió
+      },
+      {
+        preserveState: true,
+        replace: true,
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (flash.success) {
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+    }
+  }, [flash]);
+
+  const clearFilter = () => {
+    setFilters({
+      date: "",
+      rows: 5,
+    });
+
+    router.get(route("permission.index"));
+  };
+
+  const handleExport = async (item) => {
+    const response = await fetch(route("approval.export", item.id), {
+      method: "GET",
+      headers: {
+        "Content-Type":
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob(); // Obtén el archivo como blob
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Permiso_${item.plant}_${item.areaMaquina}_${
+        item.ejecutorTrabajo
+      }_ ${new Date().toLocaleDateString()}.xlsx`; // Nombre del archivo
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } else {
+      console.error("Error al descargar el archivo:", response.statusText);
+    }
+  };
+
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -13,8 +107,8 @@ export default function Index({ auth }) {
           <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             Permissions
           </h2>
-          {(auth.user.roles.includes("Fuel") ||
-            auth.user.permissions.includes("Create Fuel")) && (
+          {(auth.user.roles.includes("Permissions") ||
+            auth.user.permissions.includes("Create Permissions")) && (
             <>
               <Link
                 href={route("permission.create")}
@@ -30,15 +124,8 @@ export default function Index({ auth }) {
       <Head title="Meters" />
 
       <ContainerAuth>
-        {/* {(auth.user.roles.includes("Fuel") ||
-          auth.user.permissions.includes("Create Fuel")) && (
-          <>
-            <ExportButton link="/fuel-data/export" documentName="fuel" />
-          </>
-        )} */}
-
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-2">
-          {/* {showSuccess && (
+          {showSuccess && (
             <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
               <div className="relative">
                 <strong className="font-bold block">Success!</strong>
@@ -58,11 +145,209 @@ export default function Index({ auth }) {
                 </button>
               </div>
             </div>
-          )} */}
+          )}
 
-          <h2 className="text-center">SHOW PERMISSIONS TABLE</h2>
+          <div className="mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
+              <div className="col-span-1">
+                <label
+                  htmlFor="date"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Date
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  id="date"
+                  value={filters.date}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
 
-          {/* <pre>{JSON.stringify(fuelData, undefined, 2)}</pre> */}
+              <div className="col-span-1">
+                <label
+                  htmlFor="rows"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Rows
+                </label>
+                <select
+                  name="rows"
+                  id="rows"
+                  value={filters.rows}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+              <div className="col-span-1 flex items-end space-x-2">
+                <button
+                  onClick={clearFilter}
+                  className="w-full bg-red-500 text-white py-2 px-4 rounded shadow"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+
+            {data.data.length > 0 && (
+              <>
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
+                  <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
+                    <tr>
+                      <th scope="col" className="px-6 py-3">
+                        Plant
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Date
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Supplier
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Area
+                      </th>
+
+                      {auth.user.roles.includes("Permissions") &&
+                        auth.user.permissions.includes(
+                          "Export Permissions"
+                        ) && (
+                          <>
+                            <th scope="col" className="px-6 py-3">
+                              Permisos
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                              Alturas
+                            </th>
+                          </>
+                        )}
+
+                      {auth.user.roles.includes("Permissions") &&
+                        auth.user.permissions.includes("Edit Permissions") &&
+                        auth.user.permissions.includes(
+                          "Delete Permissions"
+                        ) && (
+                          <th scope="col" className="px-6 py-3">
+                            Actions
+                          </th>
+                        )}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {data.data.map((item, index) => (
+                      <tr
+                        key={item.id}
+                        className={`${
+                          index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                        } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
+                      >
+                        <td className="px-6 py-2">{item.plant}</td>
+                        <td className="px-6 py-2">{item.fechaEjecucion}</td>
+                        <td className="px-6 py-2">{item.ejecutorTrabajo}</td>
+                        <td className="px-6 py-2">{item.areaMaquina}</td>
+
+                        {auth.user.roles.includes("Permissions") &&
+                          auth.user.permissions.includes(
+                            "Export Permissions"
+                          ) && (
+                            <>
+                              <td className="px-6 py-2">
+                                <Link
+                                  className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
+                                  onClick={() => handleExport(item)}
+                                >
+                                  Export
+                                </Link>
+                              </td>
+                              <td className="px-6 py-2">
+                                {item.TrabajosEnAlturas === "SI" ? (
+                                  <Link
+                                    className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
+                                    onClick={() => handleExport(item.id)}
+                                  >
+                                    Export
+                                  </Link>
+                                ) : (
+                                  item.TrabajosEnAlturas
+                                )}
+                              </td>
+                            </>
+                          )}
+
+                        {auth.user.roles.includes("Permissions") &&
+                          auth.user.permissions.includes("Edit Permissions") &&
+                          auth.user.permissions.includes(
+                            "Delete Permissions"
+                          ) && (
+                            <td className="py-2 text-center">
+                              <Link
+                                className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
+                                href={route("permission.edit", item.id)}
+                              >
+                                Edit
+                              </Link>
+                              <button
+                                className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                                onClick={() => {
+                                  setMeasurementToDelete(item);
+                                  setIsDeleteModalOpen(true);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <Modal
+                  show={isDeleteModalOpen}
+                  onClose={() => setIsDeleteModalOpen(false)}
+                  maxWidth="sm"
+                >
+                  <div className="p-6 bg-slate-500 text-white">
+                    <h2 className="text-lg font-semibold mb-4">
+                      Delete Confirmation
+                    </h2>
+                    <p className="text-sm text-white mb-8">
+                      Are you sure you want to delete this measurement? This
+                      action cannot be undone.
+                    </p>
+                    <div className="flex justify-end">
+                      <button
+                        onClick={onDeleteMeasurement}
+                        className="bg-red-500 text-white rounded-md px-4 py-2 mr-2 hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        onClick={() => setIsDeleteModalOpen(false)}
+                        className="bg-gray-300 text-gray-700 rounded-md px-4 py-2 hover:bg-gray-400"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </Modal>
+                <Pagination links={data.meta.links} filters={filters} />
+              </>
+            )}
+            {data.data.length === 0 && (
+              <NoContent text={"No Content"} icon={"🛢"} />
+            )}
+          </div>
+
+          {/* <pre>{JSON.stringify(flash, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(fuelData, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}

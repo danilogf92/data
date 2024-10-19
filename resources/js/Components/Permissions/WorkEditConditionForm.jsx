@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import InputError from "../InputError";
 
-const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
+const WorkEditConditionForm = ({
+  plants,
+  areaMachine,
+  suppliers,
+  approval,
+}) => {
   const date = () => {
     const hoy = new Date();
     hoy.setDate(hoy.getDate());
@@ -12,28 +17,28 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
   const [allAreas, setAllAreas] = useState(areaMachine);
   const [allSuppliers, setAllSuppliers] = useState(suppliers);
 
-  const { data, setData, post, errors } = useForm({
-    fechaEjecucion: date() || "",
-    desde: "06:00",
-    hasta: "23:00",
-    inspectorSSA: "Inspector",
-    plant_id: "",
-    areaMaquina: "",
-    ejecutorTrabajo: "",
-    descripcionTrabajo: "",
-    condiciones: conditions,
-    TrabajosIncompatible: "",
-    RiesgosFactores: "",
-    TrabajosElectricos: "NO",
-    TrabajosDeSoldadura: "NO",
-    TrabajosEnAlturas: "NO",
-    Escalera: "NO",
-    Montacargas: "NO",
-    Andamios: "NO",
-    Techo: "NO",
-    TrabajosDentroCocinadores: "NO",
-    TrabajosTransportar: "NO",
-    TrabajosLevantarObjetos: "NO",
+  const { data, setData, put, errors } = useForm({
+    fechaEjecucion: approval.fechaEjecucion || "",
+    desde: approval.desde,
+    hasta: approval.hasta,
+    inspectorSSA: approval.inspectorSSA || "",
+    plant_id: approval.plant_id || "",
+    areaMaquina: approval.areaMaquina || "",
+    ejecutorTrabajo: approval.ejecutorTrabajo || "",
+    descripcionTrabajo: approval.descripcionTrabajo || "",
+    condiciones: approval.condiciones || [],
+    TrabajosIncompatible: approval.TrabajosIncompatible || "",
+    RiesgosFactores: approval.RiesgosFactores || "",
+    TrabajosElectricos: approval.TrabajosElectricos || "",
+    TrabajosDeSoldadura: approval.TrabajosDeSoldadura || "",
+    TrabajosEnAlturas: approval.TrabajosEnAlturas || "",
+    Escalera: approval.Escalera || "",
+    Montacargas: approval.Montacargas || "",
+    Andamios: approval.Andamios || "",
+    Techo: approval.Techo || "",
+    TrabajosDentroCocinadores: approval.TrabajosDentroCocinadores || "",
+    TrabajosTransportar: approval.TrabajosTransportar || "",
+    TrabajosLevantarObjetos: approval.TrabajosLevantarObjetos || "",
   });
 
   const handleChange = (e) => {
@@ -44,7 +49,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
     }));
   };
   const handleConditionChange = (index, value) => {
-    const newCondiciones = [...conditions];
+    const newCondiciones = [...approval.condiciones];
     newCondiciones[index].cumple = value;
     setData((prevData) => ({
       ...prevData,
@@ -55,16 +60,12 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    post(route("permission.store"), {
+    put(route("permission.update", approval.id), {
       onSuccess: (response) => {
-        console.log("Respuesta exitosa:", response);
-        // setTimeout(() => {
-        //   setShowSuccess(false);
-        // }, 3000);
+        // console.log(response); // AQUI GENERA EL showSuccess
       },
       onError: (errors) => {
-        console.error("Errores:", errors);
-        // Opcional: mostrar errores en la interfaz de usuario
+        // console.log(errors);
       },
     });
   };
@@ -245,7 +246,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
             </th>
           </tr>
 
-          {conditions.map((condicion, index) => (
+          {approval.condiciones.map((condicion, index) => (
             <tr key={index}>
               <td className="p-2 border border-gray-300 text-center">
                 {condicion.nombre}
@@ -638,17 +639,24 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
           </tr>
         </tbody>
       </table>
-      <button
-        type="submit"
-        className="mt-4 block mx-auto bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition duration-300"
-      >
-        Save
-      </button>
-      <pre>{JSON.stringify(data.plant, undefined, 2)}</pre>
-      <pre>{JSON.stringify(errors, undefined, 2)}</pre>
+
+      <div className="mt-6 flex items-center justify-center gap-x-6">
+        <Link
+          href={route("permission.index")}
+          className="rounded-md bg-amber-600 text-white px-3 py-2 text-sm font-semibold shadow-sm hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
+        >
+          Cancel
+        </Link>
+        <button
+          type="submit"
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+        >
+          Update
+        </button>
+      </div>
       {/* <pre>{JSON.stringify(conditions, undefined, 2)}</pre> */}
     </form>
   );
 };
 
-export default WorkConditionForm;
+export default WorkEditConditionForm;

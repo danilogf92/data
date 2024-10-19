@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreApprovalRequest extends FormRequest
+class UpdateApprovalRequest extends FormRequest
 {
   // Determina si el usuario está autorizado a realizar esta solicitud
   public function authorize(): bool
@@ -12,33 +12,33 @@ class StoreApprovalRequest extends FormRequest
     return true; // Cambia esto según la lógica de autorización que necesites
   }
 
-  // Define las reglas de validación
+  // Define las reglas de validación para la actualización
   public function rules(): array
   {
     return [
-      'fechaEjecucion' => 'required|date',
-      'desde' => 'required|string|max:255',
-      'hasta' => 'required|string|max:255',
-      'inspectorSSA' => 'required|string|max:255',
-      'plant_id' => 'required|exists:plants,id', // Verifica que la planta exista
-      'areaMaquina' => 'required|string|max:255',
-      'ejecutorTrabajo' => 'required|string|max:255',
-      'descripcionTrabajo' => 'required|string|max:1000',
-      'condiciones' => 'required|array',
+      'fechaEjecucion' => 'sometimes|required|date',
+      'desde' => 'sometimes|required|string|max:255',
+      'hasta' => 'sometimes|required|string|max:255',
+      'inspectorSSA' => 'sometimes|required|string|max:255',
+      'plant_id' => 'sometimes|required|exists:plants,id', // Verifica que la planta exista
+      'areaMaquina' => 'sometimes|required|string|max:255',
+      'ejecutorTrabajo' => 'sometimes|required|string|max:255',
+      'descripcionTrabajo' => 'sometimes|required|string|max:1000',
+      'condiciones' => 'sometimes|required|array',
       'TrabajosIncompatible' => 'nullable|string|max:255',
       'RiesgosFactores' => 'nullable|string|max:255',
 
       // Campos booleanos representados como "SI" o "NO"
-      'TrabajosElectricos' => 'required|string|in:SI,NO',
-      'TrabajosDeSoldadura' => 'required|string|in:SI,NO',
-      'TrabajosEnAlturas' => 'required|string|in:SI,NO',
-      'Escalera' => 'required|string|in:SI,NO',
-      'Montacargas' => 'required|string|in:SI,NO',
-      'Andamios' => 'required|string|in:SI,NO',
-      'Techo' => 'required|string|in:SI,NO',
-      'TrabajosDentroCocinadores' => 'required|string|in:SI,NO',
-      'TrabajosTransportar' => 'required|string|in:SI,NO',
-      'TrabajosLevantarObjetos' => 'required|string|in:SI,NO',
+      'TrabajosElectricos' => 'sometimes|required|string|in:SI,NO',
+      'TrabajosDeSoldadura' => 'sometimes|required|string|in:SI,NO',
+      'TrabajosEnAlturas' => 'sometimes|required|string|in:SI,NO',
+      'Escalera' => 'sometimes|required|string|in:SI,NO',
+      'Montacargas' => 'sometimes|required|string|in:SI,NO',
+      'Andamios' => 'sometimes|required|string|in:SI,NO',
+      'Techo' => 'sometimes|required|string|in:SI,NO',
+      'TrabajosDentroCocinadores' => 'sometimes|required|string|in:SI,NO',
+      'TrabajosTransportar' => 'sometimes|required|string|in:SI,NO',
+      'TrabajosLevantarObjetos' => 'sometimes|required|string|in:SI,NO',
     ];
   }
 

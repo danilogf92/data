@@ -9,16 +9,13 @@ class Approval extends Model
 {
   use HasFactory;
 
-  // Especifica la tabla si no sigue la convención
-  protected $table = 'approvals';
-
-  // Especifica los campos que pueden ser llenados masivamente
+  // Especifica los campos que se pueden llenar masivamente
   protected $fillable = [
     'fechaEjecucion',
     'desde',
     'hasta',
     'inspectorSSA',
-    'plant',
+    'plant_id',
     'areaMaquina',
     'ejecutorTrabajo',
     'descripcionTrabajo',
@@ -28,13 +25,23 @@ class Approval extends Model
     'TrabajosElectricos',
     'TrabajosDeSoldadura',
     'TrabajosEnAlturas',
+    'Escalera',
+    'Montacargas',
+    'Andamios',
+    'Techo',
     'TrabajosDentroCocinadores',
     'TrabajosTransportar',
     'TrabajosLevantarObjetos',
   ];
 
-  // Opcional: define atributos para los campos JSON
+  // Define la relación con Plant
+  public function plant()
+  {
+    return $this->belongsTo(Plant::class);
+  }
+
+  // Define los casts para el campo JSON
   protected $casts = [
-    'condiciones' => 'array', // Esto convierte el campo JSON a un array automáticamente
+    'condiciones' => 'array',
   ];
 }

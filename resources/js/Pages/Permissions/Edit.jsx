@@ -1,9 +1,16 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import Container from "@/Components/Container";
-import FormEditFuelMeters from "@/Components/MyComponents/FormEditFuelMeters";
+import WorkEditConditionForm from "@/Components/Permissions/WorkEditConditionForm";
 
-export default function Edit({ auth, plants, fuelEquipment, fuel, equipment }) {
+export default function Edit({
+  auth,
+  plants,
+  areaMachine,
+  suppliers,
+  conditions,
+  approval,
+}) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -14,12 +21,13 @@ export default function Edit({ auth, plants, fuelEquipment, fuel, equipment }) {
       }
     >
       <Head title="Meters" />
-      <Container route={route("fuel.index")} buttonText="Before">
-        <FormEditFuelMeters
+      <Container route={route("permission.index")} buttonText="Before">
+        <WorkEditConditionForm
           plants={plants}
-          fuelEquipment={fuelEquipment}
-          fuel={fuel}
-          equipment={equipment}
+          areaMachine={areaMachine}
+          suppliers={suppliers}
+          conditions={conditions}
+          approval={approval}
         />
       </Container>
     </AuthenticatedLayout>
