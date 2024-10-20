@@ -8,11 +8,6 @@ const WorkEditConditionForm = ({
   suppliers,
   approval,
 }) => {
-  const date = () => {
-    const hoy = new Date();
-    hoy.setDate(hoy.getDate());
-    return hoy.toISOString().split("T")[0];
-  };
   const [filteredArea, setFilteredArea] = useState([]);
   const [allAreas, setAllAreas] = useState(areaMachine);
   const [allSuppliers, setAllSuppliers] = useState(suppliers);
@@ -23,7 +18,8 @@ const WorkEditConditionForm = ({
     hasta: approval.hasta,
     inspectorSSA: approval.inspectorSSA || "",
     plant_id: approval.plant_id || "",
-    areaMaquina: approval.areaMaquina || "",
+    user_id: approval.user_id || "",
+    area_machine_id: approval.area_machine_id || "",
     ejecutorTrabajo: approval.ejecutorTrabajo || "",
     descripcionTrabajo: approval.descripcionTrabajo || "",
     condiciones: approval.condiciones || [],
@@ -163,10 +159,10 @@ const WorkEditConditionForm = ({
               <div className="mt-2">
                 <select
                   onChange={handleChange}
-                  value={data.areaMaquina}
-                  id="areaMaquina"
-                  name="areaMaquina"
-                  autoComplete="areaMaquina"
+                  value={data.area_machine_id}
+                  id="area_machine_id"
+                  name="area_machine_id"
+                  autoComplete="area_machine_id"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   <option value="" disabled>
@@ -179,7 +175,7 @@ const WorkEditConditionForm = ({
                   ))}
                 </select>
                 <InputError
-                  message={errors.areaMaquina}
+                  message={errors.area_machine_id}
                   className="mt-2 text-red-500"
                 />
               </div>
@@ -292,7 +288,7 @@ const WorkEditConditionForm = ({
                 <textarea
                   className="w-full p-2 border border-gray-300"
                   placeholder="Observaciones"
-                  value={condicion.observaciones}
+                  value={condicion.observaciones || ""}
                   onChange={(e) => {
                     const newCondiciones = [...data.condiciones];
                     newCondiciones[index].observaciones = e.target.value;
@@ -654,7 +650,7 @@ const WorkEditConditionForm = ({
           Update
         </button>
       </div>
-      {/* <pre>{JSON.stringify(conditions, undefined, 2)}</pre> */}
+      <pre>{JSON.stringify(errors, undefined, 2)}</pre>
     </form>
   );
 };

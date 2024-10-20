@@ -9,7 +9,7 @@ class StoreApprovalRequest extends FormRequest
   // Determina si el usuario está autorizado a realizar esta solicitud
   public function authorize(): bool
   {
-    return true; // Cambia esto según la lógica de autorización que necesites
+    return true; // Ajusta según la lógica de autorización que necesites
   }
 
   // Define las reglas de validación
@@ -20,15 +20,16 @@ class StoreApprovalRequest extends FormRequest
       'desde' => 'required|string|max:255',
       'hasta' => 'required|string|max:255',
       'inspectorSSA' => 'required|string|max:255',
-      'plant_id' => 'required|exists:plants,id', // Verifica que la planta exista
-      'areaMaquina' => 'required|string|max:255',
+      'plant_id' => 'required|exists:plants,id',
+      'user_id' => 'required|exists:users,id',
+      'area_machine_id' => 'required|exists:area_machines,id',
       'ejecutorTrabajo' => 'required|string|max:255',
       'descripcionTrabajo' => 'required|string|max:1000',
       'condiciones' => 'required|array',
       'TrabajosIncompatible' => 'nullable|string|max:255',
       'RiesgosFactores' => 'nullable|string|max:255',
 
-      // Campos booleanos representados como "SI" o "NO"
+      // Validaciones para campos de SI o NO
       'TrabajosElectricos' => 'required|string|in:SI,NO',
       'TrabajosDeSoldadura' => 'required|string|in:SI,NO',
       'TrabajosEnAlturas' => 'required|string|in:SI,NO',
@@ -52,6 +53,10 @@ class StoreApprovalRequest extends FormRequest
       'inspectorSSA.required' => 'El campo "Inspector SSA" es obligatorio.',
       'plant_id.required' => 'El campo "Planta" es obligatorio.',
       'plant_id.exists' => 'La planta seleccionada no existe.',
+      'user_id.required' => 'El campo "User" es obligatorio.',
+      'user_id.exists' => 'El user seleccionada no existe.',
+      'area_machine_id.required' => 'El campo "Área de Máquina" es obligatorio.',
+      'area_machine_id.exists' => 'El área de máquina seleccionada no existe.',
       'descripcionTrabajo.required' => 'La descripción del trabajo es obligatoria.',
       'descripcionTrabajo.max' => 'La descripción no debe exceder los 1000 caracteres.',
       'condiciones.required' => 'Las condiciones son obligatorias.',

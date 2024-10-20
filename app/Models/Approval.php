@@ -9,14 +9,14 @@ class Approval extends Model
 {
   use HasFactory;
 
-  // Especifica los campos que se pueden llenar masivamente
   protected $fillable = [
     'fechaEjecucion',
     'desde',
     'hasta',
     'inspectorSSA',
+    'user_id',
     'plant_id',
-    'areaMaquina',
+    'area_machine_id',
     'ejecutorTrabajo',
     'descripcionTrabajo',
     'condiciones',
@@ -34,13 +34,21 @@ class Approval extends Model
     'TrabajosLevantarObjetos',
   ];
 
-  // Define la relación con Plant
   public function plant()
   {
     return $this->belongsTo(Plant::class);
   }
 
-  // Define los casts para el campo JSON
+  public function areaMachine()
+  {
+    return $this->belongsTo(AreaMachines::class, 'area_machine_id');
+  }
+
+  public function user()
+  {
+    return $this->belongsTo(User::class, 'user_id');
+  }
+
   protected $casts = [
     'condiciones' => 'array',
   ];

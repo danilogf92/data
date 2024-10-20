@@ -6,27 +6,63 @@ use App\Http\Requests\StoreApprovalRequest;
 use App\Http\Requests\UpdateApprovalRequest;
 use App\Http\Resources\ApprovalResource;
 use App\Models\Approval;
-use App\Models\AreaMachine;
+use App\Models\AreaMachines;
 use App\Models\Condition;
 use App\Models\Plant;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\Auth;
 
 class ApprovalController extends Controller
 {
+
+  private function validacion()
+  {
+    $user = Auth::user();
+
+    $condicion = $user->id != 3;
+
+
+    if ($condicion) {
+      abort(403, 'Unauthorized action.');
+    }
+  }
+
   /**
    * Display a listing of the resource.
    */
   public function index(Request $request)
   {
+    $this->validacion();
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Create Permissions')) {
+      abort(403, 'Unauthorized action.');
+    }
 
     $query = Approval::query();
+
+    $user = Auth::user();
+
+    $query->whereDate('user_id', $user->id);
 
     // Aplicar filtros
     if ($request->has('date') && $request->date) {
       $query->whereDate('fechaEjecucion', $request->date);
+    }
+
+    if ($request->has('plant_id') && $request->plant_id) {
+      $query->where('plant_id', (int)$request->plant_id);
+    }
+
+    if ($request->has('area_machine_id') && $request->area_machine_id) {
+      $query->where('area_machine_id', (int)$request->area_machine_id);
+    }
+
+    if ($request->has('ejecutorTrabajo') && $request->ejecutorTrabajo) {
+      $query->where('ejecutorTrabajo', $request->ejecutorTrabajo);
     }
 
     if ($request->has('rows') && $request->rows) {
@@ -36,20 +72,39 @@ class ApprovalController extends Controller
     }
 
     $data = $query->orderBy('fechaEjecucion', 'DESC')->paginate((int)$rowsPerPage);
+    $plants = Plant::orderBy('name', 'ASC')->get();
+    $areaMachine = AreaMachines::orderBy('nombre', 'ASC')->get();
+    $suppliers = Supplier::orderBy('name', 'ASC')->get();
+
+
 
     return inertia('Permissions/Index', [
       "data" => ApprovalResource::collection($data),
-      'queryParams' => request()->query() ?: null
+      'queryParams' => request()->query() ?: null,
+      'plants' => $plants,
+      'areaMachine' => $areaMachine,
+      'suppliers' => $suppliers
     ]);
   }
+
+
+
 
   /**
    * Show the form for creating a new resource.
    */
   public function create()
   {
+    $this->validacion();
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Create Permissions')) {
+      abort(403, 'Unauthorized action.');
+    }
+
     $plants = Plant::orderBy('name', 'ASC')->get();
-    $areaMachine = AreaMachine::orderBy('nombre', 'ASC')->get();
+    $areaMachine = AreaMachines::orderBy('nombre', 'ASC')->get();
     $suppliers = Supplier::orderBy('name', 'ASC')->get();
     $conditions = Condition::orderBy('id', 'ASC')->get();
 
@@ -66,8 +121,18 @@ class ApprovalController extends Controller
    */
   public function store(StoreApprovalRequest $request)
   {
+    $this->validacion();
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Create Permissions')) {
+      abort(403, 'Unauthorized action.');
+    }
+
     // Validar los datos y crear un nuevo registro
     $data = $request->validated();
+
+    // dd($data);
     Approval::create($data);
 
     // Redirigir al método index con un mensaje de éxito
@@ -89,10 +154,18 @@ class ApprovalController extends Controller
    */
   public function edit($id)
   {
+    $this->validacion();
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Edit Permissions')) {
+      abort(403, 'Unauthorized action.');
+    }
+
     $approval = Approval::findOrFail($id);
 
     $plants = Plant::orderBy('name', 'ASC')->get();
-    $areaMachine = AreaMachine::orderBy('nombre', 'ASC')->get();
+    $areaMachine = AreaMachines::orderBy('nombre', 'ASC')->get();
     $suppliers = Supplier::orderBy('name', 'ASC')->get();
     $conditions = Condition::orderBy('id', 'ASC')->get();
 
@@ -113,6 +186,14 @@ class ApprovalController extends Controller
    */
   public function update(UpdateApprovalRequest $request, $id)
   {
+    $this->validacion();
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Edit Permissions')) {
+      abort(403, 'Unauthorized action.');
+    }
+
     $approval = Approval::findOrFail($id); // Encuentra el recurso
     $data = $request->validated(); // Valida los datos
 
@@ -127,6 +208,14 @@ class ApprovalController extends Controller
    */
   public function destroy($id)
   {
+    $this->validacion();
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Delete Permissions')) {
+      abort(403, 'Unauthorized action.');
+    }
+
     $approval = Approval::findOrFail($id);
 
     $approval->delete();
@@ -135,6 +224,8 @@ class ApprovalController extends Controller
 
   public function export($id)
   {
+    $this->validacion();
+
     // Encuentra la aprobación o lanza un error 404
     $approval = Approval::findOrFail($id);
 
@@ -162,7 +253,7 @@ class ApprovalController extends Controller
     $sheet->setCellValue('E2', $approval->desde);
     $sheet->setCellValue('H2', $approval->hasta);
     $sheet->setCellValue('B3', $approval->plant->name);
-    $sheet->setCellValue('H3', $approval->areaMaquina);
+    $sheet->setCellValue('H3', $approval->areaMachine->nombre);
     $sheet->setCellValue('H4', $approval->ejecutorTrabajo);
     $sheet->setCellValue('A7', $approval->descripcionTrabajo);
     $sheet->setCellValue('A30', $approval->TrabajosIncompatible);
@@ -193,6 +284,91 @@ class ApprovalController extends Controller
     $sheet->setCellValue('L42', $approval->TrabajosDentroCocinadores);
     $sheet->setCellValue('L43', $approval->TrabajosTransportar);
     $sheet->setCellValue('L44', $approval->TrabajosLevantarObjetos);
+
+    // Guarda el archivo Excel en la ruta especificada
+    $writer = new Xlsx($spreadsheet);
+    $writer->save($newExcelPath);
+
+    // Descarga el archivo y elimina después de enviar
+    return response()->download($newExcelPath)->deleteFileAfterSend(true);
+  }
+
+
+  public function alturas($id)
+  {
+    $this->validacion();
+
+    // Encuentra la aprobación o lanza un error 404
+    $approval = Approval::findOrFail($id);
+
+    // Asegúrate de que la ruta de la plantilla sea correcta
+    $templatePath = storage_path('app/template/alturas.xlsx');
+    $fecha = now();
+    $plant = preg_replace('/[^A-Za-z0-9_\-]/', '_', $approval->plant->name); // Sanitiza el nombre
+    $area = preg_replace('/[^A-Za-z0-9_\-]/', '_', $approval->areaMaquina); // Sanitiza el área
+
+    // Genera la ruta y el nombre del archivo exportado
+    $filename = "Permiso_{$plant}_{$area}_{$fecha->format('d-m-Y')}.xlsx";
+    $newExcelPath = storage_path("app/exports/{$filename}");
+
+    // Verifica si la plantilla existe
+    if (!file_exists($templatePath)) {
+      return response()->json(['error' => 'Template file not found.'], 404);
+    }
+
+    // Carga la plantilla Excel
+    $spreadsheet = IOFactory::load($templatePath);
+
+    // Obtén la hoja activa y modifica los datos
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setCellValue('S11', $approval->fechaEjecucion);
+    $sheet->setCellValue('S12', $approval->fechaEjecucion);
+
+    $sheet->setCellValue('AE11', $approval->desde);
+    $sheet->setCellValue('AE12', $approval->hasta);
+
+    $sheet->setCellValue('AV11', $approval->areaMachine->nombre);
+    $sheet->setCellValue('L13', $approval->plant->name);
+    $sheet->setCellValue('M15', $approval->descripcionTrabajo);
+
+    if ($approval->TrabajosEnAlturas === "SI") {
+
+      if ($approval->Escalera === "SI") {
+        $sheet->setCellValue('D58', "X");
+        $sheet->setCellValue('C62', "X");
+        $sheet->setCellValue('C64', "X");
+        $sheet->setCellValue('C66', "X");
+        $sheet->setCellValue('C68', "X");
+        $sheet->setCellValue('C70', "X");
+        $sheet->setCellValue('C72', "X");
+      }
+
+      if ($approval->Montacargas === "SI") {
+        $sheet->setCellValue('T58', "X");
+        $sheet->setCellValue('S62', "X");
+        $sheet->setCellValue('S64', "X");
+        $sheet->setCellValue('S66', "X");
+        $sheet->setCellValue('S68', "X");
+        $sheet->setCellValue('S70', "X");
+        $sheet->setCellValue('S72', "X");
+      }
+
+      if ($approval->Andamios === "SI") {
+        $sheet->setCellValue('AJ58', "X");
+        $sheet->setCellValue('AJ62', "X");
+        $sheet->setCellValue('AJ64', "X");
+        $sheet->setCellValue('AJ66', "X");
+        $sheet->setCellValue('AJ68', "X");
+      }
+
+      if ($approval->Techo === "SI") {
+        $sheet->setCellValue('BA58', "X");
+        $sheet->setCellValue('BA62', "X");
+        $sheet->setCellValue('BA64', "X");
+        $sheet->setCellValue('BA66', "X");
+        $sheet->setCellValue('BA68', "X");
+      }
+    }
 
     // Guarda el archivo Excel en la ruta especificada
     $writer = new Xlsx($spreadsheet);

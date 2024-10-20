@@ -11,7 +11,7 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('areamachine', function (Blueprint $table) {
+    Schema::create('area_machines', function (Blueprint $table) {
       $table->id();
       $table->unsignedBigInteger('plant_id');
       $table->foreign('plant_id')->references('id')->on('plants')
@@ -28,6 +28,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('areamachine');
+    Schema::dropIfExists('area_machines');
   }
 };

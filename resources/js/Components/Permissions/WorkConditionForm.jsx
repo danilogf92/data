@@ -2,12 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import InputError from "../InputError";
 
-const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
+const WorkConditionForm = ({
+  plants,
+  areaMachine,
+  suppliers,
+  conditions,
+  user,
+}) => {
   const date = () => {
     const hoy = new Date();
-    hoy.setDate(hoy.getDate());
+    hoy.setHours(0, 0, 0, 0);
     return hoy.toISOString().split("T")[0];
   };
+
   const [filteredArea, setFilteredArea] = useState([]);
   const [allAreas, setAllAreas] = useState(areaMachine);
   const [allSuppliers, setAllSuppliers] = useState(suppliers);
@@ -18,7 +25,8 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
     hasta: "23:00",
     inspectorSSA: "Inspector",
     plant_id: "",
-    areaMaquina: "",
+    user_id: user.id,
+    area_machine_id: "",
     ejecutorTrabajo: "",
     descripcionTrabajo: "",
     condiciones: conditions,
@@ -41,6 +49,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
     setData((prevData) => ({
       ...prevData,
       [name]: value,
+      user_id: user.id,
     }));
   };
   const handleConditionChange = (index, value) => {
@@ -57,7 +66,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
 
     post(route("permission.store"), {
       onSuccess: (response) => {
-        console.log("Respuesta exitosa:", response);
+        // console.log("Respuesta exitosa:", response);
         // setTimeout(() => {
         //   setShowSuccess(false);
         // }, 3000);
@@ -162,23 +171,23 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
               <div className="mt-2">
                 <select
                   onChange={handleChange}
-                  value={data.areaMaquina}
-                  id="areaMaquina"
-                  name="areaMaquina"
-                  autoComplete="areaMaquina"
+                  value={data.area_machine_id}
+                  id="area_machine_id"
+                  name="area_machine_id"
+                  autoComplete="area_machine_id"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   <option value="" disabled>
                     -- Select Machine --
                   </option>
                   {filteredArea.map((machine) => (
-                    <option key={machine.id} value={machine.nombre}>
+                    <option key={machine.id} value={machine.id}>
                       {machine.nombre}
                     </option>
                   ))}
                 </select>
                 <InputError
-                  message={errors.areaMaquina}
+                  message={errors.area_machine_id}
                   className="mt-2 text-red-500"
                 />
               </div>
@@ -291,7 +300,7 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
                 <textarea
                   className="w-full p-2 border border-gray-300"
                   placeholder="Observaciones"
-                  value={condicion.observaciones}
+                  value={condicion.observaciones || ""}
                   onChange={(e) => {
                     const newCondiciones = [...data.condiciones];
                     newCondiciones[index].observaciones = e.target.value;
@@ -644,8 +653,9 @@ const WorkConditionForm = ({ plants, areaMachine, suppliers, conditions }) => {
       >
         Save
       </button>
-      <pre>{JSON.stringify(data.plant, undefined, 2)}</pre>
-      <pre>{JSON.stringify(errors, undefined, 2)}</pre>
+      {/* <pre>{JSON.stringify(user.id, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(data.user_id, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(errors, undefined, 2)}</pre> */}
       {/* <pre>{JSON.stringify(conditions, undefined, 2)}</pre> */}
     </form>
   );

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\AreaMachineResource\Pages;
-use App\Filament\Resources\AreaMachineResource\RelationManagers;
-use App\Models\AreaMachine;
+use App\Filament\Resources\AreaMachinesResource\Pages;
+use App\Filament\Resources\AreaMachinesResource\RelationManagers;
+use App\Models\AreaMachines;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,15 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class AreaMachineResource extends Resource
+class AreaMachinesResource extends Resource
 {
-  protected static ?string $model = AreaMachine::class;
+  protected static ?string $model = AreaMachines::class;
 
-  protected static ?string $navigationGroup = 'Permissions';
-
-  protected static ?string $navigationIcon = 'heroicon-o-funnel';
-
-  protected static ?int $navigationSort = 1;
+  protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
   public static function form(Form $form): Form
   {
@@ -50,8 +46,6 @@ class AreaMachineResource extends Resource
           ->numeric()
           ->sortable(),
         Tables\Columns\TextColumn::make('nombre')
-          ->searchable(),
-        Tables\Columns\TextColumn::make('descripcion')
           ->searchable(),
         Tables\Columns\IconColumn::make('activo')
           ->boolean(),
@@ -88,8 +82,8 @@ class AreaMachineResource extends Resource
   {
     return [
       'index' => Pages\ListAreaMachines::route('/'),
-      'create' => Pages\CreateAreaMachine::route('/create'),
-      'edit' => Pages\EditAreaMachine::route('/{record}/edit'),
+      'create' => Pages\CreateAreaMachines::route('/create'),
+      'edit' => Pages\EditAreaMachines::route('/{record}/edit'),
     ];
   }
 }

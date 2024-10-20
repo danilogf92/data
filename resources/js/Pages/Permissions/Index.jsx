@@ -7,17 +7,28 @@ import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import Pagination from "@/Components/Pagination";
 
-export default function Index({ auth, data, queryParams = null }) {
+export default function Index({
+  auth,
+  data,
+  queryParams = null,
+  plants,
+  areaMachine,
+  suppliers,
+}) {
   queryParams = queryParams || {};
   const [filters, setFilters] = useState({
     date: queryParams.date || "",
     rows: queryParams.rows || 5,
+    plant_id: queryParams.plant || "",
+    area_machine_id: queryParams.area_machine_id || "",
+    ejecutorTrabajo: queryParams.ejecutorTrabajo || "",
   });
   const { flash } = usePage().props;
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [measurementToDelete, setMeasurementToDelete] = useState(null);
+  const [areaMachines, setAreaMachines] = useState([]);
 
   const onDeleteMeasurement = () => {
     if (!measurementToDelete) return;
@@ -69,10 +80,22 @@ export default function Index({ auth, data, queryParams = null }) {
     setFilters({
       date: "",
       rows: 5,
+      plant_id: "",
+      area_machine_id: "",
+      ejecutorTrabajo: "",
     });
 
     router.get(route("permission.index"));
   };
+
+  useEffect(() => {
+    if (filters.plant_id) {
+      const filteredMachines = areaMachine.filter(
+        (item) => item.plant_id === parseInt(filters.plant_id, 10)
+      );
+      setAreaMachines(filteredMachines);
+    }
+  }, [filters.plant_id]);
 
   const handleExport = async (item) => {
     const response = await fetch(route("approval.export", item.id), {
@@ -89,6 +112,31 @@ export default function Index({ auth, data, queryParams = null }) {
       const a = document.createElement("a");
       a.href = url;
       a.download = `Permiso_${item.plant}_${item.areaMaquina}_${
+        item.ejecutorTrabajo
+      }_ ${new Date().toLocaleDateString()}.xlsx`; // Nombre del archivo
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } else {
+      console.error("Error al descargar el archivo:", response.statusText);
+    }
+  };
+
+  const handleExportHeihgts = async (item) => {
+    const response = await fetch(route("approval.alturas", item.id), {
+      method: "GET",
+      headers: {
+        "Content-Type":
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob(); // Obtén el archivo como blob
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Permiso_Alturas_${item.plant}_${item.areaMaquina}_${
         item.ejecutorTrabajo
       }_ ${new Date().toLocaleDateString()}.xlsx`; // Nombre del archivo
       document.body.appendChild(a);
@@ -148,7 +196,7 @@ export default function Index({ auth, data, queryParams = null }) {
           )}
 
           <div className="mb-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 p-2">
               <div className="col-span-1">
                 <label
                   htmlFor="date"
@@ -164,6 +212,75 @@ export default function Index({ auth, data, queryParams = null }) {
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
+              </div>
+
+              <div className="col-span-1">
+                <label
+                  htmlFor="plant_id"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Plant
+                </label>
+                <select
+                  name="plant_id"
+                  id="plant_id"
+                  value={queryParams.plant_id}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Plant</option>
+                  {plants.map((plant) => (
+                    <option key={plant.id} value={plant.id}>
+                      {plant.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-span-1">
+                <label
+                  htmlFor="area_machine_id"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Area
+                </label>
+                <select
+                  name="area_machine_id"
+                  id="area_machine_id"
+                  value={queryParams.area_machine_id}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Plant</option>
+                  {areaMachines.map((plant) => (
+                    <option key={plant.id} value={plant.id}>
+                      {plant.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-span-1">
+                <label
+                  htmlFor="ejecutorTrabajo"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Supplier
+                </label>
+                <select
+                  name="ejecutorTrabajo"
+                  id="ejecutorTrabajo"
+                  value={queryParams.ejecutorTrabajo}
+                  onChange={handleFilterChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option value="">Select Plant</option>
+                  {suppliers.map((item) => (
+                    <option key={item.id} value={item.name}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="col-span-1">
@@ -187,6 +304,7 @@ export default function Index({ auth, data, queryParams = null }) {
                   <option value="100">100</option>
                 </select>
               </div>
+
               <div className="col-span-1 flex items-end space-x-2">
                 <button
                   onClick={clearFilter}
@@ -271,7 +389,7 @@ export default function Index({ auth, data, queryParams = null }) {
                                 {item.TrabajosEnAlturas === "SI" ? (
                                   <Link
                                     className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
-                                    onClick={() => handleExport(item.id)}
+                                    onClick={() => handleExportHeihgts(item)}
                                   >
                                     Export
                                   </Link>
@@ -347,9 +465,9 @@ export default function Index({ auth, data, queryParams = null }) {
             )}
           </div>
 
-          {/* <pre>{JSON.stringify(flash, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
-          {/* <pre>{JSON.stringify(fuelData, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(plants, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}
         </div>

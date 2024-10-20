@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AreaMachine extends Model
+class AreaMachines extends Model
 {
   use HasFactory;
 
   // Define la tabla asociada si el nombre no sigue la convención plural
-  protected $table = 'areamachine';
+  protected $table = 'area_machines';
 
   // Define los atributos que se pueden asignar masivamente
   protected $fillable = [
@@ -24,5 +24,10 @@ class AreaMachine extends Model
   public function plant()
   {
     return $this->belongsTo(Plant::class);
+  }
+
+  public function approvals()
+  {
+    return $this->hasMany(Approval::class, 'area_machine_id');
   }
 }

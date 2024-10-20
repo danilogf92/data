@@ -9,7 +9,7 @@ class UpdateApprovalRequest extends FormRequest
   // Determina si el usuario está autorizado a realizar esta solicitud
   public function authorize(): bool
   {
-    return true; // Cambia esto según la lógica de autorización que necesites
+    return true; // Ajusta según tu lógica de autorización
   }
 
   // Define las reglas de validación para la actualización
@@ -20,15 +20,16 @@ class UpdateApprovalRequest extends FormRequest
       'desde' => 'sometimes|required|string|max:255',
       'hasta' => 'sometimes|required|string|max:255',
       'inspectorSSA' => 'sometimes|required|string|max:255',
-      'plant_id' => 'sometimes|required|exists:plants,id', // Verifica que la planta exista
-      'areaMaquina' => 'sometimes|required|string|max:255',
+      'plant_id' => 'sometimes|required|exists:plants,id',
+      'user_id' => 'required|exists:users,id',
+      'area_machine_id' => 'sometimes|required|exists:area_machines,id', // Consistencia con la base de datos
       'ejecutorTrabajo' => 'sometimes|required|string|max:255',
       'descripcionTrabajo' => 'sometimes|required|string|max:1000',
       'condiciones' => 'sometimes|required|array',
       'TrabajosIncompatible' => 'nullable|string|max:255',
       'RiesgosFactores' => 'nullable|string|max:255',
 
-      // Campos booleanos representados como "SI" o "NO"
+      // Validaciones para campos booleanos (SI/NO)
       'TrabajosElectricos' => 'sometimes|required|string|in:SI,NO',
       'TrabajosDeSoldadura' => 'sometimes|required|string|in:SI,NO',
       'TrabajosEnAlturas' => 'sometimes|required|string|in:SI,NO',
@@ -52,6 +53,10 @@ class UpdateApprovalRequest extends FormRequest
       'inspectorSSA.required' => 'El campo "Inspector SSA" es obligatorio.',
       'plant_id.required' => 'El campo "Planta" es obligatorio.',
       'plant_id.exists' => 'La planta seleccionada no existe.',
+      'user_id.required' => 'El campo "User" es obligatorio.',
+      'user_id.exists' => 'El user seleccionada no existe.',
+      'area_machine_id.required' => 'El campo "Área de Máquina" es obligatorio.',
+      'area_machine_id.exists' => 'El área de máquina seleccionada no existe.',
       'descripcionTrabajo.required' => 'La descripción del trabajo es obligatoria.',
       'descripcionTrabajo.max' => 'La descripción no debe exceder los 1000 caracteres.',
       'condiciones.required' => 'Las condiciones son obligatorias.',

@@ -26,6 +26,7 @@ export default function Create({
           areaMachine={areaMachine}
           suppliers={suppliers}
           conditions={conditions}
+          user={auth.user}
         />
       </Container>
     </AuthenticatedLayout>

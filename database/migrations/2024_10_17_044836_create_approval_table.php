@@ -14,12 +14,18 @@ return new class extends Migration {
       $table->string('hasta');
       $table->string('inspectorSSA');
 
-      // Clave foránea con convención de *_id
+      $table->unsignedBigInteger('user_id');
+      $table->foreign('user_id')->references('id')->on('users')
+        ->onDelete('cascade')->onUpdate('cascade');
+
       $table->unsignedBigInteger('plant_id');
       $table->foreign('plant_id')->references('id')->on('plants')
         ->onDelete('cascade')->onUpdate('cascade');
 
-      $table->string('areaMaquina')->nullable();
+      $table->unsignedBigInteger('area_machine_id');
+      $table->foreign('area_machine_id')->references('id')->on('area_machines')
+        ->onDelete('cascade')->onUpdate('cascade');
+
       $table->string('ejecutorTrabajo')->nullable();
       $table->text('descripcionTrabajo')->nullable();
       $table->json('condiciones');

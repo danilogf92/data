@@ -70,18 +70,20 @@ export default function Authenticated({ user, header, children }) {
                 </NavLink>
               </div>
 
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <NavLink
-                  href={route("permission.index")}
-                  active={
-                    route().current("permission.index") ||
-                    route().current("permission.create") ||
-                    route().current("permission.edit")
-                  }
-                >
-                  Permission
-                </NavLink>
-              </div>
+              {user.roles.includes("Permissions") && user.id === 3 && (
+                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                  <NavLink
+                    href={route("permission.index")}
+                    active={
+                      route().current("permission.index") ||
+                      route().current("permission.create") ||
+                      route().current("permission.edit")
+                    }
+                  >
+                    Permission
+                  </NavLink>
+                </div>
+              )}
             </div>
 
             <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -212,16 +214,18 @@ export default function Authenticated({ user, header, children }) {
               Fuel
             </ResponsiveNavLink>
 
-            <ResponsiveNavLink
-              href={route("permission.index")}
-              active={
-                route().current("permission.index") ||
-                route().current("permission.create") ||
-                route().current("permission.edit")
-              }
-            >
-              Permission
-            </ResponsiveNavLink>
+            {user.roles.includes("Permissions") && user.id === 3 && (
+              <ResponsiveNavLink
+                href={route("permission.index")}
+                active={
+                  route().current("permission.index") ||
+                  route().current("permission.create") ||
+                  route().current("permission.edit")
+                }
+              >
+                Permission
+              </ResponsiveNavLink>
+            )}
           </div>
 
           <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

@@ -18,28 +18,11 @@ class ApprovalResource extends JsonResource
     return [
       'id' => $this->id,
       'fechaEjecucion' => (new Carbon($this->fechaEjecucion))->format('Y-m-d'),
-      // 'desde' => $this->desde,
-      // 'hasta' => $this->hasta,
-      // 'inspectorSSA' => $this->inspectorSSA,
       'plant' => $this->plant->name,
-      'areaMaquina' => $this->areaMaquina,
+      'areaMaquina' => $this->areaMachine->nombre,
       'ejecutorTrabajo' => $this->ejecutorTrabajo,
       'descripcionTrabajo' => $this->descripcionTrabajo,
-      // 'condiciones' => $this->condiciones,
-      // 'TrabajosIncompatible' => $this->TrabajosIncompatible,
-      // 'RiesgosFactores' => $this->RiesgosFactores,
-      // 'TrabajosElectricos' => $this->TrabajosElectricos,
-      // 'TrabajosDeSoldadura' => $this->TrabajosDeSoldadura,
-      'TrabajosEnAlturas' => $this->TrabajosEnAlturas,
-      // 'Escalera' => $this->Escalera,
-      // 'Montacargas' => $this->Montacargas,
-      // 'Andamios' => $this->Andamios,
-      // 'Techo' => $this->Techo,
-      // 'TrabajosDentroCocinadores' => $this->TrabajosDentroCocinadores,
-      // 'TrabajosTransportar' => $this->TrabajosTransportar,
-      // 'TrabajosLevantarObjetos' => $this->TrabajosLevantarObjetos,
-      // 'created_at' => $this->created_at->toDateTimeString(),
-      // 'updated_at' => $this->updated_at->toDateTimeString(),
+      'TrabajosEnAlturas' => $this->TrabajosEnAlturas
     ];
   }
 }
