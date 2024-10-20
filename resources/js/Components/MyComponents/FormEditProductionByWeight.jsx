@@ -59,7 +59,7 @@ export default function FormEditProductionByWeight({ production }) {
                 </div>
               </div>
 
-              <div className="sm:col-span-2">
+              {/* <div className="sm:col-span-2">
                 <label
                   htmlFor="net"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -109,7 +109,7 @@ export default function FormEditProductionByWeight({ production }) {
                     className="mt-2 text-red-500"
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="sm:col-span-2">
                 <label

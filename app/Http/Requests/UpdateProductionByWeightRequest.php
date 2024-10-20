@@ -19,16 +19,28 @@ class UpdateProductionByWeightRequest extends FormRequest
    *
    * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
    */
+  // public function rules()
+  // {
+  //   return [
+  //     // 'date' => 'required|date',
+  //     'date' => 'required|date|unique:production_by_weights,date',
+  //     'net' => 'required|numeric|min:0',
+  //     'total_boxes' => 'required|numeric|min:0',
+  //     'pn_per_box' => 'required|numeric|min:0',
+  //   ];
+  // }
+
   public function rules()
   {
     return [
-      // 'date' => 'required|date',
-      'date' => 'required|date|unique:production_by_weights,date',
+      // Excluye el ID actual en la validación de unicidad.
+      'date' => 'required|date|unique:production_by_weights,date,' . $this->production_by_weight->id,
       'net' => 'required|numeric|min:0',
       'total_boxes' => 'required|numeric|min:0',
       'pn_per_box' => 'required|numeric|min:0',
     ];
   }
+
 
   /**
    * Get custom messages for validator errors.

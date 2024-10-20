@@ -4,6 +4,8 @@ import InputError from "../InputError";
 
 export default function FormProductionByWeight() {
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  today.setDate(today.getDate() - 1);
   const formattedDate = today.toISOString().split("T")[0];
 
   const { data, setData, post, errors } = useForm({

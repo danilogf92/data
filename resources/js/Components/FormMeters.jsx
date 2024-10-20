@@ -4,6 +4,7 @@ import InputError from "./InputError";
 
 const datetest = () => {
   const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
   hoy.setDate(hoy.getDate());
 
   if (hoy.getDay() === 1) {

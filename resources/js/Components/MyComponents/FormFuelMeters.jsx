@@ -4,6 +4,7 @@ import InputError from "../InputError";
 
 const datetest = () => {
   const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
   hoy.setDate(hoy.getDate());
 
   if (hoy.getDay() === 1) {
@@ -153,6 +154,8 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
 
     setFilteredEquipments(filteredEquipments);
 
+    setSelectedEquipment({});
+
     setData({
       ...data,
       plant_id: selectedPlantId,
@@ -213,7 +216,7 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
         (equipment) => equipment.id === parseInt(data.fuel_equipment_id)
       );
       setSelectedEquipment(foundEquipment || {}); // Establecer el equipo encontrado o un objeto vacío por defecto
-      console.log(foundEquipment.enabled_kw);
+      // console.log(foundEquipment.enabled_kw);
 
       if (
         parseInt(foundEquipment.enabled_kw) == 0 &&

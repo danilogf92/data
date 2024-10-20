@@ -46,7 +46,7 @@ class ApprovalController extends Controller
 
     $user = Auth::user();
 
-    $query->whereDate('user_id', $user->id);
+    $query->where('user_id', $user->id);
 
     // Aplicar filtros
     if ($request->has('date') && $request->date) {
