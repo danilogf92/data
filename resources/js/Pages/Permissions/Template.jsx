@@ -1,9 +1,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import Container from "@/Components/Container";
-import WorkEditConditionForm from "@/Components/Permissions/WorkEditConditionForm";
+import WorkTemplateConditionForm from "@/Components/Permissions/WorkTemplateConditionForm";
 
-export default function Edit({
+export default function Template({
   auth,
   plants,
   areaMachine,
@@ -15,16 +15,17 @@ export default function Edit({
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-          New Measure
+          New Permission
         </h2>
       }
     >
       <Head title="Meters" />
       <Container route={route("permission.index")} buttonText="Before">
-        <WorkEditConditionForm
+        <WorkTemplateConditionForm
           plants={plants}
           areaMachine={areaMachine}
           suppliers={suppliers}
+          user={auth.user}
           approval={approval}
         />
       </Container>

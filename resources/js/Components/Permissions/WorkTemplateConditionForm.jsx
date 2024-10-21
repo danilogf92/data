@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useForm } from "@inertiajs/react";
 import InputError from "../InputError";
 
-const WorkEditConditionForm = ({
+const WorkTemplateConditionForm = ({
   plants,
   areaMachine,
   suppliers,
@@ -12,7 +12,7 @@ const WorkEditConditionForm = ({
   const [allAreas, setAllAreas] = useState(areaMachine);
   const [allSuppliers, setAllSuppliers] = useState(suppliers);
 
-  const { data, setData, put, errors } = useForm({
+  const { data, setData, post, errors } = useForm({
     fechaEjecucion: approval.fechaEjecucion || "",
     desde: approval.desde,
     hasta: approval.hasta,
@@ -53,15 +53,32 @@ const WorkEditConditionForm = ({
     }));
   };
 
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   put(route("permission.update", approval.id), {
+  //     onSuccess: (response) => {
+  //       // console.log(response); // AQUI GENERA EL showSuccess
+  //     },
+  //     onError: (errors) => {
+  //       // console.log(errors);
+  //     },
+  //   });
+  // };
+
   const onSubmit = (e) => {
     e.preventDefault();
 
-    put(route("permission.update", approval.id), {
+    post(route("permission.store"), {
       onSuccess: (response) => {
-        // console.log(response); // AQUI GENERA EL showSuccess
+        // console.log("Respuesta exitosa:", response);
+        // setTimeout(() => {
+        //   setShowSuccess(false);
+        // }, 3000);
       },
       onError: (errors) => {
-        // console.log(errors);
+        console.error("Errores:", errors);
+        // Opcional: mostrar errores en la interfaz de usuario
       },
     });
   };
@@ -658,12 +675,12 @@ const WorkEditConditionForm = ({
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
         >
-          Update
+          Save New
         </button>
       </div>
-      {/* <pre>{JSON.stringify(errors, undefined, 2)}</pre> */}
+      <pre>{JSON.stringify(data, undefined, 2)}</pre>
     </form>
   );
 };
 
-export default WorkEditConditionForm;
+export default WorkTemplateConditionForm;

@@ -121,6 +121,7 @@ class ApprovalController extends Controller
    */
   public function store(StoreApprovalRequest $request)
   {
+
     $this->validacion();
 
     $permissions = Auth::user()->getPermissionNames();
@@ -132,8 +133,8 @@ class ApprovalController extends Controller
     // Validar los datos y crear un nuevo registro
     $data = $request->validated();
 
-    // dd($data);
     Approval::create($data);
+    // dd($data);
 
     // Redirigir al método index con un mensaje de éxito
     return redirect()->route('permission.index')
@@ -175,8 +176,7 @@ class ApprovalController extends Controller
         "approval" => $approval,
         'plants' => $plants,
         'areaMachine' => $areaMachine,
-        'suppliers' => $suppliers,
-        'conditions' => $conditions
+        'suppliers' => $suppliers
       ]
     );
   }
@@ -378,5 +378,33 @@ class ApprovalController extends Controller
 
     // Descarga el archivo y elimina después de enviar
     return response()->download($newExcelPath)->deleteFileAfterSend(true);
+  }
+
+  public function processId($id)
+  {
+    $this->validacion();
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Edit Permissions')) {
+      abort(403, 'Unauthorized action.');
+    }
+
+    $approval = Approval::findOrFail($id);
+
+    $plants = Plant::orderBy('name', 'ASC')->get();
+    $areaMachine = AreaMachines::orderBy('nombre', 'ASC')->get();
+    $suppliers = Supplier::orderBy('name', 'ASC')->get();
+    // $conditions = Condition::orderBy('id', 'ASC')->get();
+
+    return inertia(
+      'Permissions/Template',
+      [
+        "approval" => $approval,
+        'plants' => $plants,
+        'areaMachine' => $areaMachine,
+        'suppliers' => $suppliers
+      ]
+    );
   }
 }

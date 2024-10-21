@@ -1,6 +1,5 @@
 import Modal from "@/Components/Modal";
 import ContainerAuth from "@/Components/MyComponents/ContainerAuth";
-import ExportButton from "@/Components/MyComponents/ExportButton";
 import { NoContent } from "@/Components/MyComponents/NoContent";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
@@ -339,10 +338,14 @@ export default function Index({
                         ) && (
                           <>
                             <th scope="col" className="px-6 py-3">
-                              Permisos
+                              Permissions
                             </th>
                             <th scope="col" className="px-6 py-3">
-                              Alturas
+                              Work at Heights
+                            </th>
+
+                            <th scope="col" className="px-6 py-3">
+                              Template
                             </th>
                           </>
                         )}
@@ -396,6 +399,14 @@ export default function Index({
                                 ) : (
                                   item.TrabajosEnAlturas
                                 )}
+                              </td>
+                              <td className="px-6 py-2">
+                                <Link
+                                  className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
+                                  href={route("approval.processId", item.id)} // Corrección aquí
+                                >
+                                  Template
+                                </Link>
                               </td>
                             </>
                           )}
