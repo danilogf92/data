@@ -20,7 +20,7 @@ class ApprovalResource extends JsonResource
       'fechaEjecucion' => (new Carbon($this->fechaEjecucion))->format('Y-m-d'),
       'plant' => $this->plant->name,
       'areaMaquina' => $this->areaMachine->nombre,
-      'ejecutorTrabajo' => $this->ejecutorTrabajo,
+      'ejecutorTrabajo' => $this->supplier->name,
       'descripcionTrabajo' => $this->descripcionTrabajo,
       'TrabajosEnAlturas' => $this->TrabajosEnAlturas
     ];

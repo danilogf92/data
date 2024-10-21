@@ -22,8 +22,8 @@ class UpdateApprovalRequest extends FormRequest
       'inspectorSSA' => 'sometimes|required|string|max:255',
       'plant_id' => 'sometimes|required|exists:plants,id',
       'user_id' => 'required|exists:users,id',
-      'area_machine_id' => 'sometimes|required|exists:area_machines,id', // Consistencia con la base de datos
-      'ejecutorTrabajo' => 'sometimes|required|string|max:255',
+      'area_machine_id' => 'sometimes|required|exists:area_machines,id',
+      'supplier_id' => 'sometimes|required|exists:suppliers,id', // Nuevo campo
       'descripcionTrabajo' => 'sometimes|required|string|max:1000',
       'condiciones' => 'sometimes|required|array',
       'TrabajosIncompatible' => 'nullable|string|max:255',
@@ -54,9 +54,11 @@ class UpdateApprovalRequest extends FormRequest
       'plant_id.required' => 'El campo "Planta" es obligatorio.',
       'plant_id.exists' => 'La planta seleccionada no existe.',
       'user_id.required' => 'El campo "User" es obligatorio.',
-      'user_id.exists' => 'El user seleccionada no existe.',
+      'user_id.exists' => 'El usuario seleccionado no existe.',
       'area_machine_id.required' => 'El campo "Área de Máquina" es obligatorio.',
       'area_machine_id.exists' => 'El área de máquina seleccionada no existe.',
+      'supplier_id.required' => 'El campo "Proveedor" es obligatorio.', // Nuevo mensaje
+      'supplier_id.exists' => 'El proveedor seleccionado no existe.', // Nuevo mensaje
       'descripcionTrabajo.required' => 'La descripción del trabajo es obligatoria.',
       'descripcionTrabajo.max' => 'La descripción no debe exceder los 1000 caracteres.',
       'condiciones.required' => 'Las condiciones son obligatorias.',

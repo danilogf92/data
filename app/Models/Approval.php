@@ -9,6 +9,7 @@ class Approval extends Model
 {
   use HasFactory;
 
+  // Asegúrate de incluir 'supplier_id' en $fillable
   protected $fillable = [
     'fechaEjecucion',
     'desde',
@@ -17,7 +18,7 @@ class Approval extends Model
     'user_id',
     'plant_id',
     'area_machine_id',
-    'ejecutorTrabajo',
+    'supplier_id',
     'descripcionTrabajo',
     'condiciones',
     'TrabajosIncompatible',
@@ -34,6 +35,7 @@ class Approval extends Model
     'TrabajosLevantarObjetos',
   ];
 
+  // Relaciones
   public function plant()
   {
     return $this->belongsTo(Plant::class);
@@ -49,6 +51,13 @@ class Approval extends Model
     return $this->belongsTo(User::class, 'user_id');
   }
 
+  // Nueva relación con Supplier
+  public function supplier()
+  {
+    return $this->belongsTo(Supplier::class, 'supplier_id');
+  }
+
+  // Castea 'condiciones' a un array
   protected $casts = [
     'condiciones' => 'array',
   ];

@@ -17,4 +17,9 @@ class Supplier extends Model
     'description',
     'active',
   ];
+
+  public function approvals()
+  {
+    return $this->hasMany(Approval::class, 'supplier_id');
+  }
 }

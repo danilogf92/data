@@ -27,7 +27,7 @@ const WorkConditionForm = ({
     plant_id: "",
     user_id: user.id,
     area_machine_id: "",
-    ejecutorTrabajo: "",
+    supplier_id: "",
     descripcionTrabajo: "Organización y limpieza.",
     condiciones: conditions,
     TrabajosIncompatible: "Ninguno.",
@@ -208,23 +208,23 @@ const WorkConditionForm = ({
               <div className="mt-2">
                 <select
                   onChange={handleChange}
-                  value={data.ejecutorTrabajo}
-                  id="ejecutorTrabajo"
-                  name="ejecutorTrabajo"
-                  autoComplete="ejecutorTrabajo"
+                  value={data.supplier_id}
+                  id="supplier_id"
+                  name="supplier_id"
+                  autoComplete="supplier_id"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   <option value="" disabled>
                     -- Select Supplier --
                   </option>
                   {allSuppliers.map((proveedor) => (
-                    <option key={proveedor.id} value={proveedor.name}>
+                    <option key={proveedor.id} value={proveedor.id}>
                       {proveedor.name}
                     </option>
                   ))}
                 </select>
                 <InputError
-                  message={errors.ejecutorTrabajo}
+                  message={errors.supplier_id}
                   className="mt-2 text-red-500"
                 />
               </div>
@@ -665,8 +665,8 @@ const WorkConditionForm = ({
         Save
       </button>
       {/* <pre>{JSON.stringify(user.id, undefined, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(data.user_id, undefined, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(errors, undefined, 2)}</pre> */}
+      <pre>{JSON.stringify(data, undefined, 2)}</pre>
+      <pre>{JSON.stringify(errors, undefined, 2)}</pre>
       {/* <pre>{JSON.stringify(conditions, undefined, 2)}</pre> */}
     </form>
   );

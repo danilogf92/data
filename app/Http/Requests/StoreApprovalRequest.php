@@ -23,13 +23,13 @@ class StoreApprovalRequest extends FormRequest
       'plant_id' => 'required|exists:plants,id',
       'user_id' => 'required|exists:users,id',
       'area_machine_id' => 'required|exists:area_machines,id',
-      'ejecutorTrabajo' => 'required|string|max:255',
+      'supplier_id' => 'required|exists:suppliers,id', // Cambio realizado
       'descripcionTrabajo' => 'required|string|max:1000',
       'condiciones' => 'required|array',
       'TrabajosIncompatible' => 'nullable|string|max:255',
       'RiesgosFactores' => 'nullable|string|max:255',
 
-      // Validaciones para campos de SI o NO
+      // Validaciones para campos con valores "SI" o "NO"
       'TrabajosElectricos' => 'required|string|in:SI,NO',
       'TrabajosDeSoldadura' => 'required|string|in:SI,NO',
       'TrabajosEnAlturas' => 'required|string|in:SI,NO',
@@ -53,10 +53,12 @@ class StoreApprovalRequest extends FormRequest
       'inspectorSSA.required' => 'El campo "Inspector SSA" es obligatorio.',
       'plant_id.required' => 'El campo "Planta" es obligatorio.',
       'plant_id.exists' => 'La planta seleccionada no existe.',
-      'user_id.required' => 'El campo "User" es obligatorio.',
-      'user_id.exists' => 'El user seleccionada no existe.',
+      'user_id.required' => 'El campo "Usuario" es obligatorio.',
+      'user_id.exists' => 'El usuario seleccionado no existe.',
       'area_machine_id.required' => 'El campo "Área de Máquina" es obligatorio.',
       'area_machine_id.exists' => 'El área de máquina seleccionada no existe.',
+      'supplier_id.required' => 'El campo "Proveedor" es obligatorio.', // Mensaje personalizado
+      'supplier_id.exists' => 'El proveedor seleccionado no existe.',
       'descripcionTrabajo.required' => 'La descripción del trabajo es obligatoria.',
       'descripcionTrabajo.max' => 'La descripción no debe exceder los 1000 caracteres.',
       'condiciones.required' => 'Las condiciones son obligatorias.',

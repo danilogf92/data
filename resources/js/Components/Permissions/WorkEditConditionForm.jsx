@@ -20,7 +20,7 @@ const WorkEditConditionForm = ({
     plant_id: approval.plant_id || "",
     user_id: approval.user_id || "",
     area_machine_id: approval.area_machine_id || "",
-    ejecutorTrabajo: approval.ejecutorTrabajo || "",
+    supplier_id: approval.supplier_id || "",
     descripcionTrabajo: approval.descripcionTrabajo || "",
     condiciones: approval.condiciones || [],
     TrabajosIncompatible: approval.TrabajosIncompatible || "",
@@ -188,23 +188,23 @@ const WorkEditConditionForm = ({
               <div className="mt-2">
                 <select
                   onChange={handleChange}
-                  value={data.ejecutorTrabajo}
-                  id="ejecutorTrabajo"
-                  name="ejecutorTrabajo"
-                  autoComplete="ejecutorTrabajo"
+                  value={data.supplier_id}
+                  id="supplier_id"
+                  name="supplier_id"
+                  autoComplete="supplier_id"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   <option value="" disabled>
                     -- Select Supplier --
                   </option>
                   {allSuppliers.map((proveedor) => (
-                    <option key={proveedor.id} value={proveedor.name}>
+                    <option key={proveedor.id} value={proveedor.id}>
                       {proveedor.name}
                     </option>
                   ))}
                 </select>
                 <InputError
-                  message={errors.ejecutorTrabajo}
+                  message={errors.supplier_id}
                   className="mt-2 text-red-500"
                 />
               </div>
