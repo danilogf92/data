@@ -17,7 +17,11 @@ class AreaMachinesResource extends Resource
 {
   protected static ?string $model = AreaMachines::class;
 
-  protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+  protected static ?string $navigationGroup = 'Permissions';
+
+  protected static ?string $navigationIcon = 'heroicon-o-funnel';
+
+  protected static ?int $navigationSort = 1;
 
   public static function form(Form $form): Form
   {

@@ -181,7 +181,10 @@ const WorkEditConditionForm = ({
               </div>
             </td>
             <th className="p-2 border border-gray-700">Proveedor</th>
-            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+            <td
+              className="p-2 border border-gray-700 bg-gray-300 text-gray-700"
+              colSpan={4}
+            >
               <div className="mt-2">
                 <select
                   onChange={handleChange}
@@ -192,7 +195,7 @@ const WorkEditConditionForm = ({
                   className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   <option value="" disabled>
-                    -- Select Proveedor --
+                    -- Select Supplier --
                   </option>
                   {allSuppliers.map((proveedor) => (
                     <option key={proveedor.id} value={proveedor.name}>
@@ -206,10 +209,10 @@ const WorkEditConditionForm = ({
                 />
               </div>
             </td>
-            <th className="p-2 border border-gray-700">Orden/Trabajo</th>
+            {/* <th className="p-2 border border-gray-700">Orden/Trabajo</th>
             <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
               No Aplica
-            </td>
+            </td> */}
           </tr>
 
           <tr className="bg-blue-900 text-white">
@@ -650,7 +653,7 @@ const WorkEditConditionForm = ({
           Update
         </button>
       </div>
-      <pre>{JSON.stringify(errors, undefined, 2)}</pre>
+      {/* <pre>{JSON.stringify(errors, undefined, 2)}</pre> */}
     </form>
   );
 };

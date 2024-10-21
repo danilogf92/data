@@ -68,7 +68,7 @@ class ApprovalController extends Controller
     if ($request->has('rows') && $request->rows) {
       $rowsPerPage = $request->input('rows', $request->rows);
     } else {
-      $rowsPerPage = $request->input('rows', 5);
+      $rowsPerPage = $request->input('rows', 10);
     }
 
     $data = $query->orderBy('fechaEjecucion', 'DESC')->paginate((int)$rowsPerPage);
@@ -328,8 +328,10 @@ class ApprovalController extends Controller
     $sheet->setCellValue('AE12', $approval->hasta);
 
     $sheet->setCellValue('AV11', $approval->areaMachine->nombre);
-    $sheet->setCellValue('L13', $approval->plant->name);
-    $sheet->setCellValue('M15', $approval->descripcionTrabajo);
+    $sheet->setCellValue('k13', $approval->plant->name);
+    $sheet->setCellValue('B17', $approval->descripcionTrabajo);
+    $sheet->setCellValue('BF17', $approval->ejecutorTrabajo);
+
 
     if ($approval->TrabajosEnAlturas === "SI") {
 

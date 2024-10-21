@@ -18,7 +18,7 @@ export default function Index({
   queryParams = queryParams || {};
   const [filters, setFilters] = useState({
     date: queryParams.date || "",
-    rows: queryParams.rows || 5,
+    rows: queryParams.rows || 10,
     plant_id: queryParams.plant || "",
     area_machine_id: queryParams.area_machine_id || "",
     ejecutorTrabajo: queryParams.ejecutorTrabajo || "",
@@ -79,7 +79,7 @@ export default function Index({
   const clearFilter = () => {
     setFilters({
       date: "",
-      rows: 5,
+      rows: 10,
       plant_id: "",
       area_machine_id: "",
       ejecutorTrabajo: "",

@@ -28,9 +28,9 @@ const WorkConditionForm = ({
     user_id: user.id,
     area_machine_id: "",
     ejecutorTrabajo: "",
-    descripcionTrabajo: "",
+    descripcionTrabajo: "Organización y limpieza.",
     condiciones: conditions,
-    TrabajosIncompatible: "",
+    TrabajosIncompatible: "Ninguno.",
     RiesgosFactores: "",
     TrabajosElectricos: "NO",
     TrabajosDeSoldadura: "NO",
@@ -96,6 +96,14 @@ const WorkConditionForm = ({
         Escalera: "NO",
         Montacargas: "NO",
         Andamios: "NO",
+        Techo: "NO",
+      }));
+    } else {
+      setData((prevData) => ({
+        ...prevData,
+        Escalera: "SI",
+        Montacargas: "NO",
+        Andamios: "SI",
         Techo: "NO",
       }));
     }
@@ -193,7 +201,10 @@ const WorkConditionForm = ({
               </div>
             </td>
             <th className="p-2 border border-gray-700">Proveedor</th>
-            <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
+            <td
+              className="p-2 border border-gray-700 bg-gray-300 text-gray-700"
+              colSpan={4}
+            >
               <div className="mt-2">
                 <select
                   onChange={handleChange}
@@ -204,7 +215,7 @@ const WorkConditionForm = ({
                   className="block w-full rounded-md border-0 py-1.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   <option value="" disabled>
-                    -- Select Proveedor --
+                    -- Select Supplier --
                   </option>
                   {allSuppliers.map((proveedor) => (
                     <option key={proveedor.id} value={proveedor.name}>
@@ -218,10 +229,10 @@ const WorkConditionForm = ({
                 />
               </div>
             </td>
-            <th className="p-2 border border-gray-700">Orden/Trabajo</th>
+            {/* <th className="p-2 border border-gray-700">Orden/Trabajo</th>
             <td className="p-2 border border-gray-700 bg-gray-300 text-gray-700">
               No Aplica
-            </td>
+            </td> */}
           </tr>
 
           <tr className="bg-blue-900 text-white">
