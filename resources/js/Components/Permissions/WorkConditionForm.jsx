@@ -665,8 +665,8 @@ const WorkConditionForm = ({
         Save
       </button>
       {/* <pre>{JSON.stringify(user.id, undefined, 2)}</pre> */}
-      <pre>{JSON.stringify(data, undefined, 2)}</pre>
-      <pre>{JSON.stringify(errors, undefined, 2)}</pre>
+      {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(errors, undefined, 2)}</pre> */}
       {/* <pre>{JSON.stringify(conditions, undefined, 2)}</pre> */}
     </form>
   );

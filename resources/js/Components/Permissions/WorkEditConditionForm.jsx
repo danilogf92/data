@@ -86,6 +86,14 @@ const WorkEditConditionForm = ({
         Andamios: "NO",
         Techo: "NO",
       }));
+    } else {
+      setData((prevData) => ({
+        ...prevData,
+        Escalera: "SI",
+        Montacargas: "NO",
+        Andamios: "SI",
+        Techo: "NO",
+      }));
     }
   }, [data.TrabajosEnAlturas]);
 

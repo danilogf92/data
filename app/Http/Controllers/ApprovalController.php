@@ -254,7 +254,7 @@ class ApprovalController extends Controller
     $sheet->setCellValue('H2', $approval->hasta);
     $sheet->setCellValue('B3', $approval->plant->name);
     $sheet->setCellValue('H3', $approval->areaMachine->nombre);
-    $sheet->setCellValue('H4', $approval->ejecutorTrabajo);
+    $sheet->setCellValue('H4', $approval->supplier->name);
     $sheet->setCellValue('A7', $approval->descripcionTrabajo);
     $sheet->setCellValue('A30', $approval->TrabajosIncompatible);
     $sheet->setCellValue('A34', $approval->RiesgosFactores);
@@ -330,7 +330,7 @@ class ApprovalController extends Controller
     $sheet->setCellValue('AV11', $approval->areaMachine->nombre);
     $sheet->setCellValue('k13', $approval->plant->name);
     $sheet->setCellValue('B17', $approval->descripcionTrabajo);
-    $sheet->setCellValue('BF17', $approval->ejecutorTrabajo);
+    $sheet->setCellValue('BF17', $approval->supplier->name);
 
 
     if ($approval->TrabajosEnAlturas === "SI") {
