@@ -275,7 +275,7 @@ export default function Index({
                 >
                   <option value="">Select Plant</option>
                   {suppliers.map((item) => (
-                    <option key={item.id} value={item.name}>
+                    <option key={item.id} value={item.id}>
                       {item.name}
                     </option>
                   ))}
@@ -476,8 +476,8 @@ export default function Index({
             )}
           </div>
 
-          {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(suppliers, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(plants, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}
