@@ -20,7 +20,7 @@ export default function Index({
     rows: queryParams.rows || 10,
     plant_id: queryParams.plant || "",
     area_machine_id: queryParams.area_machine_id || "",
-    ejecutorTrabajo: queryParams.ejecutorTrabajo || "",
+    supplier_id: queryParams.supplier_id || "",
   });
   const { flash } = usePage().props;
 
@@ -81,7 +81,7 @@ export default function Index({
       rows: 10,
       plant_id: "",
       area_machine_id: "",
-      ejecutorTrabajo: "",
+      supplier_id: "",
     });
 
     router.get(route("permission.index"));
@@ -261,15 +261,15 @@ export default function Index({
 
               <div className="col-span-1">
                 <label
-                  htmlFor="ejecutorTrabajo"
+                  htmlFor="supplier_id"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Supplier
                 </label>
                 <select
-                  name="ejecutorTrabajo"
-                  id="ejecutorTrabajo"
-                  value={queryParams.ejecutorTrabajo}
+                  name="supplier_id"
+                  id="supplier_id"
+                  value={queryParams.supplier_id}
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
@@ -477,7 +477,7 @@ export default function Index({
           </div>
 
           {/* <pre>{JSON.stringify(filters, undefined, 2)}</pre> */}
-          {/* <pre>{JSON.stringify(suppliers, undefined, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(data, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(plants, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user, undefined, 2)}</pre> */}
           {/* <pre>{JSON.stringify(auth.user.permissions, undefined, 2)}</pre> */}

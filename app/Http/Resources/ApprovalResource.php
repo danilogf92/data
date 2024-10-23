@@ -21,6 +21,7 @@ class ApprovalResource extends JsonResource
       'plant' => $this->plant->name,
       'areaMaquina' => $this->areaMachine->nombre,
       'ejecutorTrabajo' => $this->supplier->name,
+      'supplier_id' => $this->supplier->id,
       'descripcionTrabajo' => $this->descripcionTrabajo,
       'TrabajosEnAlturas' => $this->TrabajosEnAlturas
     ];

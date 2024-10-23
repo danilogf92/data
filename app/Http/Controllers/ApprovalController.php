@@ -61,8 +61,8 @@ class ApprovalController extends Controller
       $query->where('area_machine_id', (int)$request->area_machine_id);
     }
 
-    if ($request->has('ejecutorTrabajo') && $request->ejecutorTrabajo) {
-      $query->where('supplier_id', $request->ejecutorTrabajo);
+    if ($request->has('supplier_id') && $request->supplier_id) {
+      $query->where('supplier_id', $request->supplier_id);
     }
 
     if ($request->has('rows') && $request->rows) {
