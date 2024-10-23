@@ -273,7 +273,7 @@ export default function Index({
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
-                  <option value="">Select Plant</option>
+                  <option value="">Select Supplier</option>
                   {suppliers.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.name}
