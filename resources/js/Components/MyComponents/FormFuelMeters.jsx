@@ -7,12 +7,12 @@ const datetest = () => {
   hoy.setHours(0, 0, 0, 0);
   hoy.setDate(hoy.getDate());
 
-  if (hoy.getDay() === 1) {
-    hoy.setDate(hoy.getDate() - 2);
-    console.log("ES LUNES");
-  } else {
-    hoy.setDate(hoy.getDate() - 1);
-  }
+  // if (hoy.getDay() === 1) {
+  //   hoy.setDate(hoy.getDate() - 2);
+  //   console.log("ES LUNES");
+  // } else {
+  //   hoy.setDate(hoy.getDate() - 1);
+  // }
   return hoy.toISOString().split("T")[0];
 };
 
@@ -43,22 +43,25 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
 
   useEffect(() => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const dayOfWeek = today.getDay();
 
-    if (dayOfWeek === 1) {
-      console.log("Hoy es lunes Primera ejecucion");
-      today.setDate(today.getDate() - 3);
-    } else {
-      today.setDate(today.getDate() - 2);
-    }
+    // if (dayOfWeek === 1) {
+    //   console.log("Hoy es lunes Primera ejecucion");
+    //   today.setDate(today.getDate() - 3);
+    // } else {
+    //   today.setDate(today.getDate() - 2);
+    // }
 
-    if (dayOfWeek === 2) {
-      console.log("Hoy es Martes Primera ejecucion");
-      today.setDate(today.getDate() - 1);
-      setIsMonday(true);
-    } else {
-      setIsMonday(false);
-    }
+    // if (dayOfWeek === 2) {
+    //   console.log("Hoy es Martes Primera ejecucion");
+    //   today.setDate(today.getDate() - 1);
+    //   setIsMonday(true);
+    // } else {
+    //   setIsMonday(false);
+    // }
+    today.setDate(today.getDate() - 1);
 
     setDateMeasureBefore(today.toISOString().split("T")[0]);
   }, []);
@@ -167,13 +170,15 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     const selectedDate = new Date(e.target.value + "T00:00:00");
     const dayOfWeek = selectedDate.getDay();
 
-    if (dayOfWeek === 1) {
-      setIsMonday(true);
-      selectedDate.setDate(selectedDate.getDate() - 2);
-    } else {
-      setIsMonday(false);
-      selectedDate.setDate(selectedDate.getDate() - 1);
-    }
+    // if (dayOfWeek === 1) {
+    //   setIsMonday(true);
+    //   selectedDate.setDate(selectedDate.getDate() - 2);
+    // } else {
+    //   setIsMonday(false);
+    //   selectedDate.setDate(selectedDate.getDate() - 1);
+    // }
+
+    selectedDate.setDate(selectedDate.getDate() - 1);
 
     setDateMeasureBefore(selectedDate.toISOString().split("T")[0]);
 
