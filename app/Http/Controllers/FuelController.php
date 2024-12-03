@@ -20,6 +20,7 @@ class FuelController extends Controller
    */
   public function index(Request $request)
   {
+    $ROWS = 10;
     $query = Fuel::query();
 
     // Aplicar filtros
@@ -38,7 +39,7 @@ class FuelController extends Controller
     if ($request->has('rows') && $request->rows) {
       $rowsPerPage = $request->input('rows', $request->rows);
     } else {
-      $rowsPerPage = $request->input('rows', 5);
+      $rowsPerPage = $request->input('rows', $ROWS);
     }
 
     if ($rowsPerPage === 'all') {

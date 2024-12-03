@@ -14,114 +14,116 @@ use Illuminate\Http\Request;
 
 class ProductionByWeightController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
-    {
-        $query = ProductionByWeight::query();
+  /**
+   * Display a listing of the resource.
+   */
+  public function index(Request $request)
+  {
+    $ROWS = 10;
+    $query = ProductionByWeight::query();
 
-        // Aplicar filtros
-        if ($request->has('date') && $request->date) {
-            $query->whereDate('date', $request->date);
-        }
-      
-        if ($request->has('rows') && $request->rows) {            
-          $rowsPerPage = $request->input('rows', $request->rows );
-        }else{
-          $rowsPerPage = $request->input('rows', 5);
-        }
-   
-        $production = $query->orderBy('date', 'DESC')->paginate((int)$rowsPerPage);
-
-        return inertia('ProductionByWeight/Index', [
-            "production" => ProductionByWeightResource::collection($production),
-            'queryParams' => request()->query() ?: null
-        ]);
+    // Aplicar filtros
+    if ($request->has('date') && $request->date) {
+      $query->whereDate('date', $request->date);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $permissions = Auth::user()->getPermissionNames();
-
-        if (!$permissions->contains('Create Water')) {
-        abort(403, 'Unauthorized action.');
-        }
-
-        return inertia('ProductionByWeight/Create');
+    if ($request->has('rows') && $request->rows) {
+      $rowsPerPage = $request->input('rows', $request->rows);
+    } else {
+      $rowsPerPage = $request->input('rows', $ROWS);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProductionByWeightRequest $request)
-    {
+    $production = $query->orderBy('date', 'DESC')->paginate((int)$rowsPerPage);
 
-        $permissions = Auth::user()->getPermissionNames();
+    return inertia('ProductionByWeight/Index', [
+      "production" => ProductionByWeightResource::collection($production),
+      'queryParams' => request()->query() ?: null
+    ]);
+  }
 
-        if (!$permissions->contains('Create Water')) {
-        abort(403, 'Unauthorized action.');
-        }
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function create()
+  {
+    $permissions = Auth::user()->getPermissionNames();
 
-        $data = $request->validated();
-        ProductionByWeight::create($data);
+    if (!$permissions->contains('Create Water')) {
+      abort(403, 'Unauthorized action.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+    return inertia('ProductionByWeight/Create');
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(StoreProductionByWeightRequest $request)
+  {
+
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Create Water')) {
+      abort(403, 'Unauthorized action.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ProductionByWeight $productionByWeight)
-    {
-        $permissions = Auth::user()->getPermissionNames();
+    $data = $request->validated();
+    ProductionByWeight::create($data);
+  }
 
-        if (!$permissions->contains('Edit Water')) {
-        abort(403, 'Unauthorized action.');
-        }
+  /**
+   * Display the specified resource.
+   */
+  public function show(string $id)
+  {
+    //
+  }
 
-        return inertia('ProductionByWeight/Edit', 
-            ["production" => $productionByWeight]
-        );
+  /**
+   * Show the form for editing the specified resource.
+   */
+  public function edit(ProductionByWeight $productionByWeight)
+  {
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Edit Water')) {
+      abort(403, 'Unauthorized action.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateProductionByWeightRequest $request, ProductionByWeight $productionByWeight)
-    {
-        $data = $request->validated();
-        $productionByWeight->update($data);
+    return inertia(
+      'ProductionByWeight/Edit',
+      ["production" => $productionByWeight]
+    );
+  }
 
-        return redirect()->route('production-by-weight.index')->with('success', 'Production updated successfully.');
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(UpdateProductionByWeightRequest $request, ProductionByWeight $productionByWeight)
+  {
+    $data = $request->validated();
+    $productionByWeight->update($data);
+
+    return redirect()->route('production-by-weight.index')->with('success', 'Production updated successfully.');
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(ProductionByWeight $productionByWeight)
+  {
+    $permissions = Auth::user()->getPermissionNames();
+
+    if (!$permissions->contains('Delete Water')) {
+      abort(403, 'Unauthorized action.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ProductionByWeight $productionByWeight)
-    {
-        $permissions = Auth::user()->getPermissionNames();
+    $productionByWeight->delete();
+    return redirect()->route('production-by-weight.index')->with('success', 'Delete Production Data.');
+  }
 
-        if (!$permissions->contains('Delete Water')) {
-        abort(403, 'Unauthorized action.');
-        }
-
-        $productionByWeight->delete();
-        return redirect()->route('production-by-weight.index')->with('success', 'Delete Production Data.');
-    }
-
-    public function export()
-    {
-        return Excel::download(new ProductionByWeightExport, 'production_by_weights.xlsx');
-    }  
+  public function export()
+  {
+    return Excel::download(new ProductionByWeightExport, 'production_by_weights.xlsx');
+  }
 }

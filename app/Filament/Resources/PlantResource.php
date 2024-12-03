@@ -15,72 +15,72 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PlantResource extends Resource
 {
-    protected static ?string $model = Plant::class;
+  protected static ?string $model = Plant::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+  protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
-    protected static ?string $navigationGroup = 'Main managment';
+  protected static ?string $navigationGroup = 'Main management';
 
-    protected static ?int $navigationSort = 1;
+  protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('location')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
+  public static function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        Forms\Components\TextInput::make('name')
+          ->required()
+          ->maxLength(255),
+        Forms\Components\TextInput::make('location')
+          ->required()
+          ->maxLength(255),
+      ]);
+  }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('location')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+  public static function table(Table $table): Table
+  {
+    return $table
+      ->columns([
+        Tables\Columns\TextColumn::make('name')
+          ->searchable(),
+        Tables\Columns\TextColumn::make('location')
+          ->searchable(),
+        Tables\Columns\TextColumn::make('created_at')
+          ->dateTime()
+          ->sortable()
+          ->toggleable(isToggledHiddenByDefault: true),
+        Tables\Columns\TextColumn::make('updated_at')
+          ->dateTime()
+          ->sortable()
+          ->toggleable(isToggledHiddenByDefault: true),
+      ])
+      ->filters([
+        //
+      ])
+      ->actions([
+        Tables\Actions\ViewAction::make(),
+        Tables\Actions\EditAction::make(),
+        Tables\Actions\DeleteAction::make(),
+      ])
+      ->bulkActions([
+        Tables\Actions\BulkActionGroup::make([
+          Tables\Actions\DeleteBulkAction::make(),
+        ]),
+      ]);
+  }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+  public static function getRelations(): array
+  {
+    return [
+      //
+    ];
+  }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListPlants::route('/'),
-            'create' => Pages\CreatePlant::route('/create'),
-            'edit' => Pages\EditPlant::route('/{record}/edit'),
-        ];
-    }
+  public static function getPages(): array
+  {
+    return [
+      'index' => Pages\ListPlants::route('/'),
+      'create' => Pages\CreatePlant::route('/create'),
+      'edit' => Pages\EditPlant::route('/{record}/edit'),
+    ];
+  }
 }

@@ -7,12 +7,6 @@ const datetest = () => {
   hoy.setHours(0, 0, 0, 0);
   hoy.setDate(hoy.getDate());
 
-  // if (hoy.getDay() === 1) {
-  //   hoy.setDate(hoy.getDate() - 2);
-  //   console.log("ES LUNES");
-  // } else {
-  //   hoy.setDate(hoy.getDate() - 1);
-  // }
   return hoy.toISOString().split("T")[0];
 };
 
@@ -47,20 +41,6 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
 
     const dayOfWeek = today.getDay();
 
-    // if (dayOfWeek === 1) {
-    //   console.log("Hoy es lunes Primera ejecucion");
-    //   today.setDate(today.getDate() - 3);
-    // } else {
-    //   today.setDate(today.getDate() - 2);
-    // }
-
-    // if (dayOfWeek === 2) {
-    //   console.log("Hoy es Martes Primera ejecucion");
-    //   today.setDate(today.getDate() - 1);
-    //   setIsMonday(true);
-    // } else {
-    //   setIsMonday(false);
-    // }
     today.setDate(today.getDate() - 1);
 
     setDateMeasureBefore(today.toISOString().split("T")[0]);
@@ -170,14 +150,6 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     const selectedDate = new Date(e.target.value + "T00:00:00");
     const dayOfWeek = selectedDate.getDay();
 
-    // if (dayOfWeek === 1) {
-    //   setIsMonday(true);
-    //   selectedDate.setDate(selectedDate.getDate() - 2);
-    // } else {
-    //   setIsMonday(false);
-    //   selectedDate.setDate(selectedDate.getDate() - 1);
-    // }
-
     selectedDate.setDate(selectedDate.getDate() - 1);
 
     setDateMeasureBefore(selectedDate.toISOString().split("T")[0]);
@@ -194,7 +166,7 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     const dateValue = dateInputRef.current.value;
 
     const currentDate = new Date(dateValue + "T00:00:00");
-    const newDate = new Date(currentDate); // Crea una copia de la fecha actual
+    const newDate = new Date(currentDate);
 
     if (e.target.checked) {
       newDate.setDate(newDate.getDate() - 1);
@@ -220,8 +192,7 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
       const foundEquipment = filteredEquipments.find(
         (equipment) => equipment.id === parseInt(data.fuel_equipment_id)
       );
-      setSelectedEquipment(foundEquipment || {}); // Establecer el equipo encontrado o un objeto vacío por defecto
-      // console.log(foundEquipment.enabled_kw);
+      setSelectedEquipment(foundEquipment || {});
 
       if (
         parseInt(foundEquipment.enabled_kw) == 0 &&
@@ -790,9 +761,10 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
           </Link>
           <button
             type="submit"
+            // onClick={test}
             className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
           >
-            Save
+            Create
           </button>
         </div>
       </form>

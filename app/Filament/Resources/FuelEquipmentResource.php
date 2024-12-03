@@ -17,7 +17,7 @@ class FuelEquipmentResource extends Resource
 {
   protected static ?string $model = FuelEquipment::class;
 
-  protected static ?string $navigationGroup = 'Fuel consumption managment';
+  protected static ?string $navigationGroup = 'Fuel consumption management';
 
   protected static ?string $navigationIcon = 'heroicon-o-funnel';
 
@@ -60,17 +60,18 @@ class FuelEquipmentResource extends Resource
     return $table
       ->columns([
         Tables\Columns\TextColumn::make('id')
-          ->searchable(),
+          ->sortable(),
         Tables\Columns\TextColumn::make('name')
           ->searchable(),
         Tables\Columns\TextColumn::make('plant.name')
+          ->searchable()
           ->numeric()
           ->sortable(),
         Tables\Columns\TextColumn::make('fuelType.name')
           ->numeric()
           ->sortable(),
         Tables\Columns\TextColumn::make('units')
-          ->searchable(),
+          ->sortable(),
         Tables\Columns\TextColumn::make('enabled')
           ->label('Status')
           ->getStateUsing(function ($record) {
@@ -78,8 +79,8 @@ class FuelEquipmentResource extends Resource
           })
           ->badge()
           ->color(fn(string $state): string => match ($state) {
-            'Enabled' => 'success',  // Verde para 'Enabled'
-            'Disabled' => 'danger',  // Rojo para 'Disabled'
+            'Enabled' => 'success',
+            'Disabled' => 'danger',
             default => 'gray',
           })
           ->sortable(),

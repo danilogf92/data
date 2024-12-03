@@ -7,6 +7,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
+const ROWS = 5;
+
 export default function Index({
   auth,
   fuelData,
@@ -22,7 +24,7 @@ export default function Index({
     date: queryParams.date || "",
     plant_id: queryParams.plant_id || "",
     meter_id: queryParams.meter_id || "",
-    rows: queryParams.rows || 5,
+    rows: queryParams.rows || ROWS,
   });
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function Index({
       date: "",
       plant_id: "",
       meter_id: "",
-      rows: 5,
+      rows: ROWS,
     });
 
     // Hacer la solicitud a la ruta de índice de medidas usando los filtros actualizados
@@ -134,7 +136,7 @@ export default function Index({
           </>
         )}
 
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-2">
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-2 my-2">
           {showSuccess && (
             <div className="mt-20 fixed top-0 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center shadow-md">
               <div className="relative">
@@ -237,7 +239,6 @@ export default function Index({
                   onChange={handleFilterChange}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
-                  <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
                   <option value="50">50</option>
@@ -257,103 +258,107 @@ export default function Index({
 
           {fuelData.data.length > 0 && (
             <>
-              <table className="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
-                <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
-                  <tr>
-                    <th scope="col" className="px-2 py-3">
-                      Plant
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Equipment
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Start Value
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Final Value
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Difference
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Units
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Start Value KW/h
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Final Value KW/h
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Difference KW/h
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Start Value H
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Final Value H
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Difference H
-                    </th>
-                    <th scope="col" className="px-2 py-3">
-                      Date
-                    </th>
-                    {auth.user.roles.includes("Fuel") && (
+              <div className="m-2">
+                <table className="w-full text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-red-50 rounded-lg">
+                  <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 rounded-lg">
+                    <tr>
                       <th scope="col" className="px-2 py-3">
-                        Actions
+                        Plant
                       </th>
-                    )}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {fuelData.data.map((fuel, index) => (
-                    <tr
-                      key={fuel.id}
-                      className={`${
-                        index % 2 === 0 ? "bg-white" : "bg-gray-100"
-                      } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
-                    >
-                      <td className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {fuel.plant_id}
-                      </td>
-                      <td className="px-2 py-2">{fuel.fuel_equipment_id}</td>
-                      <td className="px-2 py-2">{fuel.start_value}</td>
-                      <td className="px-2 py-2">{fuel.end_value} </td>
-                      <td className="px-2 py-2">{fuel.difference}</td>
-                      <td className="px-2 py-2">{fuel.fuel_equipment_units}</td>
-                      <td className="px-2 py-2">{fuel.kw_start_value}</td>
-                      <td className="px-2 py-2">{fuel.kw_end_value}</td>
-                      <td className="px-2 py-2">{fuel.kw_difference}</td>
-                      <td className="px-2 py-2">{fuel.hour_start_value}</td>
-                      <td className="px-2 py-2">{fuel.hour_end_value}</td>
-                      <td className="px-2 py-2">{fuel.hour_difference}</td>
-
-                      <td className="px-2 py-2 text-nowrap">{fuel.date}</td>
+                      <th scope="col" className="px-2 py-3">
+                        Equipment
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Start Value
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Final Value
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Difference
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Units
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Start Value KW/h
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Final Value KW/h
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Difference KW/h
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Start Value H
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Final Value H
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Difference H
+                      </th>
+                      <th scope="col" className="px-2 py-3">
+                        Date
+                      </th>
                       {auth.user.roles.includes("Fuel") && (
-                        <td className="py-2 text-center">
-                          <Link
-                            className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
-                            href={route("fuel.edit", fuel.id)}
-                          >
-                            Edit
-                          </Link>
-                          <button
-                            className="font-medium text-red-600 dark:text-red-500 hover:underline"
-                            onClick={() => {
-                              setMeasurementToDelete(fuel);
-                              setIsDeleteModalOpen(true);
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </td>
+                        <th scope="col" className="px-2 py-3">
+                          Actions
+                        </th>
                       )}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody>
+                    {fuelData.data.map((fuel, index) => (
+                      <tr
+                        key={fuel.id}
+                        className={`${
+                          index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                        } border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
+                      >
+                        <td className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                          {fuel.plant_id}
+                        </td>
+                        <td className="px-2 py-2">{fuel.fuel_equipment_id}</td>
+                        <td className="px-2 py-2">{fuel.start_value}</td>
+                        <td className="px-2 py-2">{fuel.end_value} </td>
+                        <td className="px-2 py-2">{fuel.difference}</td>
+                        <td className="px-2 py-2">
+                          {fuel.fuel_equipment_units}
+                        </td>
+                        <td className="px-2 py-2">{fuel.kw_start_value}</td>
+                        <td className="px-2 py-2">{fuel.kw_end_value}</td>
+                        <td className="px-2 py-2">{fuel.kw_difference}</td>
+                        <td className="px-2 py-2">{fuel.hour_start_value}</td>
+                        <td className="px-2 py-2">{fuel.hour_end_value}</td>
+                        <td className="px-2 py-2">{fuel.hour_difference}</td>
+
+                        <td className="px-2 py-2 text-nowrap">{fuel.date}</td>
+                        {auth.user.roles.includes("Fuel") && (
+                          <td className="py-2 text-center">
+                            <Link
+                              className="font-medium text-amber-600 dark:text-amber-500 hover:underline mr-4"
+                              href={route("fuel.edit", fuel.id)}
+                            >
+                              Edit
+                            </Link>
+                            <button
+                              className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                              onClick={() => {
+                                setMeasurementToDelete(fuel);
+                                setIsDeleteModalOpen(true);
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
               <Modal
                 show={isDeleteModalOpen}

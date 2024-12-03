@@ -48,6 +48,7 @@ class AreaMachinesResource extends Resource
       ->columns([
         Tables\Columns\TextColumn::make('plant.name')
           ->numeric()
+          ->searchable()
           ->sortable(),
         Tables\Columns\TextColumn::make('nombre')
           ->searchable(),

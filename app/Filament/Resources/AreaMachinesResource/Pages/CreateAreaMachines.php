@@ -8,5 +8,10 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateAreaMachines extends CreateRecord
 {
-    protected static string $resource = AreaMachinesResource::class;
+  protected static string $resource = AreaMachinesResource::class;
+
+  protected function getRedirectUrl(): string
+  {
+    return $this->getResource()::getUrl('index');
+  }
 }
