@@ -45,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
   Route::get('/approval/{id}/export', [ApprovalController::class, 'export'])->name('approval.export');
   Route::get('/approval/{id}/alturas', [ApprovalController::class, 'alturas'])->name('approval.alturas');
   Route::get('/approval/process-id/{id}', [ApprovalController::class, 'processId'])->name('approval.processId');
+  Route::post('/approvals/duplicate', [ApprovalController::class, 'duplicateRows'])->name('approvals.duplicate');
 });
 
 Route::prefix('api')->middleware(EnsureStaticTokenIsValid::class)->group(function () {

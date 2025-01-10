@@ -146,6 +146,17 @@ export default function Index({
     }
   };
 
+  const handleDuplicate = () => {
+    router.post(route("approvals.duplicate"), {
+      onSuccess: () => {
+        console.log("Las filas fueron duplicadas con éxito.");
+      },
+      onError: () => {
+        console.log("Ocurrió un error al duplicar las filas.");
+      },
+    });
+  };
+
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -157,6 +168,13 @@ export default function Index({
           {(auth.user.roles.includes("Permissions") ||
             auth.user.permissions.includes("Create Permissions")) && (
             <>
+              <button
+                onClick={handleDuplicate}
+                className="bg-blue-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-blue-600"
+              >
+                Duplicate Last Day
+              </button>
+
               <Link
                 href={route("permission.create")}
                 className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ApprovalController extends Controller
 {
@@ -407,4 +408,38 @@ class ApprovalController extends Controller
       ]
     );
   }
+
+ public function duplicateRows()
+  {
+      $this->validacion();
+
+      $permissions = Auth::user()->getPermissionNames();
+      if (!$permissions->contains('Edit Permissions')) {
+          abort(403, 'Unauthorized action.');
+      }
+
+      // Obtener la última fecha registrada
+      $lastDate = Approval::max('fechaEjecucion');
+
+      if (!$lastDate) {
+          return redirect()->back()->with('error', 'There are no records to duplicate.');
+      }
+
+      // Asegurar que la fecha sea tratada correctamente con Carbon
+      $lastDate = Carbon::parse($lastDate);
+
+      // Obtener todas las filas correspondientes a la última fecha
+      $rowsToDuplicate = Approval::whereDate('fechaEjecucion', $lastDate->toDateString())->get();
+
+      // Crear nuevas filas duplicadas con la fecha del día siguiente
+      foreach ($rowsToDuplicate as $row) {
+          $newRow = $row->replicate(); // Copiar los datos de la fila existente
+          $newRow->fechaEjecucion = $lastDate->copy()->addDay(); // Incrementar la fecha en un día
+          $newRow->save(); // Guardar la nueva fila
+      }
+
+      //return redirect()->back()->with('success', 'Las filas del último día (' . $lastDate->toDateString() . ') se han duplicado con éxito con la fecha del día siguiente.');
+      return redirect()->back()->with('success', 'The rows from the last recorded day (' . $lastDate->toDateString() . ') have been successfully duplicated with the next day\'s date.');
+  }
+
 }
