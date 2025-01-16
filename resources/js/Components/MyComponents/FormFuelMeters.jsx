@@ -2,10 +2,10 @@ import { Link, useForm } from "@inertiajs/react";
 import React, { useState, useEffect, useRef } from "react";
 import InputError from "../InputError";
 
-const datetest = () => {
+const datetest = (value = 0) => {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
-  hoy.setDate(hoy.getDate());
+  hoy.setDate(hoy.getDate() - value);
 
   return hoy.toISOString().split("T")[0];
 };
@@ -23,15 +23,17 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     hour_start_value: 0,
     hour_end_value: 0,
     hour_difference: 0,
-    date: datetest() || "",
+    date: datetest(1) || "",
+    dateInput: datetest() || "",
+    dateAux: datetest(2) || "",
   });
   const dateInputRef = useRef(null);
 
   const [showSuccess, setShowSuccess] = useState(false);
-  const [isMonday, setIsMonday] = useState(false);
   const [filteredEquipments, setFilteredEquipments] = useState([]);
   const [allEquipments, setAllEquipments] = useState(fuelEquipment);
   const [dateMeasureBefore, setDateMeasureBefore] = useState("");
+  const [isEnabled, setIsEnabled] = useState(false);
 
   const [selectedEquipment, setSelectedEquipment] = useState({});
 
@@ -146,36 +148,38 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     });
   };
 
+  const handleEquipment = async (e) => {
+    const selectedEquipmentId = e.target.value;
+
+    const foundEquipment = filteredEquipments.find(
+      (equipment) => equipment.id === parseInt(selectedEquipmentId, 10)
+    );
+    setSelectedEquipment(foundEquipment || {});
+
+    setData({
+      ...data,
+      fuel_equipment_id: selectedEquipmentId,
+    });
+  };
+
   const handleDateChange = (e) => {
     const selectedDate = new Date(e.target.value + "T00:00:00");
-    const dayOfWeek = selectedDate.getDay();
 
     selectedDate.setDate(selectedDate.getDate() - 1);
 
     setDateMeasureBefore(selectedDate.toISOString().split("T")[0]);
 
+    const dateAux = new Date(selectedDate);
+    dateAux.setDate(dateAux.getDate() - 1);
+
     setData({
       ...data,
       plant_id: "",
       fuel_equipment_id: "",
-      date: e.target.value,
+      dateInput: e.target.value,
+      dateAux: dateAux.toISOString().split("T")[0],
+      date: selectedDate.toISOString().split("T")[0],
     });
-  };
-
-  const handleChecked = (e) => {
-    const dateValue = dateInputRef.current.value;
-
-    const currentDate = new Date(dateValue + "T00:00:00");
-    const newDate = new Date(currentDate);
-
-    if (e.target.checked) {
-      newDate.setDate(newDate.getDate() - 1);
-    } else {
-      newDate.setDate(newDate.getDate() - 2);
-    }
-    console.log(newDate.toISOString().split("T")[0]);
-
-    setDateMeasureBefore(newDate.toISOString().split("T")[0]);
   };
 
   useEffect(() => {
@@ -185,18 +189,15 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
       );
       setFilteredEquipments(fuelEquipmentArray);
     }
-  }, [data.plant_id, data.date, allEquipments, dateMeasureBefore]);
+  }, [data.plant_id, data.dateInput, allEquipments, dateMeasureBefore]);
 
+  // Este useEffect depende de selectedEquipment y se ejecuta cada vez que cambia
   useEffect(() => {
-    if (data.fuel_equipment_id) {
-      const foundEquipment = filteredEquipments.find(
-        (equipment) => equipment.id === parseInt(data.fuel_equipment_id)
-      );
-      setSelectedEquipment(foundEquipment || {});
-
+    if (selectedEquipment && selectedEquipment.id) {
+      // Lógica cuando selectedEquipment ha sido actualizado
       if (
-        parseInt(foundEquipment.enabled_kw) == 0 &&
-        parseInt(foundEquipment.enabled_hour) == 0
+        parseInt(selectedEquipment.enabled_kw) === 0 &&
+        parseInt(selectedEquipment.enabled_hour) === 0
       ) {
         setData({
           ...data,
@@ -207,14 +208,14 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
           hour_end_value: 0,
           hour_difference: 0,
         });
-      } else if (parseInt(foundEquipment.enabled_kw) == 0) {
+      } else if (parseInt(selectedEquipment.enabled_kw) === 0) {
         setData({
           ...data,
           kw_start_value: 0,
           kw_end_value: 0,
           kw_difference: 0,
         });
-      } else if (parseInt(foundEquipment.enabled_hour) == 0) {
+      } else if (parseInt(selectedEquipment.enabled_hour) === 0) {
         setData({
           ...data,
           hour_start_value: 0,
@@ -223,7 +224,7 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
         });
       }
     }
-  }, [data.fuel_equipment_id, filteredEquipments]);
+  }, [selectedEquipment]); // Este useEffect se ejecuta cada vez que selectedEquipment cambia
 
   useEffect(() => {
     setData({
@@ -243,7 +244,7 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
 
     const fetchData = async () => {
       try {
-        // console.log(data.date);
+        // console.log(data.dateInput);
         const response = await fetch(`/api/fuel-equipment?date=${data.date}`);
         if (!response.ok) {
           throw new Error("Failed to fetch meters");
@@ -266,21 +267,26 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
     };
 
     fetchData();
-  }, [data.date, dateMeasureBefore, data.fuel_equipment_id]);
+  }, [data.dateInput, dateMeasureBefore, data.fuel_equipment_id]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsEnabled(true);
+
         setData({
           ...data,
           start_value: "0",
           hour_start_value: "0",
           kw_start_value: "0",
+          kw_end_value: "0",
+          kw_difference: "0",
+          hour_end_value: "0",
+          hour_difference: "0",
         });
 
-        // Restar un día a data.date
         const prevDate = new Date(dateMeasureBefore + "T00:00:00");
-        prevDate.setDate(prevDate.getDate());
+        prevDate.setDate(prevDate.getDate() - 1);
         const formattedDate = prevDate.toISOString().split("T")[0];
 
         const response = await fetch(
@@ -290,35 +296,44 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
           throw new Error("Failed to fetch measurement");
         }
         const { measurement } = await response.json();
-        // console.log(measurement, formattedDate, data.fuel_equipment_id);
+
+        let hour_end_value = 0;
+        let end_value = 0;
+        let kw_end_value = 0;
 
         if (measurement.length > 0) {
-          const end_value = measurement[0]["end_value"];
-          const hour_end_value = measurement[0]["hour_end_value"];
-          const kw_end_value = measurement[0]["kw_end_value"];
+          end_value = measurement[0]["end_value"];
+          hour_end_value = measurement[0]["hour_end_value"];
+          kw_end_value = measurement[0]["kw_end_value"];
 
-          console.log(measurement);
-
-          setData({
-            ...data,
-            start_value: end_value,
-            hour_start_value: hour_end_value,
-            kw_start_value: kw_end_value,
-            hour_end_value: "",
-            kw_end_value: "",
-            kw_difference: "",
-            hour_difference: "",
-          });
+          // console.log(measurement);
         }
+
+        setData({
+          ...data,
+          start_value: end_value,
+          hour_start_value: hour_end_value,
+          kw_start_value: kw_end_value,
+          hour_end_value: selectedEquipment.enabled_hour === 0 ? 0 : "",
+          kw_end_value: selectedEquipment.enabled_kw === 0 ? 0 : "",
+          kw_difference: selectedEquipment.enabled_kw === 0 ? 0 : "",
+          hour_difference: selectedEquipment.enabled_hour === 0 ? 0 : "",
+        });
       } catch (error) {
         console.error("Error fetching measurement:", error);
+      } finally {
+        setIsEnabled(false); // Desactiva siempre, ya sea en éxito o en error
       }
     };
 
+    const fetchDataAsync = async () => {
+      await fetchData();
+    };
+
     if (data.fuel_equipment_id) {
-      fetchData();
+      fetchDataAsync();
     }
-  }, [data.fuel_equipment_id, data.date]);
+  }, [data.fuel_equipment_id, data.dateInput]);
 
   const dateFormat = (originalDate) => {
     const dateObject = new Date(originalDate + "T00:00:00");
@@ -443,9 +458,7 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                 </label>
                 <div className="mt-2">
                   <select
-                    onChange={(e) =>
-                      setData("fuel_equipment_id", e.target.value)
-                    }
+                    onChange={handleEquipment}
                     value={data.fuel_equipment_id}
                     id="fuel_equipment_id"
                     name="fuel_equipment_id"
@@ -476,20 +489,11 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
                   <span className="bg-red-200 ml-2 rounded-sm p-1">
                     {dateFormat(dateMeasureBefore)}
                   </span>
-                  {isMonday && (
-                    <input
-                      type="checkbox"
-                      name="toggle"
-                      id="toggle"
-                      onChange={handleChecked}
-                      className="h-4 w-4 ml-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                    />
-                  )}
                 </label>
                 <div className="mt-2">
                   <input
                     onChange={handleDateChange}
-                    value={data.date}
+                    value={data.dateInput}
                     type="date"
                     ref={dateInputRef}
                     name="date"
@@ -759,10 +763,16 @@ export default function FormFuelMeters({ plants, fuelEquipment }) {
           >
             Cancel
           </Link>
+
           <button
+            disabled={isEnabled}
             type="submit"
-            // onClick={test}
-            className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            className={`rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm
+          ${
+            isEnabled
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-emerald-600 hover:bg-emerald-500"
+          }`}
           >
             Create
           </button>

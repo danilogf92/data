@@ -20,17 +20,17 @@ return new class extends Migration
         ->onDelete('cascade')->onUpdate('cascade');
 
       $table->date('date');
-      $table->decimal('start_value', 10, 3);
-      $table->decimal('end_value', 10, 3);
-      $table->decimal('difference', 10, 3);
+      $table->decimal('start_value', 15, 3);
+      $table->decimal('end_value', 15, 3);
+      $table->decimal('difference', 15, 3);
 
-      $table->decimal('kw_start_value', 10, 3)->nullable()->default(0);
-      $table->decimal('kw_end_value', 10, 3)->nullable()->default(0);
-      $table->decimal('kw_difference', 10, 3)->nullable()->default(0);
+      $table->decimal('kw_start_value', 15, 3)->nullable()->default(0);
+      $table->decimal('kw_end_value', 15, 3)->nullable()->default(0);
+      $table->decimal('kw_difference', 15, 3)->nullable()->default(0);
 
-      $table->decimal('hour_start_value', 10, 3)->nullable()->default(0);
-      $table->decimal('hour_end_value', 10, 3)->nullable()->default(0);
-      $table->decimal('hour_difference', 10, 3)->nullable()->default(0);
+      $table->decimal('hour_start_value', 15, 3)->nullable()->default(0);
+      $table->decimal('hour_end_value', 15, 3)->nullable()->default(0);
+      $table->decimal('hour_difference', 15, 3)->nullable()->default(0);
       $table->timestamps();
     });
   }
