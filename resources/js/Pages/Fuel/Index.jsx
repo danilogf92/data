@@ -23,7 +23,7 @@ export default function Index({
   const [filters, setFilters] = useState({
     date: queryParams.date || "",
     plant_id: queryParams.plant_id || "",
-    meter_id: queryParams.meter_id || "",
+    fuel_equipment_id: queryParams.fuel_equipment_id || "",
     rows: queryParams.rows || ROWS,
   });
 

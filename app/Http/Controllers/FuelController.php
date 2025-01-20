@@ -52,7 +52,10 @@ class FuelController extends Controller
         ->paginate((int)$rowsPerPage);
     }
 
-    $fuelEquipment = FuelEquipment::orderBy('name', 'ASC')->get();
+    $fuelEquipment = FuelEquipment::where('enabled', 1)
+      ->orderBy('name', 'ASC')
+      ->get();
+
     $plants = Plant::orderBy('name', 'ASC')->get();
 
     return inertia('Fuel/Index', [
